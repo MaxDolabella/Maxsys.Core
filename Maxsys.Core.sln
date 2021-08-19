@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{99E25893-90D6-4FC3-A2FC-95A014AF3315}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maxsys.Core", "src\Maxsys.Core\Maxsys.Core.csproj", "{A78A38E3-6E95-49EB-91DB-D16C095EA825}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66452108-81E5-45E5-806E-C440F433F8F5}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A78A38E3-6E95-49EB-91DB-D16C095EA825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A78A38E3-6E95-49EB-91DB-D16C095EA825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A78A38E3-6E95-49EB-91DB-D16C095EA825}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A78A38E3-6E95-49EB-91DB-D16C095EA825}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A78A38E3-6E95-49EB-91DB-D16C095EA825} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2A4EDFD5-F835-4736-AE34-1BE95C64D8EB}
+	EndGlobalSection
+EndGlobal

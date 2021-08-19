@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;</TargetFrameworks>
+    
+    <Authors>Max Dolabella</Authors>
+    <Company>Maxsys Tech</Company>
+    <Description>Core para aplicações Maxsys (.NetStandart 2.0, .NetStandart 2.1)</Description>
+    <Version>1.0.0</Version>
+    <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
+    <PackageIcon>maxsys-core.png</PackageIcon>
+    <PackageId>Maxsys.Core</PackageId>
+    <PackageTags>NuGet;.NET 5;Classlib;GitHub;Actions</PackageTags>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <SignAssembly>false</SignAssembly>
+    <AnalysisLevel>5.0</AnalysisLevel>
+  </PropertyGroup>
+
+  
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.3.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>
