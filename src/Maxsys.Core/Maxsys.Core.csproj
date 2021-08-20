@@ -11,7 +11,7 @@
     <PackageIcon>maxsys-core.png</PackageIcon>
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>NuGet;.NET 5;Classlib;GitHub;Actions</PackageTags>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageReleaseNotes>First Release.</PackageReleaseNotes>
     <SignAssembly>false</SignAssembly>
     <AnalysisLevel>5.0</AnalysisLevel>
   </PropertyGroup>
@@ -19,13 +19,21 @@
   
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
-  
 
+  
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.3.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
+  
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="maxsys-core.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
 
 </Project>
