@@ -11,7 +11,6 @@
     <PackageIcon>maxsys-core.png</PackageIcon>
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>NuGet;.NET 5;Classlib;GitHub;Actions</PackageTags>
-    <PackageIconUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageIconUrl>
     <PackageReleaseNotes></PackageReleaseNotes>
     <SignAssembly>false</SignAssembly>
     <AnalysisLevel>5.0</AnalysisLevel>
