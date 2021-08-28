@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net5.0;</TargetFrameworks>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</Description>
@@ -22,13 +22,9 @@
       
       * ViewModelBase alterada para permitir comparação de valores nulos.
     </PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
-  </PropertyGroup>
-
   
-  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
