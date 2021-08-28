@@ -21,62 +21,83 @@ namespace Maxsys.AppCore
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Sets the local value of a property
+        /// Sets the local value of a property depending on a condition (<paramref name="canChange"/>)<br/>
+        /// and executes an <see cref="Action"/> after <see cref= "NotifyPropertyChanged" /> is called.
         /// </summary>
-        /// <param name="current">Reference to the current local value.</param>
-        /// <param name="value">The new local value.</param>
-        /// <param name="canChange">Represents a condition to change occurs.</param>
-        /// <param name="actionIfNotifyIsCalled">Action executed after (and if) the change occurs.</param>
+        /// <param name="currentValue">Reference to the current local value.</param>
+        /// <param name="newValue">The new local value.</param>
+        /// <param name="canChange">Represents a condition to occurs the change.<br/>
+        /// If result of <paramref name="canChange"/> is <see langword="true"/>, the property can be changed.
+        /// Otherwise, the property will not be changed.</param>
+        /// <param name="actionAfterNotification">Action that will be executed IF the change occurs
+        /// and AFTER <see cref="NotifyPropertyChanged"/> be called.</param>
         /// <param name="propertyName">The name of the property that changed.</param>
-        protected void SetProperty<T>(ref T current, T value, bool canChange, Action actionIfNotifyIsCalled, [CallerMemberName] string propertyName = "")
+        protected void SetProperty<T>(
+            ref T currentValue,
+            T newValue,
+            Func<bool> canChange,
+            Action actionAfterNotification,
+            [CallerMemberName] string propertyName = "")
         {
-            if (!current.Equals(value) && canChange)
+            if (canChange?.Invoke() == false) return;
+
+            if ((currentValue == null && newValue != null)
+                || (currentValue != null && newValue == null)
+                || !currentValue.Equals(newValue))
             {
-                current = value;
+                currentValue = newValue;
 
                 NotifyPropertyChanged(propertyName);
 
-                actionIfNotifyIsCalled?.Invoke();
+                actionAfterNotification?.Invoke();
             }
         }
 
         /// <summary>
-        /// Sets the local value of a property
+        /// Sets the local value of a property.
         /// </summary>
-        /// <param name="current">Reference to the current local value.</param>
-        /// <param name="value">The new local value.</param>
+        /// <param name="currentValue">Reference to the current local value.</param>
+        /// <param name="newValue">The new local value.</param>
         /// <param name="propertyName">The name of the property that changed.</param>
-        protected void SetProperty<T>(ref T current, T value, [CallerMemberName] string propertyName = "")
+        protected void SetProperty<T>(ref T currentValue, T newValue, [CallerMemberName] string propertyName = "")
         {
-            SetProperty(ref current, value, true, null, propertyName);
+            SetProperty(ref currentValue, newValue, null, null, propertyName);
         }
 
         /// <summary>
         /// Sets the local value of a property
+        /// and executes an <see cref="Action"/> after <see cref="NotifyPropertyChanged"/> is called.
         /// </summary>
-        /// <param name="current">Reference to the current local value.</param>
-        /// <param name="value">The new local value.</param>
-        /// <param name="actionIfNotifyIsCalled">Action executed after (and if) the change occurs.</param>
+        /// <param name="currentValue">Reference to the current local value.</param>
+        /// <param name="newValue">The new local value.</param>
+        /// <param name="actionAfterNotification">Action that will be executed IF the change occurs
+        /// and AFTER <see cref="NotifyPropertyChanged"/> is called.</param>
         /// <param name="propertyName">The name of the property that changed.</param>
         protected void SetProperty<T>(
-            ref T current,
-            T value,
-            Action actionIfNotifyIsCalled,
+            ref T currentValue,
+            T newValue,
+            Action actionAfterNotification,
             [CallerMemberName] string propertyName = "")
         {
-            SetProperty(ref current, value, true, actionIfNotifyIsCalled, propertyName);
+            SetProperty(ref currentValue, newValue, null, actionAfterNotification, propertyName);
         }
 
         /// <summary>
-        /// Sets the local value of a property
+        /// Sets the local value of a property depending on a condition (<paramref name="canChange"/>).
         /// </summary>
-        /// <param name="current">Reference to the current local value.</param>
-        /// <param name="value">The new local value.</param>
-        /// <param name="canChange">Represents a condition to change occurs.</param>
+        /// <param name="currentValue">Reference to the current local value.</param>
+        /// <param name="newValue">The new local value.</param>
+        /// <param name="canChange">Represents a condition to occurs the change.<br/>
+        /// If result of <paramref name="canChange"/> is <see langword="true"/>, the property can be changed.
+        /// Otherwise, the property will not be changed.</param>
         /// <param name="propertyName">The name of the property that changed.</param>
-        protected void SetProperty<T>(ref T current, T value, bool canChange, [CallerMemberName] string propertyName = "")
+        protected void SetProperty<T>(
+            ref T currentValue,
+            T newValue,
+            Func<bool> canChange,
+            [CallerMemberName] string propertyName = "")
         {
-            SetProperty(ref current, value, canChange, null, propertyName);
+            SetProperty(ref currentValue, newValue, canChange, null, propertyName);
         }
 
         /// <summary>
@@ -84,7 +105,7 @@ namespace Maxsys.AppCore
         /// The CallerMemberName attribute that is applied to the optional propertyName
         /// parameter causes the property name of the caller to be substituted as an argument.
         /// </summary>
-        /// <param name="propertyName"></param>
+        /// <param name="propertyName">Is the name of the property that changed.</param>
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

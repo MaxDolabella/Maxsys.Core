@@ -3,7 +3,7 @@
 # Maxsys Core 
 
 **Maxsys.Core** é uma biblioteca desenvolvida em C# contendo itens básicos para criações de aplicações Maxsys.
-Os frameworks de destino utilizados são `.NET Standard 2.0` e `.NET Standard 2.1`.
+Os frameworks de destino utilizados são `.NET Standard 2.0` e `.NET 5.0`.
 
 Contém interfaces e classes bases como `IRepositoryBase`, `EntityBase`, `ViewModelBase`, além de classes *helpers* e *extensions* como `GuidGen` para gerar Guids sequenciais e `ValidationResultExtensions` que possui métodos de extensão para a classe `FluentValidation.ValidationResult`.
 

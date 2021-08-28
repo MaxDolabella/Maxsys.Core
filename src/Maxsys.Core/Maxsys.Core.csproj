@@ -1,19 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;</TargetFrameworks>
-    
+    <TargetFrameworks>netstandard2.0;net5.0;</TargetFrameworks>
+    <Version>1.1.0</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
-    <Description>Core para aplicações Maxsys (.NetStandart 2.0, .NetStandart 2.1)</Description>
-    <Version>1.0.0</Version>
-    <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
-    <PackageIcon>maxsys-core.png</PackageIcon>
+    <Description>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</Description>
+    <PackageDescription>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</PackageDescription>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
+    <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
-    <PackageTags>NuGet;.NET 5;Classlib;GitHub;Actions</PackageTags>
-    <PackageReleaseNotes>First Release.</PackageReleaseNotes>
-    <SignAssembly>false</SignAssembly>
-    <AnalysisLevel>5.0</AnalysisLevel>
+    <PackageTags>maxsys;dotnet;dotnet-core;net-standard;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
+    <PackageReleaseNotes>
+      * IReadonlyRepositoryBase adicionado ao projeto.
+      
+      * Ajustes em .csproj:
+        - Mudança de TargetFramework para .net5.0.
+        - Inserção de tags xml.
+      
+      * ViewModelBase alterada para permitir comparação de valores nulos.
+    </PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>maxsys-core.png</PackageIcon>
+    <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
   </PropertyGroup>
 
   
