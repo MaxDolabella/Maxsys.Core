@@ -3,7 +3,7 @@
   <PropertyGroup>
     
     <UseWPF>true</UseWPF>
-    <TargetFrameworks>netstandard2.0;net5.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0-windows;</TargetFrameworks>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys WPF (.NetStandart 2.0, .Net 5)</Description>

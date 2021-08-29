@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD2_1
+﻿#if NET5_0
 using System.Diagnostics.CodeAnalysis;
 #endif
 
@@ -24,7 +24,7 @@ namespace System.Collections.Generic
                 && (array as IStructuralEquatable).Equals(otherArray, StructuralComparisons.StructuralEqualityComparer);
         }
 
-#elif NETSTANDARD2_1
+#elif NET5_0
         /// <summary>
         /// Determines whether an IEnumerable is structurally equal to the current instance.
         /// </summary>
