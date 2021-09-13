@@ -3,11 +3,22 @@ using System;
 using System.Drawing;
 using System.IO;
 
+#if NET5_0_OR_GREATER
+using System.Threading.Tasks;
+#endif
+
 namespace Maxsys.Core.Helpers
 {
-    // TODO create docs
+    /// <summary>
+    /// Contains static methods for Image handling.
+    /// </summary>
     public static class ImageHelper
     {
+        /// <summary>
+        /// Converts an <see cref="Image"/> to a <see cref="byte"/> array.
+        /// </summary>
+        /// <param name="image">The <see cref="Image"/> to convert.</param>
+        /// <returns>A <see cref="byte"/> array that represents the <paramref name="image"/> object.</returns>
         public static byte[] ImageToBytes(this Image image)
         {
             // ImageConverter is not present on .netstandart
@@ -27,15 +38,18 @@ namespace Maxsys.Core.Helpers
             }
         }
 
+        /// <summary>
+        /// Converts a <see cref="byte"/> array image into an <see cref="Image"/> object.
+        /// </summary>
+        /// <param name="rawImage">The <see cref="byte"/> array to convert.</param>
+        /// <returns>An <see cref="Image"/> object converted from the <paramref name="rawImage"/> array.</returns>
         public static Image ImageFromBytes(byte[] rawImage)
         {
             try
             {
-                // Dispose MemoryStream ?????????
-                using (var mStream = new MemoryStream(rawImage))
-                {
-                    return Image.FromStream(mStream);
-                }
+                var image = Image.FromStream(new MemoryStream(rawImage));
+
+                return image;
             }
             catch (Exception)
             {
@@ -43,6 +57,15 @@ namespace Maxsys.Core.Helpers
             }
         }
 
+        [Obsolete("Uses SaveImageIntoJpgFile() method. This method will be removed in next release.")]
+        /// <summary>
+        /// Saves an image to a new file.
+        /// If the target file already exists, it is overwritten.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="image"></param>
+        /// <param name="overrideFile"></param>
+        /// <returns></returns>
         public static ValidationResult SavePicture(
             this Image image,
             string filePath,
@@ -61,12 +84,105 @@ namespace Maxsys.Core.Helpers
                 }
                 catch (Exception ex)
                 {
-                    result.AddFailure($"{nameof(ImageHelper)}.{nameof(SavePicture)}", ex.Message);
+                    result.AddFailure(ex);
                 }
             }
 
             return result;
         }
+
+        /// <summary>
+        /// Saves an image represented by the <see cref="byte"/> array to a new file.
+        /// If the target file already exists, it is overwritten.
+        /// </summary>
+        /// <param name="imageBytes"></param>
+        /// <param name="targetFile"></param>
+        /// <returns></returns>
+        public static ValidationResult SaveByteArrayImageIntoJpgFile(
+            byte[] imageBytes,
+            string targetFile)
+        {
+            var result = new ValidationResult();
+
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(targetFile));
+
+                File.WriteAllBytes(targetFile, imageBytes);
+            }
+            catch (Exception ex)
+            {
+                result.AddFailure(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Saves an image represented by the <see cref="byte"/> array to a new file.
+        /// If the target file already exists, it is overwritten.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="targetFile"></param>
+        /// <returns></returns>
+        public static ValidationResult SaveImageIntoJpgFile(
+            Image image,
+            string targetFile)
+        {
+            var imageBytes = image.ImageToBytes();
+
+            var result = SaveByteArrayImageIntoJpgFile(imageBytes, targetFile);
+
+            return result;
+        }
+
+#if NET5_0_OR_GREATER
+        /// <summary>
+        /// Asynchronously saves an image represented by the <see cref="byte"/> array to a new file.
+        /// If the target file already exists, it is overwritten.
+        /// </summary>
+        /// <param name="imageBytes"></param>
+        /// <param name="targetFile"></param>
+        /// <returns></returns>
+        public static async Task<ValidationResult> SaveByteArrayImageIntoJpgFileAsync(
+            byte[] imageBytes,
+            string targetFile)
+        {
+            var result = new ValidationResult();
+
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(targetFile));
+
+                await File.WriteAllBytesAsync(targetFile, imageBytes);
+            }
+            catch (Exception ex)
+            {
+                result.AddFailure(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Asynchronously saves an image to a new file.
+        /// If the target file already exists, it is overwritten.
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="targetFile"></param>
+        /// <returns></returns>
+        public static async Task<ValidationResult> SaveImageIntoJpgFileAsync(
+            Image image,
+            string targetFile)
+        {
+            var imageBytes = image.ImageToBytes();
+
+            var result = await SaveByteArrayImageIntoJpgFileAsync(imageBytes, targetFile);
+
+            return result;
+        }
+
+#endif
 
         /* Look this
 

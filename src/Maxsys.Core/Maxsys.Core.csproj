@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net5.0;</TargetFrameworks>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</Description>
@@ -14,8 +14,16 @@
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net-standard;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
-v1.1.2
-  - Ajuste em IEnumerableExtensions para compatibilidade com .net5.0
+- 1.1.3
+    - Alterações em ValidationResultExtensions:
+        - ErrorsToString() foi descontinuado.
+        - Adicionado método ErrorMessagesAsEnumerable() para substituir ErrorsAsEnumerable() que foi descontinuado.
+        - Adicionado sobrecarga em método ValidationResult.AddFailure() que agora aceita Exeception como parâmetro.
+    - Alterações em ImageHelper:
+        - Documentação xml adicionada ao código.
+        - SavePicture() foi descontinuado.
+        - Corrigido bug em ImageFromBytes().
+        - Adicionados métodos SaveByteArrayImageIntoJpgFile(), SaveImageIntoJpgFile(), bem como suas versões async para .net5.0 ou maior.
     </PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
@@ -26,7 +34,7 @@ v1.1.2
 
   
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.1" />
+    <PackageReference Include="FluentValidation" Version="10.3.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>

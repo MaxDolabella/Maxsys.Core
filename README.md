@@ -9,11 +9,37 @@ Contém interfaces e classes bases como `IRepositoryBase`, `EntityBase`, `ViewMo
 
 Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms`, `WPF` e `ASP.NET`.
 
-## Dependências
+## ⛓ Dependências
 
 - [FluentValidation](https://www.nuget.org/packages/FluentValidation/)
 - [System.ComponentModel.Annotations](https://www.nuget.org/packages/System.ComponentModel.Annotations/)
 - [System.Drawing.Common](https://www.nuget.org/packages/System.Drawing.Common/)
+
+## 🛠 Release notes
+
+##### [1.1.3](https://www.nuget.org/packages/Maxsys.Core/1.1.3)
+- Alterações em `ValidationResultExtensions`:
+  - `ErrorsToString()` foi descontinuado.
+  - Adicionado método `ErrorMessagesAsEnumerable()` para substituir `ErrorsAsEnumerable()` que foi descontinuado.
+  - Adicionado sobrecarga em método `ValidationResult.AddFailure()` que agora aceita `Exeception` como parâmetro.
+- Alterações em `ImageHelper`:
+  - Documentação xml adicionada ao código.
+  - `SavePicture()` foi descontinuado.
+  - Corrigido bug em `ImageFromBytes()`.
+  - Adicionados métodos `SaveByteArrayImageIntoJpgFile()`, `SaveImageIntoJpgFile()`, bem como suas versões `async` para `.net5.0` ou maior.
+
+##### [1.1.2](https://www.nuget.org/packages/Maxsys.Core/1.1.2)
+- Ajuste em `IEnumerableExtensions` para compatibilidade com `.net5.0`.
+
+##### [1.1.1](https://www.nuget.org/packages/Maxsys.Core/1.1.1)
+- `IReadonlyRepositoryBase` adicionado ao projeto.
+- Ajustes em `.csproj`:
+     - Mudança de TargetFramework para `.net5.0`.
+     - Inserção de tags xml.
+- `ViewModelBase` alterada para permitir comparação de valores nulos.
+
+##### [1.0.0](https://www.nuget.org/packages/Maxsys.Core/1.0.0)
+- Primeiro lançamento.
 
 ## ✒️ Autores
 
@@ -21,7 +47,6 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 Aqui uma menção à [Jeremy H. Todd](https://github.com/jhtodd), autor de uma das features usadas nesse projeto (geração de guid sequencial).
 
-  
 ## 🧐 Aprendizagem
 
 Através desse projeto, tenho a oportunidade de por em prática parte do conhecimento adquirido. Obviamente, ainda é limitado, mas a intenção é sempre buscar a melhora.
