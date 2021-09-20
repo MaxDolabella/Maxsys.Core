@@ -1,6 +1,8 @@
-﻿#if NET5_0
+﻿#if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
+
+using System.Collections.ObjectModel;
 
 namespace System.Collections.Generic
 {
@@ -24,7 +26,7 @@ namespace System.Collections.Generic
                 && (array as IStructuralEquatable).Equals(otherArray, StructuralComparisons.StructuralEqualityComparer);
         }
 
-#elif NET5_0
+#elif NET5_0_OR_GREATER
         /// <summary>
         /// Determines whether an IEnumerable is structurally equal to the current instance.
         /// </summary>
@@ -44,5 +46,33 @@ namespace System.Collections.Generic
                 , StructuralComparisons.StructuralEqualityComparer);
         }
 #endif
+
+        /// <summary>
+        ///  Creates an <see cref="ObservableCollection{TSource}"/> from an <see cref="IEnumerable{TSource}"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <param name="source">The <see cref="IEnumerable{TSource}"/> to create a <see cref="ObservableCollection{TSource}"/> from.</param>
+        /// <returns>An <see cref="ObservableCollection{TSource}"/> that contains elements from the input sequence.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        public static ObservableCollection<TSource> ToObservableCollection<TSource>(this IEnumerable<TSource> source)
+        {
+            return source is null
+                ? throw new ArgumentNullException(nameof(source))
+                : new ObservableCollection<TSource>(source);
+        }
+
+        /// <summary>
+        ///  Creates an <see cref="ReadOnlyObservableCollection{TSource}"/> from an <see cref="IEnumerable{TSource}"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <param name="source">The <see cref="IEnumerable{TSource}"/> to create a <see cref="ReadOnlyObservableCollection{TSource}"/> from.</param>
+        /// <returns>An <see cref="ReadOnlyObservableCollection{TSource}"/> that contains elements from the input sequence.</returns>
+        /// <exception cref="ArgumentNullException">source is null.</exception>
+        public static ReadOnlyObservableCollection<TSource> ToReadOnlyObservableCollection<TSource>(this IEnumerable<TSource> source)
+        {
+            return source is null
+               ? throw new ArgumentNullException(nameof(source))
+               : new ReadOnlyObservableCollection<TSource>(source is ObservableCollection<TSource> obs ? obs : source.ToObservableCollection());
+        }
     }
 }

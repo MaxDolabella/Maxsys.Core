@@ -14,8 +14,18 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 - [FluentValidation](https://www.nuget.org/packages/FluentValidation/)
 - [System.ComponentModel.Annotations](https://www.nuget.org/packages/System.ComponentModel.Annotations/)
 - [System.Drawing.Common](https://www.nuget.org/packages/System.Drawing.Common/)
+- [System.Threading.Tasks.Extensions](https://www.nuget.org/packages/System.Threading.Tasks.Extensions/)
 
 ## 🛠 Release notes
+
+##### [1.1.4](https://www.nuget.org/packages/Maxsys.Core/1.1.4)
+- Adicionada referência para `System.Threading.Tasks.Extensions`.
+- Alterações em `IOHelper`:
+  - Documentação xml adicionada.
+  - Adicionados métodos assíncronos para operações com arquivos (`MoveFileAsync()`, `MoveOrOverwriteFileAsync()`, `CopyFileAsync()` e `DeleteFileAsync()`).
+- Alterações em `IEnumerableExtensions`:
+  - Adicionados métodos de extensão `ToObservableCollection()` e `ToReadOnlyObservableCollection()`.
+- Adicionado método `DateTimeToUID_64Bits()` em `GuidGen`.
 
 ##### [1.1.3](https://www.nuget.org/packages/Maxsys.Core/1.1.3)
 - Alterações em `ValidationResultExtensions`:

@@ -1,9 +1,14 @@
 ﻿using FluentValidation.Results;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Maxsys.Core.Helpers
 {
+    /// <summary>
+    /// Provides static methods for file operations like Copy, Move and Delete
+    /// </summary>
     public static class IOHelper
     {
         #region Attibutes
@@ -160,6 +165,152 @@ namespace Maxsys.Core.Helpers
         }
 
         #endregion File Operations
+
+        #region Async File Operations
+
+        /// <summary>
+        /// Asynchronously moves an existing file to a new file and sets <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>.
+        /// Overwritting a file of the same name is not allowed.<para/>
+        /// Creates the directory of the destination file name if it doesn't exists.
+        /// </summary>
+        /// <param name="sourceFileName">The file to move.</param>
+        /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
+        /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
+        /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
+        /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
+        public static async ValueTask<ValidationResult> MoveFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
+        {
+            var validationResult = new ValidationResult();
+
+            try
+            {
+                RemoveReadOnlyAttribute(sourceFileName);
+
+                var copyResult = await CopyFileAsync(sourceFileName, destFileName, setAsReadOnly, cancellationToken);
+
+                if (copyResult.IsValid)
+                {
+                    validationResult = await DeleteFileAsync(sourceFileName, cancellationToken);
+                }
+                else
+                {
+                    validationResult.AddFailure(nameof(MoveFileAsync), $"Error moving file: {copyResult.ToString()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                validationResult.AddFailure(nameof(MoveFileAsync), ex);
+            }
+
+            return validationResult;
+        }
+
+        /// <summary>
+        /// Asynchronously moves or overwrite an existing file to a new file and sets <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>.
+        /// If destination file exists, will be deleted.<para/>
+        /// Creates the directory of the destination file name if it doesn't exists.
+        /// </summary>
+        /// <param name="sourceFileName">The file to move.</param>
+        /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
+        /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
+        /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
+        /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
+        public static async ValueTask<ValidationResult> MoveOrOverwriteFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true)
+        {
+            var deleteResult = await DeleteFileAsync(destFileName);
+
+            return deleteResult.IsValid
+                ? await MoveFileAsync(sourceFileName, destFileName, setAsReadOnly)
+                : deleteResult;
+        }
+
+        /// <summary>
+        /// Asynchronously copies an existing file to a new file and sets <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>.
+        /// Overwritting a file of the same name is not allowed.<para/>
+        /// Creates the directory of the destination file name if it doesn't exists.
+        /// </summary>
+        /// <param name="sourceFileName">The file to copy.</param>
+        /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
+        /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
+        /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
+        /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
+        public static async ValueTask<ValidationResult> CopyFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
+        {
+            var validationResult = new ValidationResult();
+
+            if (!File.Exists(destFileName))
+            {
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(destFileName));
+
+                    await InternalCopyFileAsync(sourceFileName, destFileName, cancellationToken);
+
+                    if (setAsReadOnly) InsertReadOnlyAttribute(destFileName);
+                }
+                catch (Exception ex)
+                {
+                    validationResult.AddFailure(nameof(CopyFileAsync), ex);
+                }
+            }
+            else
+            {
+                validationResult.AddFailure(destFileName, "Destination file already exists");
+            }
+
+            return validationResult;
+        }
+
+        /// <summary>
+        /// Asynchronously deletes the specified file if exists. Ignores <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>
+        /// </summary>
+        /// <param name="fileName">The name of the file to be deleted. Wildcard characters are not supported.</param>
+        /// <returns></returns>
+        public static async ValueTask<ValidationResult> DeleteFileAsync(string fileName, CancellationToken cancellationToken = default)
+        {
+            var validationResult = new ValidationResult();
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    RemoveReadOnlyAttribute(fileName);
+
+                    await InternalDeleteAsync(fileName, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                validationResult.AddFailure(nameof(DeleteFileAsync), ex);
+            }
+
+            return validationResult;
+        }
+
+        #region Internal operations
+
+        private static async Task InternalDeleteAsync(string fileName, CancellationToken cancellationToken)
+        {
+            await Task.Factory.StartNew(() =>
+            {
+                using (_ = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None, 1, FileOptions.DeleteOnClose | FileOptions.Asynchronous)) ;
+            }, cancellationToken);
+        }
+
+        private static async Task InternalCopyFileAsync(string sourceFileName, string destFileName, CancellationToken cancellationToken)
+        {
+            var fileOptions = FileOptions.Asynchronous | FileOptions.SequentialScan;
+            var bufferSize = 4096;
+
+            using (var srcStream = new FileStream(sourceFileName, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions))
+
+            using (var dstStream = new FileStream(destFileName, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize, fileOptions))
+
+                await srcStream.CopyToAsync(dstStream, bufferSize, cancellationToken);
+        }
+
+        #endregion Internal operations
+
+        #endregion Async File Operations
 
         #region Path Operations
 

@@ -184,15 +184,34 @@ namespace System
         }
 
         /// <summary>
-        /// Returns a new UID value
+        /// Randomly creates a hexadecimal string representation of a 32 bits UID.<br/>
+        /// The result string is in lowecase.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string of hexadecimal 32 bits UID representation; for example, "7f2c4a00".</returns>
         public static string NewUID_32Bits()
         {
             var randomBytes = new byte[4];
             RandomGenerator.GetBytes(randomBytes);
 
             return BitConverter.ToString(randomBytes).Replace("-", "").ToLower();
+        }
+
+        /// <summary>
+        /// Creates a hexadecimal string representation of a 64 bits UID based on a <see cref="DateTime"/> value.<br/>
+        /// If <paramref name="dateTime"/> arg is not passed (<see langword="default"/>),
+        /// <paramref name="dateTime"/> will be assigned as <see cref="DateTime.Now"/>.<br/>
+        /// The result string is in lowecase.
+        /// </summary>
+        /// <param name="dateTime">Is the <see cref="DateTime"/> to be converted into a 64 bits UID.</param>
+        /// <returns>A string of hexadecimal 64 bits UID representation; for example, "7c30b180d0f07b43".</returns>
+        public static string DateTimeToUID_64Bits(DateTime dateTime = default)
+        {
+            if (dateTime == default) dateTime = DateTime.Now;
+
+            var randomByte = new byte[1];
+            RandomGenerator.GetBytes(randomByte);
+
+            return $"{dateTime.Year:x3}{dateTime.Month:x2}{dateTime.Day:x2}{dateTime.Hour:x2}{dateTime.Second:x2}{dateTime.Millisecond:x3}{randomByte[0]:x2}";
         }
     }
 }
