@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net5.0;</TargetFrameworks>
-    <Version>1.1.4</Version>
+    <Version>1.2.0</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</Description>
@@ -14,14 +14,11 @@
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net-standard;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
-1.1.4
-  - Adicionada referência para `System.Threading.Tasks.Extensions`.
-  - Alterações em `IOHelper`:
-      - Documentação xml adicionada.
-      - Adicionados métodos assíncronos para operações com arquivos (`MoveFileAsync()`, `MoveOrOverwriteFileAsync()`, `CopyFileAsync()` e `DeleteFileAsync()`).
-  - Alterações em `IEnumerableExtensions`:
-      - Adicionados métodos de extensão `ToObservableCollection()` e `ToReadOnlyObservableCollection()`.
-  - Adicionado método `DateTimeToUID_64Bits()` em `GuidGen`.
+1.2.0
+  - Interface IDialogService totalmente reescrita.
+  - Refatoração da classe ServiceBase e interface IServiceBase:
+    - Os métodos Add()/AddAsync() e Update()/UpdateAsync() agora permitem a passagem de um IValidator como parâmetro. Nos métodos sem IValidator, nenhuma validação será realizada.
+
     </PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>

@@ -18,6 +18,11 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 ## 🛠 Release notes
 
+##### [1.2.0](https://www.nuget.org/packages/Maxsys.Core/1.2.0)
+- Interface `IDialogService` totalmente reescrita.
+- Refatoração da interface `IServiceBase` e da classe `ServiceBase`:
+  - Os métodos `Add()`/`AddAsync()` e `Update()`/`UpdateAsync()` agora permitem a passagem de um `IValidator` como parâmetro. Nos métodos sem `IValidator`, nenhuma validação será realizada.
+
 ##### [1.1.4](https://www.nuget.org/packages/Maxsys.Core/1.1.4)
 - Adicionada referência para `System.Threading.Tasks.Extensions`.
 - Alterações em `IOHelper`:

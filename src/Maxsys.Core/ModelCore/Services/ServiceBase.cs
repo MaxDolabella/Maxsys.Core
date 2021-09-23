@@ -12,35 +12,25 @@ namespace Maxsys.ModelCore.Services
     /// Provides a class for basic entity crud operations.
     /// </summary>
     /// <typeparam name="TEntity"></typeparam>
-    public class ServiceBase<TEntity> : IServiceBase<TEntity>
+    /// <inheritdoc cref="IServiceBase{TEntity}"/>
+    public abstract class ServiceBase<TEntity> : IServiceBase<TEntity>
         where TEntity : class
     {
         #region FIELDS
 
         private readonly IRepositoryBase<TEntity> _repository;
-        protected readonly IValidator<TEntity> _businessValidator;
-        protected readonly IValidator<TEntity> _persistenceValidator;
+        //protected readonly ICollection<object> _componentsToClear = new HashSet<object>();
         protected bool _disposed;
-        protected readonly bool _hasValidators;
 
         #endregion FIELDS
 
         #region CONSTRUCTORS
 
-        public ServiceBase(IRepositoryBase<TEntity> repository
-            , IValidator<TEntity> businessValidator
-            , IValidator<TEntity> persistenceValidator)
+        protected ServiceBase(IRepositoryBase<TEntity> repository)
         {
             _disposed = false;
             _repository = repository;
-            _businessValidator = businessValidator;
-            _persistenceValidator = persistenceValidator;
-
-            _hasValidators = true;
         }
-
-        public ServiceBase(IRepositoryBase<TEntity> repository)
-            : this(repository, null, null) { _hasValidators = false; }
 
         #endregion CONSTRUCTORS
 
@@ -57,66 +47,49 @@ namespace Maxsys.ModelCore.Services
         ///<inheritdoc/>
         public virtual ValidationResult Add(TEntity entity)
         {
-            ValidationResult validationResult = null;
+            var validationResult = new ValidationResult();
 
-            if (_hasValidators)
-            {
-                #region Business
+            var isAdded = _repository.Add(entity);
 
-                validationResult = _businessValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
+            if (!isAdded) validationResult.AddFailure($"{nameof(TEntity)} could not be added.");
 
-                #endregion Business
+            return validationResult;
+        }
 
-                #region Persistence
+        ///<inheritdoc/>
+        public virtual ValidationResult Add(TEntity entity, IValidator<TEntity> validator)
+        {
+            if (validator is null) throw new ArgumentNullException(nameof(validator));
 
-                validationResult = _persistenceValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
+            var validationResult = validator.Validate(entity);
 
-                #endregion Persistence
-            }
-
-            // oh! It's all ok
-            var added = _repository.Add(entity);
-
-            if (!added)
-                validationResult.AddFailure($"{entity}", $"{nameof(TEntity)} could not be added.");
-
-            return validationResult ?? new ValidationResult();
+            return validationResult.IsValid
+                ? Add(entity)
+                : validationResult;
         }
 
         ///<inheritdoc/>
         public virtual ValidationResult Update(TEntity entity)
         {
-            ValidationResult validationResult = null;
+            var validationResult = new ValidationResult();
 
-            if (_hasValidators)
-            {
-                #region Business
+            var isUpdated = _repository.Update(entity);
 
-                validationResult = _businessValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
+            if (!isUpdated) validationResult.AddFailure($"{nameof(TEntity)} could not be updated.");
 
-                #endregion Business
+            return validationResult;
+        }
 
-                #region Persistence
+        ///<inheritdoc/>
+        public virtual ValidationResult Update(TEntity entity, IValidator<TEntity> validator)
+        {
+            if (validator is null) throw new ArgumentNullException(nameof(validator));
 
-                validationResult = _persistenceValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
+            var validationResult = validator.Validate(entity);
 
-                #endregion Persistence
-            }
-
-            var updated = _repository.Update(entity);
-
-            if (!updated)
-                validationResult.AddFailure($"{entity}", $"{nameof(TEntity)} could not be updated.");
-
-            return validationResult ?? new ValidationResult();
+            return validationResult.IsValid
+                ? Update(entity)
+                : validationResult;
         }
 
         ///<inheritdoc/>
@@ -124,20 +97,9 @@ namespace Maxsys.ModelCore.Services
         {
             var validationResult = new ValidationResult();
 
-            /* Old version 2021-07-16
-            var entityForDeleting = _repository.GetById(id);
-            if (entityForDeleting == null)
-                validationResult.AddFailure($"{id}"
-                    , $"{nameof(TEntity)} with ID[{id}], does not exist in database.");
-            else
-                _repository.Remove(entityForDeleting);
-            */
+            var isRemoved = _repository.Remove(id);
 
-            // New version 2021-07-16
-            var removed = _repository.Remove(id);
-
-            if (!removed)
-                validationResult.AddFailure($"{id}", $"{nameof(TEntity)} with ID[{id}], could not be deleted.");
+            if (!isRemoved) validationResult.AddFailure($"{nameof(TEntity)} with ID[{id}], could not be deleted.");
 
             return validationResult;
         }
@@ -158,33 +120,24 @@ namespace Maxsys.ModelCore.Services
         public virtual async Task<ValidationResult> AddAsync(TEntity entity)
         {
             var validationResult = new ValidationResult();
-
-            if (_hasValidators)
-            {
-                #region Business
-
-                validationResult = _businessValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
-
-                #endregion Business
-
-                #region Persistence
-
-                validationResult = _persistenceValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
-
-                #endregion Persistence
-            }
-
-            // oh! It's all ok
-            var added = await _repository.AddAsync(entity);
-
-            if (!added)
-                validationResult.AddFailure($"{entity}", $"{nameof(TEntity)} could not be added.");
+            
+            var isAdded = await _repository.AddAsync(entity);
+            
+            if (!isAdded) validationResult.AddFailure($"{nameof(TEntity)} could not be added.");
 
             return validationResult;
+        }
+
+        ///<inheritdoc/>
+        public virtual async Task<ValidationResult> AddAsync(TEntity entity, IValidator<TEntity> validator)
+        {
+            if (validator is null) throw new ArgumentNullException(nameof(validator));
+
+            var validationResult = await validator.ValidateAsync(entity);
+            
+            return validationResult.IsValid 
+                ? await AddAsync(entity) 
+                : validationResult;
         }
 
         ///<inheritdoc/>
@@ -192,31 +145,23 @@ namespace Maxsys.ModelCore.Services
         {
             ValidationResult validationResult = new ValidationResult();
 
-            if (_hasValidators)
-            {
-                #region Business
+            var isUpdated = await _repository.UpdateAsync(entity);
 
-                validationResult = _businessValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
-
-                #endregion Business
-
-                #region Persistence
-
-                validationResult = _persistenceValidator.Validate(entity);
-                if (!validationResult.IsValid)
-                    return validationResult;
-
-                #endregion Persistence
-            }
-
-            var updated = await _repository.UpdateAsync(entity);
-
-            if (!updated)
-                validationResult.AddFailure($"{entity}", $"{nameof(TEntity)} could not be updated.");
+            if (!isUpdated) validationResult.AddFailure($"{nameof(TEntity)} could not be updated.");
 
             return validationResult;
+        }
+        
+        ///<inheritdoc/>
+        public virtual async Task<ValidationResult> UpdateAsync(TEntity entity, IValidator<TEntity> validator)
+        {
+            if (validator is null) throw new ArgumentNullException(nameof(validator));
+
+            var validationResult = await validator.ValidateAsync(entity);
+
+            return validationResult.IsValid
+                ? await UpdateAsync(entity)
+                : validationResult;
         }
 
         ///<inheritdoc/>
@@ -224,23 +169,9 @@ namespace Maxsys.ModelCore.Services
         {
             var validationResult = new ValidationResult();
 
-            /* Old version 2021-07-16
-            var validationResult = new ValidationResult();
+            var isRemoved = await _repository.RemoveAsync(id);
 
-            var entityForDeleting = await _repository.GetByIdAsync(id);
-
-            if (entityForDeleting == null)
-                validationResult.AddFailure($"{id}"
-                    , $"{nameof(TEntity)} with ID[{id}], does not exist in database.");
-            else
-                await _repository.RemoveAsync(entityForDeleting);
-            */
-
-            // New version 2021-07-16
-            var removed = await _repository.RemoveAsync(id);
-
-            if (!removed)
-                validationResult.AddFailure($"{nameof(TEntity)} with ID[{id}], could not be deleted.");
+            if (!isRemoved) validationResult.AddFailure($"{nameof(TEntity)} with ID[{id}], could not be deleted.");
 
             return validationResult;
         }
@@ -262,13 +193,8 @@ namespace Maxsys.ModelCore.Services
             {
                 if (disposing)
                 {
-                    _repository.Dispose();
-
-                    if (_businessValidator != null)
-                        GC.SuppressFinalize(_businessValidator);
-
-                    if (_persistenceValidator != null)
-                        GC.SuppressFinalize(_persistenceValidator);
+                    // foreach (var item in _componentsToClear)
+                    //    GC.SuppressFinalize(item);
                 }
             }
             _disposed = true;
