@@ -1,25 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5.0;</TargetFrameworks>
-    <Version>1.2.0</Version>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <Version>6.0.0</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
-    <Description>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</Description>
-    <PackageDescription>Core para aplicações Maxsys (.NetStandart 2.0, .Net5.0)</PackageDescription>
+    <Description>Core para aplicações Maxsys  (.Net 6)</Description>
+    <PackageDescription>Core para aplicações Maxsys (.Net 6)</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
-    <PackageTags>maxsys;dotnet;dotnet-core;net-standard;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
+    <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
-1.2.0
-  - Interface IDialogService totalmente reescrita.
-  - Refatoração da classe ServiceBase e interface IServiceBase:
-    - Os métodos Add()/AddAsync() e Update()/UpdateAsync() agora permitem a passagem de um IValidator como parâmetro. Nos métodos sem IValidator, nenhuma validação será realizada.
-
-    </PackageReleaseNotes>
+6.0.0
+	- ViewModelBase agora reescrita.
+	- TargetFramework alterado para .net6.0.
+	- Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
+	</PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
   
@@ -29,9 +28,9 @@
 
   
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.3" />
+    <PackageReference Include="FluentValidation" Version="10.3.6" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
   

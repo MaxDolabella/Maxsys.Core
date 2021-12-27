@@ -2,10 +2,10 @@
 
 # Maxsys Core 
 
-**Maxsys.Core** é uma biblioteca desenvolvida em C# contendo itens básicos para criações de aplicações Maxsys.
-Os frameworks de destino utilizados são `.NET Standard 2.0` e `.NET 5.0`.
+**Maxsys.Core** é uma biblioteca desenvolvida em C# contendo itens básicos para criação de aplicações Maxsys.
+O framework de destino utilizado é o `.NET 6.0`.
 
-Contém interfaces e classes bases como `IRepositoryBase`, `EntityBase`, `ViewModelBase`, além de classes *helpers* e *extensions* como `GuidGen` para gerar Guids sequenciais e `ValidationResultExtensions` que possui métodos de extensão para a classe `FluentValidation.ValidationResult`.
+Esse pacote contém interfaces e classes bases como `IRepositoryBase`, `EntityBase`, `ViewModelBase`, além de classes *helpers* e *extensions* como `GuidGen` para gerar Guids sequenciais e `ValidationResultExtensions` que possui métodos de extensão para a classe `FluentValidation.ValidationResult`.
 
 Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms`, `WPF` e `ASP.NET`.
 
@@ -17,6 +17,11 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 - [System.Threading.Tasks.Extensions](https://www.nuget.org/packages/System.Threading.Tasks.Extensions/)
 
 ## 🛠 Release notes
+
+##### [6.0.0](https://www.nuget.org/packages/Maxsys.Core/6.0.0)
+- ViewModelBase agora reescrita para implementar `MVVMObject` que por sua vez, implementa `NotifiableObject`. `NotifiableObject` é a implementação de `INotifyPropertyChanged`.
+- TargetFramework alterado para `.net6.0`.
+- Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
 
 ##### [1.2.0](https://www.nuget.org/packages/Maxsys.Core/1.2.0)
 - Interface `IDialogService` totalmente reescrita.
