@@ -57,40 +57,6 @@ namespace Maxsys.Core.Helpers
             }
         }
 
-        [Obsolete("Uses SaveImageIntoJpgFile() method. This method will be removed in next release.")]
-        /// <summary>
-        /// Saves an image to a new file.
-        /// If the target file already exists, it is overwritten.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="image"></param>
-        /// <param name="overrideFile"></param>
-        /// <returns></returns>
-        public static ValidationResult SavePicture(
-            this Image image,
-            string filePath,
-            bool overrideFile = true)
-        {
-            var result = new ValidationResult();
-
-            if (overrideFile) result = IOHelper.DeleteFile(filePath);
-            if (result.IsValid)
-            {
-                try
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-                    image.Save(filePath);
-                }
-                catch (Exception ex)
-                {
-                    result.AddFailure(ex);
-                }
-            }
-
-            return result;
-        }
-
         /// <summary>
         /// Saves an image represented by the <see cref="byte"/> array to a new file.
         /// If the target file already exists, it is overwritten.

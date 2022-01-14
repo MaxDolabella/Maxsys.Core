@@ -18,10 +18,11 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 ## 🛠 Release notes
 
-##### [6.0.0](https://www.nuget.org/packages/Maxsys.Core/6.0.0)
+##### [6.0.1](https://www.nuget.org/packages/Maxsys.Core/6.0.1)
 - ViewModelBase agora reescrita para implementar `MVVMObject` que por sua vez, implementa `NotifiableObject`. `NotifiableObject` é a implementação de `INotifyPropertyChanged`.
 - TargetFramework alterado para `.net6.0`.
 - Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
+- Métodos obsoletos removidos.
 
 ##### [1.2.0](https://www.nuget.org/packages/Maxsys.Core/1.2.0)
 - Interface `IDialogService` totalmente reescrita.

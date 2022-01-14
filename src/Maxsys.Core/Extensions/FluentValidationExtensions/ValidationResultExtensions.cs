@@ -8,7 +8,6 @@ namespace FluentValidation.Results
     /// Contains extension methods for <see cref="ValidationResult"/>
     /// </summary>
     public static class ValidationResultExtensions
-
     {
         /// <summary>
         /// Adds failures to current <see cref="ValidationResult"/>.
@@ -42,7 +41,6 @@ namespace FluentValidation.Results
         public static void AddFailure(this ValidationResult validationResult, string failureMessage)
             => validationResult.AddFailure(string.Empty, failureMessage);
 
-
         /// <summary>
         /// Adds a failure to current <see cref="ValidationResult"/>.<para/>
         /// <see cref="ValidationFailure.PropertyName"/> will be an empty string.
@@ -69,22 +67,17 @@ namespace FluentValidation.Results
         public static IEnumerable<string> ErrorMessagesAsEnumerable(this ValidationResult validationResult)
             => validationResult.Errors.Select(err => err.ErrorMessage);
 
-
-        [Obsolete("Uses ErrorMessagesAsEnumerable() method instead. This method will be removed in next release.")]
         /// <summary>
-        /// Gets Error Messages as a string enumerable.
+        /// Creates and returns a new <see cref="ValidationResult"/> from an <see cref="Exception"/>.
         /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        public static IEnumerable<string> ErrorsAsEnumerable(this ValidationResult validationResult)
-            => validationResult.ErrorMessagesAsEnumerable();
+        /// <param name="exception">exception to add as failure</param>
+        public static ValidationResult ValidationResultFromException(Exception exception)
+        {
+            var validationResult = new ValidationResult();
 
+            validationResult.AddFailure(exception);
 
-        [Obsolete("Uses native ToString() method instead. This method will be removed in next release.")]
-        /// <summary>
-        /// Gets Error Messages as string.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        public static string ErrorsToString(this ValidationResult validationResult)
-            => validationResult.ToString();
+            return validationResult;
+        }
     }
 }
