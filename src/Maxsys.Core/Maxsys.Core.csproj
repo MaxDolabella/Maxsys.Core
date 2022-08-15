@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
-    <Version>6.0.2</Version>
+    <Nullable>enable</Nullable>
+    <Version>6.1.0</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys  (.Net 6)</Description>
@@ -14,27 +15,26 @@
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
-6.0.2
-	- ViewModelBase agora reescrita.
-	- TargetFramework alterado para .net6.0.
-	- Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
-	- Métodos obsoletos removidos.
-	- 6.0.2: Ajustes no Git (Merge+NuGet action).
+6.1.0
+	- IServiceBase e ServiceBase removidos!!
+	- Classe IReadonlyRepositoryBase removida.
+	- IRepositoryBase remodelado tendo métodos synchronous em excluídos.
+	- Correções menores de sintaxe.
+	- EnumExtensions adicionada.
+	- Ajustes em GuidGen.
 	</PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
   
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.6" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.2.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
   
 

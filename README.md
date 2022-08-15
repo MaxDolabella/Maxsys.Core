@@ -12,14 +12,23 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 ## ⛓ Dependências
 
 - [FluentValidation](https://www.nuget.org/packages/FluentValidation/)
-- [System.ComponentModel.Annotations](https://www.nuget.org/packages/System.ComponentModel.Annotations/)
 - [System.Drawing.Common](https://www.nuget.org/packages/System.Drawing.Common/)
-- [System.Threading.Tasks.Extensions](https://www.nuget.org/packages/System.Threading.Tasks.Extensions/)
 
 ## 🛠 Release notes
 
+##### [6.1.0](https://www.nuget.org/packages/Maxsys.Core/6.1.0)
+- `IServiceBase` e `ServiceBase` removidos!!
+- Classe `IReadonlyRepositoryBase` removida.
+- `IRepositoryBase` remodelado tendo métodos synchronous em excluídos.
+- Correções menores de sintaxe.
+- EnumExtensions adicionada.
+- Ajustes em GuidGen.
+
+##### [6.0.2](https://www.nuget.org/packages/Maxsys.Core/6.0.2)
+- Correções menores.
+
 ##### [6.0.1](https://www.nuget.org/packages/Maxsys.Core/6.0.1)
-- ViewModelBase agora reescrita para implementar `MVVMObject` que por sua vez, implementa `NotifiableObject`. `NotifiableObject` é a implementação de `INotifyPropertyChanged`.
+- `ViewModelBase` agora reescrita para implementar `MVVMObject` que por sua vez, implementa `NotifiableObject`. `NotifiableObject` é a implementação de `INotifyPropertyChanged`.
 - TargetFramework alterado para `.net6.0`.
 - Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
 - Métodos obsoletos removidos.
