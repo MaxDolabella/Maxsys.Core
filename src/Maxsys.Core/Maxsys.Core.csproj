@@ -16,7 +16,7 @@
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
 6.1.0
-	- IServiceBase e ServiceBase removidos!!
+	- IServiceBase e ServiceBase removidos.
 	- Classe IReadonlyRepositoryBase removida.
 	- IRepositoryBase remodelado tendo métodos synchronous em excluídos.
 	- Correções menores de sintaxe.

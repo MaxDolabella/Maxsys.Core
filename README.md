@@ -17,7 +17,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 ## 🛠 Release notes
 
 ##### [6.1.0](https://www.nuget.org/packages/Maxsys.Core/6.1.0)
-- `IServiceBase` e `ServiceBase` removidos!!
+- `IServiceBase` e `ServiceBase` removidos.
 - Classe `IReadonlyRepositoryBase` removida.
 - `IRepositoryBase` remodelado tendo métodos synchronous em excluídos.
 - Correções menores de sintaxe.
