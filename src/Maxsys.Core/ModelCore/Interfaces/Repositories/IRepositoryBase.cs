@@ -20,6 +20,11 @@ public interface IRepositoryBase<TEntity, TKey> : IDisposable
     /// </summary>
     Guid Id { get; }
 
+    /// <summary>
+    /// A unique identifier for the Context being used.
+    /// </summary>
+    Guid ContextId { get; }
+
     #region CRUD
 
     /// <summary>
@@ -90,12 +95,20 @@ public interface IRepositoryBase<TEntity, TKey> : IDisposable
     ValueTask<bool> RemoveAsync(TKey key, CancellationToken token = default);
 
     /// <summary>
-    /// Asynchronously determines whether a sequence contains any elements.
+    /// Asynchronously determines whether a sequence contains any elements that satisfy a condition.
     /// </summary>
     /// <param name="predicate">A function to test each element for a condition.</param>
     /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns></returns>
     ValueTask<bool> AnyAsync(Expression<Func<TEntity, bool>>? predicate, CancellationToken cancellation = default);
+
+    /// <summary>
+    /// Asynchronously returns the number of elements in a sequence that satisfy a condition.
+    /// </summary>
+    /// <param name="predicate">A function to test each element for a condition.</param>
+    /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns></returns>
+    ValueTask<int> CountAsync(Expression<Func<TEntity, bool>>? predicate, CancellationToken cancellation = default);
 
     #endregion CRUD
 }

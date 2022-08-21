@@ -12,17 +12,25 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 ## ⛓ Dependências
 
 - [FluentValidation](https://www.nuget.org/packages/FluentValidation/)
+- [Microsoft.Extensions.DependencyInjection.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection.Abstractions/)
 - [System.Drawing.Common](https://www.nuget.org/packages/System.Drawing.Common/)
 
 ## 🛠 Release notes
+
+##### [6.2.0](https://www.nuget.org/packages/Maxsys.Core/6.2.0)
+- `ApplicationServiceBase` removido.
+- `IUnitOfWork` reescrito.
+- Adicionado `CountAsync()` e `ContextId` em `IRepositoryBase`.
+- `ValidationResultExtensions` reescrito.
+- `IServiceCollectionExtensions` adicionado.
 
 ##### [6.1.0](https://www.nuget.org/packages/Maxsys.Core/6.1.0)
 - `IServiceBase` e `ServiceBase` removidos.
 - Classe `IReadonlyRepositoryBase` removida.
 - `IRepositoryBase` remodelado tendo métodos synchronous em excluídos.
-- Correções menores de sintaxe.
-- EnumExtensions adicionada.
-- Ajustes em GuidGen.
+- `EnumExtensions` adicionada.
+- Ajustes em `GuidGen`.
+- Outras correções menores.
 
 ##### [6.0.2](https://www.nuget.org/packages/Maxsys.Core/6.0.2)
 - Correções menores.

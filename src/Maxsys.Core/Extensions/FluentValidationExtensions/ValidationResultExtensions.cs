@@ -2,82 +2,88 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FluentValidation.Results
+namespace FluentValidation.Results;
+
+/// <summary>
+/// Contains extension methods for <see cref="ValidationResult"/>
+/// </summary>
+public static class ValidationResultExtensions
 {
     /// <summary>
-    /// Contains extension methods for <see cref="ValidationResult"/>
+    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/>.
     /// </summary>
-    public static class ValidationResultExtensions
+    /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
+    /// <param name="errorMessage">failure error message.</param>
+    /// <param name="errorCode">failure error code.</param>
+    public static ValidationResult AddError(this ValidationResult validationResult, string errorMessage, string errorCode)
     {
-        /// <summary>
-        /// Adds failures to current <see cref="ValidationResult"/>.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        /// <param name="propertyName">name of property that failed</param>
-        /// <param name="failureMessages">collection of failure messages</param>
-        public static void AddFailures(this ValidationResult validationResult, string propertyName
-            , IEnumerable<string> failureMessages)
+        validationResult.Errors.Add(new ValidationFailure
         {
-            foreach (var message in failureMessages)
-                validationResult.AddFailure(propertyName, message);
-        }
+            ErrorMessage = errorMessage,
+            ErrorCode = errorCode
+        });
 
-        /// <summary>
-        /// Adds a failure to current <see cref="ValidationResult"/>.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        /// <param name="propertyName">name of property that failed</param>
-        /// <param name="failureMessage">failure messages</param>
-        public static void AddFailure(this ValidationResult validationResult
-            , string propertyName, string failureMessage)
-            => validationResult.Errors.Add(new ValidationFailure(propertyName, failureMessage));
-
-        /// <summary>
-        /// Adds a failure to current <see cref="ValidationResult"/>.<para/>
-        /// <see cref="ValidationFailure.PropertyName"/> will be an empty string.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        /// <param name="failureMessage">failure messages</param>
-        public static void AddFailure(this ValidationResult validationResult, string failureMessage)
-            => validationResult.AddFailure(string.Empty, failureMessage);
-
-        /// <summary>
-        /// Adds a failure to current <see cref="ValidationResult"/>.<para/>
-        /// <see cref="ValidationFailure.PropertyName"/> will be an empty string.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        /// <param name="ex"><see cref="Exception"/> that contains a failure message.</param>
-        public static void AddFailure(this ValidationResult validationResult, Exception ex)
-            => validationResult.AddFailure(string.Empty, ex.Message);
-
-        /// <summary>
-        /// Adds a failure to current <see cref="ValidationResult"/>.<para/>
-        /// <see cref="ValidationFailure.PropertyName"/> will be an empty string.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        /// <param name="propertyName">name of property that failed</param>
-        /// <param name="ex"><see cref="Exception"/> that contains a failure message.</param>
-        public static void AddFailure(this ValidationResult validationResult, string propertyName, Exception ex)
-            => validationResult.AddFailure(propertyName, ex.Message);
-
-        /// <summary>
-        /// Gets Error Messages as a string enumerable.
-        /// </summary>
-        /// <param name="validationResult">current ValidationResult</param>
-        public static IEnumerable<string> ErrorMessagesAsEnumerable(this ValidationResult validationResult)
-            => validationResult.Errors.Select(err => err.ErrorMessage);
-
-        /// <summary>
-        /// Creates and returns a new <see cref="ValidationResult"/> from an <see cref="Exception"/>.
-        /// </summary>
-        /// <param name="exception">exception to add as failure</param>
-        public static ValidationResult ValidationResultFromException(Exception exception)
-        {
-            var validationResult = new ValidationResult();
-
-            validationResult.AddFailure(exception);
-
-            return validationResult;
-        }
+        return validationResult;
     }
+
+    /// <summary>
+    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/>.
+    /// </summary>
+    /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
+    /// <param name="errorCode">failure error code.</param>
+    public static ValidationResult AddErrorCode(this ValidationResult validationResult, string errorCode)
+        => validationResult.AddError(string.Empty, errorCode);
+
+    /// <summary>
+    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/>.
+    /// </summary>
+    /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
+    /// <param name="errorMessage">failure error message.</param>
+    public static ValidationResult AddErrorMessage(this ValidationResult validationResult, string errorMessage)
+        => validationResult.AddError(errorMessage, string.Empty);
+
+    /// <summary>
+    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/> where
+    /// <see cref="ValidationFailure.ErrorMessage"/> will be setted as the <paramref name="exception"/>.Message
+    /// and <see cref="ValidationFailure.ErrorCode"/> will be setted the <paramref name="exception"/> type.
+    /// </summary>
+    /// <param name="validationResult">current ValidationResult</param>
+    /// <param name="exception">exception to add as failure</param>
+    public static ValidationResult AddException(this ValidationResult validationResult, Exception exception)
+    {
+        validationResult.AddError(exception.Message, $"Exception.{exception.GetType().Name}");
+
+        return validationResult;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/>
+    /// with a specified <paramref name="errorMessage"/>
+    /// where <see cref="ValidationFailure.ErrorCode"/> will be setted the <paramref name="exception"/> type.
+    /// <br/>
+    /// Exception Message will be ignored.
+    /// </summary>
+    /// <param name="validationResult">current ValidationResult</param>
+    /// <param name="errorMessage">the failure error message. Exception message will be ignored.</param>
+    /// <param name="exception">exception to add as failure</param>
+    public static ValidationResult AddException(this ValidationResult validationResult, Exception exception, string errorMessage)
+    {
+        validationResult.AddError(errorMessage, $"EXCEPTION.{exception.GetType().Name}");
+
+        return validationResult;
+    }
+
+    /// <summary>
+    /// Gets Error Messages as a string enumerable.
+    /// </summary>
+    /// <param name="validationResult">current ValidationResult</param>
+    public static IEnumerable<string> GetErrorMessages(this ValidationResult validationResult)
+        => validationResult.Errors.Select(err => err.ErrorMessage);
+
+    /// <summary>
+    /// Gets Error Codes as a string enumerable.
+    /// </summary>
+    /// <param name="validationResult">current ValidationResult</param>
+    public static IEnumerable<string> GetErrorCodes(this ValidationResult validationResult)
+        => validationResult.Errors.Select(err => err.ErrorCode);
 }

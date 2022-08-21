@@ -1,19 +1,45 @@
 ﻿using FluentValidation.Results;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Maxsys.DataCore.Interfaces
+namespace Maxsys.DataCore.Interfaces;
+
+/// <summary>
+/// Provides an interface to wraps a database transaction.
+/// <br/>
+/// This class implements <see cref="IDisposable"/> to allow use inside <c>using</c> blocks, and should automatically
+/// close the database transaction (without saving) when disposed.
+/// </summary>
+/// <remarks>Basic Unit of Work pattern as described by Martin Fowler in this <see href="http://martinfowler.com/eaaCatalog/unitOfWork.html">link</see>.</remarks>
+public interface IUnitOfWork : IDisposable
 {
-    public interface IUnitOfWork : IDisposable
-    {
-        void BeginTransaction();
+    /// <summary>
+    /// A unique identifier for the UnitOfWork being used.
+    /// </summary>
+    Guid Id { get; }
 
-        ValidationResult SaveChanges();
+    /// <summary>
+    /// A unique identifier for the Context being used.
+    /// </summary>
+    Guid ContextId { get; }
 
-        void RollBack();
+    /// <summary>
+    /// Asynchronously starts a new transaction.
+    /// </summary>
+    /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    ValueTask BeginTransactionAsync(CancellationToken token = default);
 
-        Task<ValidationResult> SaveChangesAsync();
+    /// <summary>
+    /// Saves all changes made in this context to the database.
+    /// </summary>
+    /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
 
-        Task RollbackAsync();
-    }
+    Task<ValidationResult> CommitAsync(CancellationToken token = default);
+
+    /// <summary>
+    ///     Discards all changes made to the database in the current transaction asynchronously.
+    /// </summary>
+    /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    ValueTask RollbackAsync(CancellationToken token = default);
 }
