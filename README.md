@@ -17,7 +17,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 ## 🛠 Release notes
 
-##### [6.2.0](https://www.nuget.org/packages/Maxsys.Core/6.2.0)
+##### [6.2.1](https://www.nuget.org/packages/Maxsys.Core/6.2.1)
 - `ApplicationServiceBase` removido.
 - `IUnitOfWork` reescrito.
 - Adicionado `CountAsync()` e `ContextId` em `IRepositoryBase`.

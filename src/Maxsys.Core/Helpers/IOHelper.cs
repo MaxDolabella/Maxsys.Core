@@ -75,12 +75,11 @@ public static class IOHelper
             if (copyResult.IsValid)
                 _ = DeleteFile(sourceFileName);
             else
-                validationResult.AddFailure(nameof(MoveFile)
-                    , $"Error moving file: {copyResult.Errors[0].ErrorMessage}");
+                validationResult.AddErrorMessage($"Error moving file: {copyResult.Errors[0].ErrorMessage}");
         }
         catch (Exception ex)
         {
-            validationResult.AddFailure(nameof(MoveFile), ex.Message);
+            validationResult.AddException(ex);
         }
 
         return validationResult;
@@ -123,7 +122,7 @@ public static class IOHelper
         }
         catch (Exception ex)
         {
-            validationResult.AddFailure(nameof(DeleteFile), ex.Message);
+            validationResult.AddException(ex);
         }
 
         return validationResult;
@@ -153,12 +152,12 @@ public static class IOHelper
             }
             catch (Exception ex)
             {
-                validationResult.AddFailure(nameof(CopyFile), ex.Message);
+                validationResult.AddException(ex);
             }
         }
         else
         {
-            validationResult.AddFailure(destFileName, "Destination file already exists");
+            validationResult.AddErrorMessage("Destination file already exists.");
         }
 
         return validationResult;
@@ -194,12 +193,12 @@ public static class IOHelper
             }
             else
             {
-                validationResult.AddFailure(nameof(MoveFileAsync), $"Error moving file: {copyResult.ToString()}");
+                validationResult.AddErrorMessage($"Error moving file: {copyResult}");
             }
         }
         catch (Exception ex)
         {
-            validationResult.AddFailure(nameof(MoveFileAsync), ex);
+            validationResult.AddException(ex);
         }
 
         return validationResult;
@@ -250,12 +249,12 @@ public static class IOHelper
             }
             catch (Exception ex)
             {
-                validationResult.AddFailure(nameof(CopyFileAsync), ex);
+                validationResult.AddException(ex);
             }
         }
         else
         {
-            validationResult.AddFailure(destFileName, "Destination file already exists");
+            validationResult.AddErrorMessage("Destination file already exists.");
         }
 
         return validationResult;
@@ -280,7 +279,7 @@ public static class IOHelper
         }
         catch (Exception ex)
         {
-            validationResult.AddFailure(nameof(DeleteFileAsync), ex);
+            validationResult.AddException(ex);
         }
 
         return validationResult;

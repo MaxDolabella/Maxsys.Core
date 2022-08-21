@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <Version>6.2.0</Version>
+    <Version>6.2.1</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.Net 6)</Description>
@@ -15,7 +15,7 @@
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
-6.2.0
+6.2.1
 	- ApplicationServiceBase removido.
     - IUnitOfWork reescrito.
     - Adicionado CountAsync() e ContextId em IRepositoryBase.
