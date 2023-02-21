@@ -15,10 +15,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET 6
+    - name: Setup .NET 7
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.x' # SDK Version to use; x will use the latest version of the 6.0 channel
+        dotnet-version: '7.0.x' # SDK Version to use; x will use the latest version of the 7.0 channel
         include-prerelease: false
 
     - name: Geração do package
