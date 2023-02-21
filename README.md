@@ -1,7 +1,6 @@
 <div align="center">
-    <img src="src\Maxsys.Core\maxsys-core.png" alt="drawing" width="256" />
-    
-    <h1>Maxsys Core</h1>
+<img src="src\Maxsys.Core\maxsys-core.png" alt="drawing" width="256" />
+<h1>Maxsys Core</h1>
 </div>
 
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core)
