@@ -1,8 +1,8 @@
-﻿using FluentValidation.Results;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 
 namespace Maxsys.Core.Helpers;
 
@@ -75,7 +75,7 @@ public static class IOHelper
             if (copyResult.IsValid)
                 _ = DeleteFile(sourceFileName);
             else
-                validationResult.AddErrorMessage($"Error moving file: {copyResult.Errors[0].ErrorMessage}");
+                validationResult.AddError($"Error moving file: {copyResult.Errors[0].ErrorMessage}");
         }
         catch (Exception ex)
         {
@@ -157,7 +157,7 @@ public static class IOHelper
         }
         else
         {
-            validationResult.AddErrorMessage("Destination file already exists.");
+            validationResult.AddError("Destination file already exists.");
         }
 
         return validationResult;
@@ -193,7 +193,7 @@ public static class IOHelper
             }
             else
             {
-                validationResult.AddErrorMessage($"Error moving file: {copyResult}");
+                validationResult.AddError($"Error moving file: {copyResult}");
             }
         }
         catch (Exception ex)
@@ -254,7 +254,7 @@ public static class IOHelper
         }
         else
         {
-            validationResult.AddErrorMessage("Destination file already exists.");
+            validationResult.AddError("Destination file already exists.");
         }
 
         return validationResult;

@@ -1,26 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <Version>6.2.1</Version>
+    <Version>7.0.0</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
-    <Description>Core para aplicações Maxsys (.Net 6)</Description>
-    <PackageDescription>Core para aplicações Maxsys (.Net 6)</PackageDescription>
+    <Description>Core para aplicações Maxsys (.Net 7)</Description>
+    <PackageDescription>Core para aplicações Maxsys (.Net 7)</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-    <PackageReleaseNotes>
-6.2.1
-	- ApplicationServiceBase removido.
-    - IUnitOfWork reescrito.
-    - Adicionado CountAsync() e ContextId em IRepositoryBase.
-    - ValidationResultExtensions reescrito.
-    - IServiceCollectionExtensions adicionado.
+    <PackageReleaseNotes>7.0.0
+- TargetFramework alterado para .net7.
+- Pacotes Nuget atualizados:
+    - FluentValidation: 11.5.1
+    - Microsoft.Extensions.DependencyInjection.Abstractions: 7.0.0
+    - System.Drawing.Common: 7.0.0
+- Objetos MVVM (MVVMObject, NotifiableObject e ViewModelBase) excluídos. Existem muitas bibliotecas por aí para isso.
+- Refatoração da implementação de IEquatable&lt;T&gt; em EntityBase&lt;TKey&gt;.
+- Refatoração de IUnitOfWork.
+- Refatoração de ValidationResultExtensions.
+    - Método de extensão em AddErrorMessage() removido. Utilizar sobrecarga AddError().
+    - Adicionada opção de passar Severity como parâmetro.
+- Adicionado JsonExtensions.
 	</PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
@@ -32,9 +38,9 @@
 
   
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.5.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
   
 

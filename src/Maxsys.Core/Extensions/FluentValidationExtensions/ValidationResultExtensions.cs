@@ -14,13 +14,24 @@ public static class ValidationResultExtensions
     /// </summary>
     /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
     /// <param name="errorMessage">failure error message.</param>
+    /// <param name="severity">failure severity.</param>
+    public static ValidationResult AddError(this ValidationResult validationResult, string errorMessage, Severity severity = Severity.Error)
+        => validationResult.AddError(errorMessage, string.Empty, severity);
+
+    /// <summary>
+    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/>.
+    /// </summary>
+    /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
+    /// <param name="errorMessage">failure error message.</param>
     /// <param name="errorCode">failure error code.</param>
-    public static ValidationResult AddError(this ValidationResult validationResult, string errorMessage, string errorCode)
+    /// <param name="severity">failure severity.</param>
+    public static ValidationResult AddError(this ValidationResult validationResult, string errorMessage, string errorCode, Severity severity = Severity.Error)
     {
         validationResult.Errors.Add(new ValidationFailure
         {
             ErrorMessage = errorMessage,
-            ErrorCode = errorCode
+            ErrorCode = errorCode,
+            Severity = severity
         });
 
         return validationResult;
@@ -31,16 +42,9 @@ public static class ValidationResultExtensions
     /// </summary>
     /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
     /// <param name="errorCode">failure error code.</param>
-    public static ValidationResult AddErrorCode(this ValidationResult validationResult, string errorCode)
-        => validationResult.AddError(string.Empty, errorCode);
-
-    /// <summary>
-    /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/>.
-    /// </summary>
-    /// <param name="validationResult">current <see cref="ValidationResult"/>.</param>
-    /// <param name="errorMessage">failure error message.</param>
-    public static ValidationResult AddErrorMessage(this ValidationResult validationResult, string errorMessage)
-        => validationResult.AddError(errorMessage, string.Empty);
+    /// <param name="severity">failure severity.</param>
+    public static ValidationResult AddErrorCode(this ValidationResult validationResult, string errorCode, Severity severity = Severity.Error)
+        => validationResult.AddError(string.Empty, errorCode, severity);
 
     /// <summary>
     /// Adds a <see cref="ValidationFailure"/> from an <see cref="Exception"/> to current <see cref="ValidationResult"/> where
@@ -51,7 +55,7 @@ public static class ValidationResultExtensions
     /// <param name="exception">exception to add as failure</param>
     public static ValidationResult AddException(this ValidationResult validationResult, Exception exception)
     {
-        validationResult.AddError(exception.Message, $"Exception.{exception.GetType().Name}");
+        validationResult.AddException(exception, exception.Message);
 
         return validationResult;
     }
@@ -68,7 +72,11 @@ public static class ValidationResultExtensions
     /// <param name="exception">exception to add as failure</param>
     public static ValidationResult AddException(this ValidationResult validationResult, Exception exception, string errorMessage)
     {
-        validationResult.AddError(errorMessage, $"EXCEPTION.{exception.GetType().Name}");
+        validationResult.Errors.Add(new ValidationFailure
+        {
+            ErrorMessage = errorMessage,
+            ErrorCode = $"[{exception.GetType()}]: {exception}",
+        });
 
         return validationResult;
     }
@@ -86,4 +94,12 @@ public static class ValidationResultExtensions
     /// <param name="validationResult">current ValidationResult</param>
     public static IEnumerable<string> GetErrorCodes(this ValidationResult validationResult)
         => validationResult.Errors.Select(err => err.ErrorCode);
+
+    /// <summary>
+    /// Determines whether an error list contains an specified error message.
+    /// </summary>
+    public static bool ContainsErrorMessage(this ValidationResult validationResult, string errorMessage)
+    {
+        return validationResult.Errors.Any(e => e.ErrorMessage == errorMessage);
+    }
 }

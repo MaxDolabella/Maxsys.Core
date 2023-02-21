@@ -8,9 +8,6 @@ namespace System;
 /// </summary>
 public static class StringHelper
 {
-    public static string StringJoin(this IEnumerable<string> stringCollection, string separator = "\n")
-        => string.Join(separator, stringCollection);
-
     /// <summary>
     /// Return the text with the first letter in low cap.<para/>
     /// "FirstLetterLowCap" will return "firstLetterLowCap"
@@ -23,7 +20,7 @@ public static class StringHelper
             ? string.Empty
             : text.Length == 1
                 ? text.ToLower()
-                : text[0].ToString().ToLower() + text.Substring(1);
+                : string.Concat(text[0].ToString().ToLower(), text.AsSpan(1));
     }
 
     /// <summary>

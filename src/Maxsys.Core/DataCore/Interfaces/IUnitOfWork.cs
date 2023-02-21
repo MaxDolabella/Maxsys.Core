@@ -1,7 +1,7 @@
-﻿using FluentValidation.Results;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 
 namespace Maxsys.DataCore.Interfaces;
 
@@ -27,8 +27,20 @@ public interface IUnitOfWork : IDisposable
     /// <summary>
     /// Asynchronously starts a new transaction.
     /// </summary>
-    /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
-    ValueTask BeginTransactionAsync(CancellationToken token = default);
+    /// <param name="cancellation">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    ValueTask BeginTransactionAsync(CancellationToken cancellation = default);
+
+    /// <summary>
+    /// Asynchronously commits a transaction.
+    /// </summary>
+    /// <param name="cancellation">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    ValueTask CommitTransactionAsync(CancellationToken cancellation = default);
+
+    /// <summary>
+    /// Asynchronously rollback a transaction.
+    /// </summary>
+    /// <param name="cancellation">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    ValueTask RollbackTransactionAsync(CancellationToken cancellation = default);
 
     /// <summary>
     /// Saves all changes made in this context to the database.
@@ -38,7 +50,7 @@ public interface IUnitOfWork : IDisposable
     Task<ValidationResult> CommitAsync(CancellationToken token = default);
 
     /// <summary>
-    ///     Discards all changes made to the database in the current transaction asynchronously.
+    /// Discards all changes made to the database in the current transaction asynchronously.
     /// </summary>
     /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
     ValueTask RollbackAsync(CancellationToken token = default);
