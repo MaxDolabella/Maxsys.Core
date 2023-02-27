@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <Version>7.1.0</Version>
+    <Version>7.1.2</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.Net 7)</Description>
@@ -14,7 +14,7 @@
     <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-    <PackageReleaseNotes>7.1.0
+    <PackageReleaseNotes>7.1.1
 - Refatoração e alteração de nome de IRepositoryBase para IRepository.
 - Alteração de namespaces:
     - IRepositoryBase: Maxsys.ModelCore.Interfaces.Repositories para Maxsys.DataCore.Interfaces (IRepository).
