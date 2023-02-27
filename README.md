@@ -23,7 +23,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 ## 🛠 Release notes
 
 
-### [7.1.0](https://www.nuget.org/packages/Maxsys.Core/7.1.0)
+### [7.1.1](https://www.nuget.org/packages/Maxsys.Core/7.1.1)
 - Refatoração e alteração de nome de `IRepositoryBase` para `IRepository`.
 - Alteração de namespaces:
     - `IRepositoryBase`: `Maxsys.ModelCore.Interfaces.Repositories` para `Maxsys.DataCore.Interfaces` (`IRepository`).
