@@ -1,4 +1,11 @@
-﻿namespace Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Maxsys.ModelCore.Sorting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// Provides extension methods to <see cref="IServiceCollection"/>
@@ -43,4 +50,39 @@ public static class IServiceCollectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddSortSelectors<TEntry>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
+    {
+        var sortableColumns = GetClassesImplementingInterface(typeof(TEntry).Assembly, typeof(ISortColumnSelector<>));
+
+        sortableColumns.ForEach(type =>
+        {
+            var implementedInterface = type.GetInterfaces()[0];
+            // 'implementedInterface.GetGenericArguments()[0].Name' é o tipo genérico.
+
+            var serviceDescriptor = new ServiceDescriptor(implementedInterface, type, lifetime);
+            services.TryAdd(serviceDescriptor);
+        });
+
+        return services;
+    }
+
+    #region Private
+
+    private static List<Type> GetClassesImplementingInterface(Assembly assembly, Type implementedInterface)
+    {
+        return GetClassesImplementingInterface(new[] { assembly }, implementedInterface);
+    }
+
+    private static List<Type> GetClassesImplementingInterface(Assembly[] assemblies, Type implementedInterface)
+    {
+        return assemblies.SelectMany(a => a.ExportedTypes)
+            .Where(type => !type.IsInterface && !type.IsAbstract
+                && type.GetInterfaces()
+                    .Where(t => t.IsGenericType)
+                    .Any(t => t.GetGenericTypeDefinition() == implementedInterface))
+            .ToList();
+    }
+
+    #endregion Private
 }

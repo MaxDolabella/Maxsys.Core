@@ -1,35 +1,35 @@
-﻿namespace Maxsys.ModelCore;
+﻿using System;
+using System.Collections.Generic;
 
-public abstract class ValueObject<T> where T : ValueObject<T>
+namespace Maxsys.ModelCore;
+
+public abstract class ValueObject<T> : IEquatable<ValueObject<T>?>
 {
-    public override bool Equals(object obj)
+    #region Overrides
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
     {
-        var valueObject = obj as T;
-        return !ReferenceEquals(valueObject, null) && EqualsCore(valueObject);
+        return Equals(obj as ValueObject<T>);
     }
 
-    protected abstract bool EqualsCore(T other);
+    /// <inheritdoc/>
+    public abstract bool Equals(ValueObject<T>? other);
 
-    public override int GetHashCode()
+    /// <inheritdoc/>
+    public static bool operator ==(ValueObject<T>? left, ValueObject<T>? right)
     {
-        return GetHashCodeCore();
+        return EqualityComparer<ValueObject<T>>.Default.Equals(left, right);
     }
 
-    protected abstract int GetHashCodeCore();
-
-    public static bool operator ==(ValueObject<T> a, ValueObject<T> b)
+    /// <inheritdoc/>
+    public static bool operator !=(ValueObject<T>? left, ValueObject<T>? right)
     {
-        if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
-            return true;
-
-        if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
-            return false;
-
-        return a.Equals(b);
+        return !(left == right);
     }
 
-    public static bool operator !=(ValueObject<T> a, ValueObject<T> b)
-    {
-        return !(a == b);
-    }
+    /// <inheritdoc/>
+    public abstract int GetHashCode();
+
+    #endregion Overrides
 }

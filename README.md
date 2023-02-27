@@ -15,11 +15,37 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 ## ⛓ Dependências
 
+- [AutoMapper.Extensions.Microsoft.DependencyInjection](https://www.nuget.org/packages/AutoMapper.Extensions.Microsoft.DependencyInjection/)
 - [FluentValidation](https://www.nuget.org/packages/FluentValidation/)
 - [Microsoft.Extensions.DependencyInjection.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection.Abstractions/)
 - [System.Drawing.Common](https://www.nuget.org/packages/System.Drawing.Common/)
 
 ## 🛠 Release notes
+
+
+### [7.1.0](https://www.nuget.org/packages/Maxsys.Core/7.1.0)
+- Refatoração e alteração de nome de `IRepositoryBase` para `IRepository`.
+- Alteração de namespaces:
+    - `IRepositoryBase`: `Maxsys.ModelCore.Interfaces.Repositories` para `Maxsys.DataCore.Interfaces` (`IRepository`).
+    - `IDialogService`: `Maxsys.ModelCore.Interfaces.Services` para `Maxsys.ModelCore.Services`.
+- Refatoração de ValueObject.
+- Adicionados métodos em `JsonExtensions`.
+- Adicionadas classes para Obtenção de dados (DTOS), Filtragem, Ordenação e Listagem de dados utilizadas em implementações de Repositório e Service.
+    - DTOS:
+        - `IDTO`, `InfoDTO`, `ListDTO`.
+    - Filtering:
+        - `IFilter`, `ActiveTypes`, `FilterBase` e `RangeFilter`.
+    - Sorting:
+        - `ISortColumnSelector`, `SortDirection` e `SortFilter`.
+    - Listing:
+        - `Criteria` e `Pagination`.
+- Adicionado método de extensão para `IServiceCollection` que registra automaticamente todas as implementações de `ISortColumnSelector`.
+- Adicionado `IQueryableExtensions` com métodos para aplicar paginação, ordenamento via `ISortColumnSelector` e `LeftOuterJoin`.
+- Pacote Nuget adicionado:
+    - AutoMapper.Extensions.Microsoft.DependencyInjection: 12.0.0
+- Adicionadas interfaces e implementações para service:
+    - `IService` e `ServiceBase`.
+
 
 ### [7.0.0](https://www.nuget.org/packages/Maxsys.Core/7.0.0)
 - TargetFramework alterado para `.net7.0`.

@@ -14,19 +14,28 @@
     <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-    <PackageReleaseNotes>7.0.0
-- TargetFramework alterado para .net7.
-- Pacotes Nuget atualizados:
-    - FluentValidation: 11.5.1
-    - Microsoft.Extensions.DependencyInjection.Abstractions: 7.0.0
-    - System.Drawing.Common: 7.0.0
-- Objetos MVVM (MVVMObject, NotifiableObject e ViewModelBase) excluídos. Existem muitas bibliotecas por aí para isso.
-- Refatoração da implementação de IEquatable&lt;T&gt; em EntityBase&lt;TKey&gt;.
-- Refatoração de IUnitOfWork.
-- Refatoração de ValidationResultExtensions.
-    - Método de extensão em AddErrorMessage() removido. Utilizar sobrecarga AddError().
-    - Adicionada opção de passar Severity como parâmetro.
-- Adicionado JsonExtensions.
+    <PackageReleaseNotes>7.1.0
+- Refatoração e alteração de nome de IRepositoryBase para IRepository.
+- Alteração de namespaces:
+    - IRepositoryBase: Maxsys.ModelCore.Interfaces.Repositories para Maxsys.DataCore.Interfaces (IRepository).
+    - IDialogService: Maxsys.ModelCore.Interfaces.Services para Maxsys.ModelCore.Services.
+- Refatoração de ValueObject.
+- Adicionados métodos em JsonExtensions.
+- Adicionadas classes para Obtenção de dados (DTOS), Filtragem, Ordenação e Listagem de dados utilizadas em implementações de Repositório e Service.
+    - DTOS:
+        - IDTO, InfoDTO, ListDTO.
+    - Filtering:
+        - IFilter, ActiveTypes, FilterBase e RangeFilter.
+    - Sorting:
+        - ISortColumnSelector, SortDirection e SortFilter.
+    - Listing:
+        - Criteria e Pagination.
+- Adicionado método de extensão para IServiceCollection que registra automaticamente todas as implementações de ISortColumnSelector.
+- Adicionado IQueryableExtensions com métodos para aplicar paginação, ordenamento via ISortColumnSelector e LeftOuterJoin.
+- Pacote Nuget adicionado:
+    - AutoMapper.Extensions.Microsoft.DependencyInjection: 12.0.0
+- Adicionadas interfaces e implementações para service:
+    - IService e ServiceBase.
 	</PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
@@ -38,6 +47,7 @@
 
   
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="FluentValidation" Version="11.5.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Maxsys.ModelCore.Interfaces.Services;
+namespace Maxsys.ModelCore.Services;
 
 /// <summary>
 /// The type of Message to show.
