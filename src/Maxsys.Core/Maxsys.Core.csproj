@@ -9,7 +9,7 @@
     <Description>Core para aplicações Maxsys (.Net 7)</Description>
     <PackageDescription>Core para aplicações Maxsys (.Net 7)</PackageDescription>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/src/Maxsys.Core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
@@ -38,8 +38,8 @@
   
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
-    <None Include="..\..\README.md">
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+    <None Include="README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<Version>0.0.0</Version>
+	<Authors>Max Dolabella</Authors>
+	<Company>Maxsys Tech</Company>
+	<Description>Data (Core) para aplicações Maxsys (.Net 7)</Description>
+	<PackageDescription>Data (Core) para aplicações Maxsys (.Net 7)</PackageDescription>
+	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/src/Maxsys.Core.Data</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
+	<RepositoryType>Public</RepositoryType>
+	<PackageId>Maxsys.Core.Data</PackageId>
+	<PackageTags>maxsys;dotnet;dotnet-core;net7;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;ef-core;</PackageTags>
+	<PackageReleaseNotes>
+		7.0.0
+		- Commit Inicial com implementações de IUnitOfWork e IRepository
+	</PackageReleaseNotes>
+	<PackageIcon>maxsys-core-data.png</PackageIcon>
+	<ApplicationIcon>maxsys-core-data.ico</ApplicationIcon>
+
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <None Include="LICENSE" Pack="true" PackagePath="" />
+	  <None Include="README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="maxsys-core-data.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Maxsys.Core" Version="7.2.0" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.3" />
+  </ItemGroup>
+
+
+</Project>
