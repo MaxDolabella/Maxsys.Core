@@ -28,7 +28,7 @@ public abstract class ServiceBase : IService
 public abstract class ReadServiceBase<TEntity, TRepository, TListDTO, TFormDTO, TInfoDTO, TFilter>
     : ServiceBase, IReadService<TListDTO, TFormDTO, TInfoDTO, TFilter>
     where TEntity : class
-    where TRepository : IRepository<TEntity, TFilter, object>
+    where TRepository : IRepository<object, TEntity, TFilter>
     where TListDTO : class, IDTO
     where TFormDTO : class, IDTO
     where TInfoDTO : class, IDTO
@@ -76,7 +76,7 @@ public abstract class ReadServiceBase<TEntity, TRepository, TListDTO, TFormDTO, 
 public abstract class ServiceBase<TEntity, TRepository, TListDTO, TFormDTO, TInfoDTO, TCreateDTO, TUpdateDTO, TFilter>
     : ReadServiceBase<TEntity, TRepository, TListDTO, TFormDTO, TInfoDTO, TFilter>, IService<TListDTO, TFormDTO, TInfoDTO, TCreateDTO, TUpdateDTO, TFilter>
     where TEntity : class
-    where TRepository : IRepository<TEntity, TFilter, object>
+    where TRepository : IRepository<object, TEntity, TFilter>
     where TListDTO : class, IDTO
     where TFormDTO : class, IDTO
     where TInfoDTO : class, IDTO

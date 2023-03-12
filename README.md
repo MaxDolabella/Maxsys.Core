@@ -23,6 +23,12 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 ## 🛠 Release notes
 
 
+### [7.2.0](https://www.nuget.org/packages/Maxsys.Core/7.2.0)
+- Adicionado método de extensão `ApplyCriteria` em `IQueryableExtensions`. É um atalho para `queryable.ApplySort(...).ApplyCriteria(...)`.
+- Ordem dos genéricos em `IRepository` alterada. Agora `TKey` vem antes de todos.
+- `IRepository` de TKey=object removido.
+
+
 ### [7.1.2](https://www.nuget.org/packages/Maxsys.Core/7.1.2)
 - Refatoração e alteração de nome de `IRepositoryBase` para `IRepository`.
 - Alteração de namespaces:

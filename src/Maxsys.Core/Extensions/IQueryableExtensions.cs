@@ -8,6 +8,24 @@ namespace System.Linq;
 public static partial class IQueryableExtensions
 {
     /// <summary>
+    /// Atalho para <c>query.ApplySort().ApplyPagination()</c>
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <param name="source"></param>
+    /// <param name="criteria"></param>
+    /// <param name="sortSelector"></param>
+    /// <returns></returns>
+    public static IQueryable<TSource> ApplyCriteria<TSource>(
+        this IQueryable<TSource> source,
+        Criteria criteria,
+        ISortColumnSelector<TSource> sortSelector)
+        where TSource : class
+    {
+        return source.ApplySort(criteria.Sorts, sortSelector)
+            .ApplyPagination(criteria.Pagination);
+    }
+
+    /// <summary>
     /// Applies pahination to an IQueryable.
     /// </summary>
     /// <typeparam name="TSource"></typeparam>

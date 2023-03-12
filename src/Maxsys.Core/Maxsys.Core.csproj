@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <Version>7.1.2</Version>
+    <Version>7.2.0</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.Net 7)</Description>
@@ -14,28 +14,11 @@
     <RepositoryType>Public</RepositoryType>
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-    <PackageReleaseNotes>7.1.1
-- Refatoração e alteração de nome de IRepositoryBase para IRepository.
-- Alteração de namespaces:
-    - IRepositoryBase: Maxsys.ModelCore.Interfaces.Repositories para Maxsys.DataCore.Interfaces (IRepository).
-    - IDialogService: Maxsys.ModelCore.Interfaces.Services para Maxsys.ModelCore.Services.
-- Refatoração de ValueObject.
-- Adicionados métodos em JsonExtensions.
-- Adicionadas classes para Obtenção de dados (DTOS), Filtragem, Ordenação e Listagem de dados utilizadas em implementações de Repositório e Service.
-    - DTOS:
-        - IDTO, InfoDTO, ListDTO.
-    - Filtering:
-        - IFilter, ActiveTypes, FilterBase e RangeFilter.
-    - Sorting:
-        - ISortColumnSelector, SortDirection e SortFilter.
-    - Listing:
-        - Criteria e Pagination.
-- Adicionado método de extensão para IServiceCollection que registra automaticamente todas as implementações de ISortColumnSelector.
-- Adicionado IQueryableExtensions com métodos para aplicar paginação, ordenamento via ISortColumnSelector e LeftOuterJoin.
-- Pacote Nuget adicionado:
-    - AutoMapper.Extensions.Microsoft.DependencyInjection: 12.0.0
-- Adicionadas interfaces e implementações para service:
-    - IService e ServiceBase.
+    <PackageReleaseNotes>
+		7.2.0
+		- Adicionado método de extensão ApplyCriteria em IQueryableExtensions. É um atalho para queryable.ApplySort(...).ApplyCriteria(...).
+		- Ordem dos genéricos em IRepository alterada. Agora TKey vem antes de todos.
+		- IRepository de TKey=object removido.
 	</PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>

@@ -31,9 +31,9 @@ public interface IRepository : IDisposable
 /// </summary>
 /// <typeparam name="TEntity">Type of entity used. Must be a <see langword="class"/>.</typeparam>
 /// <typeparam name="TKey">Is the type of the key</typeparam>
-public interface IRepository<TEntity, TKey> : IRepository
-    where TEntity : class
+public interface IRepository<TKey, TEntity> : IRepository
     where TKey : notnull
+    where TEntity : class
 {
     #region CRUD
 
@@ -133,25 +133,8 @@ public interface IRepository<TEntity, TKey> : IRepository
     /// <returns></returns>
     ValueTask<int> CountAsync(Expression<Func<TEntity, bool>>? predicate, CancellationToken cancellation = default);
 
-    /// <summary>
-    /// Gets an IQueryable given a predicate.
-    /// </summary>
-    /// <param name="predicate"></param>
-    /// <param name="readonly"></param>
-    /// <returns><see cref="IEnumerable{TEntity}"/></returns>
-    IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate, bool @readonly = true);
-
     #endregion CRUD
 }
-
-/// <summary>
-/// Provides an interface to access data from a repository.
-/// The key is <see langword="object"/> by default.
-/// </summary>
-/// <typeparam name="TEntity">Type of entity used. Must be a <see langword="class"/>.</typeparam>
-public interface IRepository<TEntity> : IRepository<TEntity, object>
-    where TEntity : class
-{ }
 
 /// <summary>
 /// Provides an interface to access data from a repository of <typeparamref name="TEntity"/>
@@ -160,10 +143,10 @@ public interface IRepository<TEntity> : IRepository<TEntity, object>
 /// <typeparam name="TEntity">Type of entity used. Must be a <see langword="class"/>.</typeparam>
 /// <typeparam name="TFilter">Is the type of the key</typeparam>
 /// <typeparam name="TKey">Is the type of the key</typeparam>
-public interface IRepository<TEntity, TFilter, TKey> : IRepository<TEntity, TKey>
+public interface IRepository<TKey, TEntity, TFilter> : IRepository<TKey, TEntity>
+    where TKey : notnull
     where TEntity : class
     where TFilter : IFilter<TEntity>
-    where TKey : notnull
 {
     /// <summary>
     /// Asynchronously returns the number of elements in a sequence that satisfy a filter.
