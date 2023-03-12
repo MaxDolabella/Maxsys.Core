@@ -25,8 +25,8 @@ jobs:
     - name: Geração do package Core
       run: dotnet pack ${{ env.CORE_PATH_PROJ }} -c Release -o out
 
-    # - name: Geração do package Data
-    #  run: dotnet pack ${{ env.DATA_PATH_PROJ }} -c Release -o out
+    - name: Geração do package Data
+      run: dotnet pack ${{ env.DATA_PATH_PROJ }} -c Release -o out
 
     - name: Push no NuGet
       run: |
