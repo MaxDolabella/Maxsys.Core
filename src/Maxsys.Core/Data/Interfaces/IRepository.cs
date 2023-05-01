@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Maxsys.ModelCore.Filtering;
-using Maxsys.ModelCore.Listing;
-using Maxsys.ModelCore.Sorting;
+using Maxsys.Core.Filtering;
+using Maxsys.Core.Listing;
+using Maxsys.Core.Sorting;
 
-namespace Maxsys.DataCore.Interfaces;
+namespace Maxsys.Core.Data.Interfaces;
 
 /// <summary>
 /// Provides an interface to access data.
@@ -33,7 +32,7 @@ public interface IRepository : IDisposable
 /// <typeparam name="TKey">Is the type of the key</typeparam>
 public interface IRepository<TKey, TEntity> : IRepository
     where TKey : notnull
-    where TEntity : class
+    where TEntity : Entity<TKey>
 {
     #region CRUD
 
@@ -60,17 +59,6 @@ public interface IRepository<TKey, TEntity> : IRepository
     /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns>an <see cref="IEnumerable{TEntity}"/> with all entities in repository.</returns>
     ValueTask<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, bool @readonly = true, CancellationToken cancellation = default);
-
-    /// <summary>
-    /// Get all items from repository asynchronously.
-    /// </summary>
-    /// <param name="readonly">For some ORMs like <see href="https://docs.microsoft.com/pt-br/ef/core/querying/tracking">
-    /// Entity Framework</see>, specifies wether entity must be tracked.
-    /// If <paramref name="readonly"/> is <see langword="true"/>, must be tracked, otherwise, must not.
-    /// <para/>Default is <see langword="true"/>.</param>
-    /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-    /// <returns>an <see cref="IEnumerable{TEntity}"/> with all entities in repository.</returns>
-    Task<IEnumerable<TEntity>> GetAllAsync(bool @readonly = true, CancellationToken cancellation = default);
 
     /// <summary>
     /// Add an object of type <typeparamref name="TEntity"/> in the repository asynchronously.
@@ -145,7 +133,7 @@ public interface IRepository<TKey, TEntity> : IRepository
 /// <typeparam name="TKey">Is the type of the key</typeparam>
 public interface IRepository<TKey, TEntity, TFilter> : IRepository<TKey, TEntity>
     where TKey : notnull
-    where TEntity : class
+    where TEntity : Entity<TKey>
     where TFilter : IFilter<TEntity>
 {
     /// <summary>
@@ -172,7 +160,18 @@ public interface IRepository<TKey, TEntity, TFilter> : IRepository<TKey, TEntity
     /// <param name="sortColumnSelector">the implementaion of sort column selector.</param>
     /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns>an <see cref="IReadOnlyList{TDestination}"/> from the repository.</returns>
-    Task<IReadOnlyList<TDestination>> GetAsync<TDestination>(TFilter filters, Criteria criteria, ISortColumnSelector<TDestination> sortColumnSelector, CancellationToken cancellation = default) where TDestination : class;
+    /// <remarks>Mapping required: <typeparamref name="TEntity"/> ➔ <typeparamref name="TDestination"/>.</remarks>
+    Task<IReadOnlyList<TDestination>> GetMappedAsync<TDestination>(TFilter filters, Criteria criteria, ISortColumnSelector<TDestination> sortColumnSelector, CancellationToken cancellation = default) where TDestination : class;
+
+    /// <summary>
+    /// Get the first item from the repository that matches a condition asynchronously.
+    /// </summary>
+    /// <param name="filters">A filter to test each element for a condition.</param>
+    /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <typeparam name="TDestination">is the destination type. Needs mapping.</typeparam>
+    /// <returns>an <typeparamref name="TDestination"/> from the repository.</returns>
+    /// <remarks>Mapping required: <typeparamref name="TEntity"/> ➔ <typeparamref name="TDestination"/>.</remarks>
+    Task<TDestination?> GetFirstMappedAsync<TDestination>(TFilter filters, CancellationToken cancellation = default) where TDestination : class;
 
     /// <summary>
     /// Get the first item from the repository that matches a condition asynchronously.
@@ -181,5 +180,6 @@ public interface IRepository<TKey, TEntity, TFilter> : IRepository<TKey, TEntity
     /// <param name="cancellation">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <typeparam name="TDestination">is the destination type. Needs mapping.</typeparam>
     /// <returns>an <typeparamref name="TDestination"/> from the repository.</returns>
-    Task<TDestination?> GetFirstAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellation = default) where TDestination : class;
+    /// <remarks>Mapping required: <typeparamref name="TEntity"/> ➔ <typeparamref name="TDestination"/>.</remarks>
+    Task<TDestination?> GetFirstMappedAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellation = default) where TDestination : class;
 }

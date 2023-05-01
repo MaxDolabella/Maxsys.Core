@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Maxsys.ModelCore;
+namespace Maxsys.Core;
 
 /// <summary>
 ///

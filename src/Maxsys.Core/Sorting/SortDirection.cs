@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Maxsys.ModelCore.Sorting;
+namespace Maxsys.Core.Sorting;
 
 /// <summary>
 /// Direction of the sort. Can be Ascendant or Descendant

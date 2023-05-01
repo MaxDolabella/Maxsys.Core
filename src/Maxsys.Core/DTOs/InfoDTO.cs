@@ -1,14 +1,14 @@
-﻿namespace Maxsys.ModelCore;
+﻿namespace Maxsys.Core;
 
 /// <summary>
-/// A simple object with only Id and Description.
+/// A simple object with only Key and Description.
 /// </summary>
 public class InfoDTO<TKey> : IDTO
 {
     /// <summary>
-    /// Id
+    /// Key
     /// </summary>
-    public TKey Id { get; set; }
+    public TKey Key { get; set; }
 
     /// <summary>
     /// Description

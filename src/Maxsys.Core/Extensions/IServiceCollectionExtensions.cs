@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Maxsys.ModelCore.Sorting;
+using Maxsys.Core.Sorting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Maxsys.Core.Extensions;
 
 /// <summary>
 /// Provides extension methods to <see cref="IServiceCollection"/>
@@ -51,9 +51,22 @@ public static class IServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Registra as dependências de <see cref="ISortColumnSelector{T}"/> para suas implementações.
+    /// </summary>
+    /// <typeparam name="TEntry">Um tipo para servir de referência a fim de se obter
+    /// os <see cref="ISortColumnSelector{T}"/> de seu Assembly.</typeparam>
+    /// <param name="services"></param>
+    /// <param name="lifetime"></param>
+    /// <returns></returns>
     public static IServiceCollection AddSortSelectors<TEntry>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
-        var sortableColumns = GetClassesImplementingInterface(typeof(TEntry).Assembly, typeof(ISortColumnSelector<>));
+        var sortableColumns = typeof(TEntry).Assembly.ExportedTypes
+            .Where(type => !type.IsInterface && !type.IsAbstract
+                && type.GetInterfaces()
+                    .Where(t => t.IsGenericType)
+                    .Any(t => t.GetGenericTypeDefinition() == typeof(ISortColumnSelector<>)))
+            .ToList();
 
         sortableColumns.ForEach(type =>
         {
@@ -67,22 +80,24 @@ public static class IServiceCollectionExtensions
         return services;
     }
 
-    #region Private
-
-    private static List<Type> GetClassesImplementingInterface(Assembly assembly, Type implementedInterface)
+    /// <summary>
+    /// Registra os itens do dicionário onde Key é a interface e Value é a implementação.
+    /// <para/>
+    /// <example>Exemplo de uso:
+    /// <code>
+    /// RegisterDictionary(services, ReflectionHelper.GetImplementationDictionary&lt;IService&gt;(new[] { typeof(Entry).Assembly }, "Service"));
+    /// </code>
+    /// </example>
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="keyValues"></param>
+    /// <param name="serviceLifetime"></param>
+    /// <returns></returns>
+    public static IServiceCollection RegisterDictionary(this IServiceCollection services, IReadOnlyDictionary<Type, Type> keyValues, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
     {
-        return GetClassesImplementingInterface(new[] { assembly }, implementedInterface);
-    }
+        foreach (var item in keyValues)
+            services.Add(new ServiceDescriptor(item.Key, item.Value, serviceLifetime));
 
-    private static List<Type> GetClassesImplementingInterface(Assembly[] assemblies, Type implementedInterface)
-    {
-        return assemblies.SelectMany(a => a.ExportedTypes)
-            .Where(type => !type.IsInterface && !type.IsAbstract
-                && type.GetInterfaces()
-                    .Where(t => t.IsGenericType)
-                    .Any(t => t.GetGenericTypeDefinition() == implementedInterface))
-            .ToList();
+        return services;
     }
-
-    #endregion Private
 }

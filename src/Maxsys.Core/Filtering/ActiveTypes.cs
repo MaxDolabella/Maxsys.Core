@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Maxsys.ModelCore.Filtering;
+namespace Maxsys.Core.Filtering;
 
 /// <summary>
 /// Used in filtering to define which objects will be retrieve.

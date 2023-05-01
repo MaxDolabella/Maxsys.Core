@@ -1,6 +1,6 @@
-﻿namespace Maxsys.ModelCore.Filtering;
+﻿namespace Maxsys.Core.Filtering;
 
-public class FilterRange<T>
+public class RangeFilter<T>
 {
     public T? MinValue { get; set; }
     public T? MaxValue { get; set; }

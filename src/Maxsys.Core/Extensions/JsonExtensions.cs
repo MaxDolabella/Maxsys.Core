@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace System.Text.Json;
+namespace Maxsys.Core.Extensions;
 
 /// <summary>
 /// Provides extension methods for JsonSerializer or string Deserialization.

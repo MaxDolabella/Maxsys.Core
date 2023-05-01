@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
-using Maxsys.ModelCore.Listing;
-using Maxsys.ModelCore.Sorting;
+using Maxsys.Core.Listing;
+using Maxsys.Core.Sorting;
 
-namespace System.Linq;
+namespace Maxsys.Core.Extensions;
 
+/// <summary>
+/// Fornece métodos de extensão para IQueryables
+/// </summary>
 public static partial class IQueryableExtensions
 {
     /// <summary>
@@ -26,7 +31,7 @@ public static partial class IQueryableExtensions
     }
 
     /// <summary>
-    /// Applies pahination to an IQueryable.
+    /// Applies pagination to an IQueryable.
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <param name="source"></param>
@@ -49,8 +54,8 @@ public static partial class IQueryableExtensions
     /// </summary>
     public static IQueryable<T> ApplySort<T>(
         this IQueryable<T> query,
-        IEnumerable<SortFilter>? sortFilters,
-        Func<byte?, Expression<Func<T, dynamic>>> sortSelectorFunc)
+        Func<byte?, Expression<Func<T, dynamic>>> sortSelectorFunc,
+        IEnumerable<SortFilter>? sortFilters)
       where T : class
     {
         if (sortFilters is null || !sortFilters.Any())
@@ -84,16 +89,17 @@ public static partial class IQueryableExtensions
         ISortColumnSelector<T> sortSelector)
       where T : class
     {
-        return ApplySort(query, sortFilters, sortSelector.ColumnSelector);
+        return query.ApplySort(sortSelector.ColumnSelector, sortFilters);
     }
 
     /// <summary>
-    /// Shortcut to <c>query.GroupJoin(...).SelectMany(...)</c>.
+    /// Shortcut to <c>query.GroupJoin(...).SelectMany(...).Select(...)</c>.
     /// <example>
     /// <code>
-    /// LeftOuterJoin(context.Set&lt;Location&gt;(),
-    /// source => source.InnerId, inner => inner.Id,
-    /// join => new { source = join.Outer, inner = join.Inner })
+    /// locations.LeftOuterJoin(countries,
+    ///     location => location.CountryId,
+    ///     country => country.Id,
+    ///     join => new { Location = join.Outer, Country = join.Inner }) //Country:null
     /// </code>
     /// </example>
     /// </summary>
@@ -118,9 +124,56 @@ public static partial class IQueryableExtensions
             .Select(resultSelector);
     }
 
+
+    /// <summary>
+    /// Atalho para query.GroupJoin(...).Select(...)
+    /// <example>
+    /// <code>
+    /// countries.LeftOuterJoin(location,
+    ///     country => country.Id,
+    ///     location => location.CountryId,
+    ///     join => new { Country = join.Outer, Locations = join.InnerList }) //IEnumerable&lt;Location&gt;
+    /// </code>
+    /// </example>
+    /// </summary>
+    /// <returns></returns>
+    public static IQueryable<TResult> LeftOuterJoin<TSource, TInner, TKey, TResult>(
+        this IQueryable<TSource> outer,
+        IQueryable<TInner> inner,
+        Expression<Func<TSource, TKey>> outerKeySelector,
+        Expression<Func<TInner, TKey>> innerKeySelector,
+        Expression<Func<LeftOuterJoinListResult<TSource, TInner>, TResult>> resultSelector)
+    {
+        return outer.GroupJoin(inner,
+            outerKeySelector,
+            innerKeySelector,
+            (outer, innerList) => new LeftOuterJoinListResult<TSource, TInner>
+            {
+                Outer = outer,
+                InnerList = innerList
+            })
+            .Select(resultSelector);
+    }
+
+    /// <summary>
+    /// Classe auxiliar para realização de Left Outer Join
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TInner"></typeparam>
     public class LeftOuterJoinResult<TSource, TInner>
     {
         public TSource Outer { get; set; }
         public TInner? Inner { get; set; }
+    }
+
+    /// <summary>
+    /// Classe auxiliar para realização de Left Outer Join
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TInner"></typeparam>
+    public class LeftOuterJoinListResult<TSource, TInner>
+    {
+        public TSource Outer { get; set; }
+        public IEnumerable<TInner> InnerList { get; set; }
     }
 }

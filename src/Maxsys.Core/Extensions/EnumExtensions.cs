@@ -1,7 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
 
-namespace System;
+namespace Maxsys.Core.Extensions;
 
 /// <summary>
 /// Provides extension methods to Enums.
@@ -86,7 +87,7 @@ public static class EnumExtensions
         }
         catch (Exception)
         {
-            return default(TEnum?);
+            return default;
         }
     }
 }

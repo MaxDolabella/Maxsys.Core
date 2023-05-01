@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace System;
 
@@ -43,5 +44,20 @@ public static class StringHelper
             contents = contents.Replace(key, replacementDictionary[key]);
 
         return contents;
+    }
+
+    /// <summary>
+    /// Converte um array de bytes em uma string Hexadecimal.
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <returns></returns>
+    public static string ToHexString(this byte[] bytes)
+    {
+        var sb = new StringBuilder();
+
+        foreach (var @byte in bytes)
+            sb.Append(@byte.ToString("x2"));
+
+        return sb.ToString();
     }
 }

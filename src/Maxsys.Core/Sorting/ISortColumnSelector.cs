@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Maxsys.ModelCore.Sorting;
+namespace Maxsys.Core.Sorting;
 
 public interface ISortColumnSelector<T>
 {

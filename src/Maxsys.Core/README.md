@@ -23,6 +23,19 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 ## 🛠 Release notes
 
 
+### [7.3.0](https://www.nuget.org/packages/Maxsys.Core/7.3.0)
+- Estrutura do projeto alterada (pastas físicas).
+- Namespaces de todas classes de extensão (exceto FluentValidation) movidos para Maxsys.Core.Extensions.
+- Refatoração de `IUnitOfWork, IService, IRepository, ServiceBase, InfoDTO` (Id para Key).
+- Refatoração em `IQueryableExtensions`: 
+    - Adicionado método `.LeftOuterJoin()` para Inner List.
+	- Assinatura de `.ApplySort()` alterada.
+- Adicionadas classes Helpers (`HashHelper` e `ReflectionHelper`).
+- Refatoração de `Entity` e `EntityBase` (guid Id).
+- `ValueObject` e `IDialogService` removidos.
+- Atualização de pacotes NUGET (AutoMapper e FluentValidation).
+
+
 ### [7.2.0](https://www.nuget.org/packages/Maxsys.Core/7.2.0)
 - Adicionado método de extensão `ApplyCriteria` em `IQueryableExtensions`. É um atalho para `queryable.ApplySort(...).ApplyCriteria(...)`.
 - Ordem dos genéricos em `IRepository` alterada. Agora `TKey` vem antes de todos.

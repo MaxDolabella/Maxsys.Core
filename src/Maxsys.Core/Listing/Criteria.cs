@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
-using Maxsys.ModelCore.Sorting;
+using Maxsys.Core.Sorting;
 
-namespace Maxsys.ModelCore.Listing;
+namespace Maxsys.Core.Listing;
 
+/// <summary>
+/// Critérios para listagem.
+/// </summary>
 public sealed class Criteria
 {
     public Pagination? Pagination { get; set; } = null;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Maxsys.ModelCore.Filtering;
+namespace Maxsys.Core.Filtering;
 
 /// <summary>
 /// Provides a Filter typification for an object.

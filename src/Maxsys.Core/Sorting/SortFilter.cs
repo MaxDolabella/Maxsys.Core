@@ -1,4 +1,4 @@
-﻿namespace Maxsys.ModelCore.Sorting;
+﻿namespace Maxsys.Core.Sorting;
 
 /// <summary>
 /// Filtro para definir ordenação de uma coluna
@@ -24,5 +24,8 @@ public sealed class SortFilter
     /// </summary>
     public SortDirection Direction { get; set; } = SortDirection.Ascendant;
 
+    /// <summary>
+    /// Representa um <see cref="SortFilter"/> padrão com <see cref="Column"/> = 0 e <see cref="Direction"/> = <see cref="SortDirection.Ascendant"/>.
+    /// </summary>
     public static readonly SortFilter DEFAULT_SORT = new() { Column = 0, Direction = SortDirection.Ascendant };
 }

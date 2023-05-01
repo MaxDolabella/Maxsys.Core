@@ -5,8 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 #endif
 
 using System.Collections.ObjectModel;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
-namespace System.Collections.Generic;
+namespace Maxsys.Core.Extensions;
 
 /// <summary>
 /// Contains extension methods for <see cref="IEnumerable{T}"/> classes.

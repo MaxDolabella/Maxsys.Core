@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 
-namespace Maxsys.DataCore.Interfaces;
+namespace Maxsys.Core.Data.Interfaces;
 
 /// <summary>
 /// Provides an interface to wraps a database transaction.
@@ -48,10 +48,4 @@ public interface IUnitOfWork : IDisposable
     /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
 
     Task<ValidationResult> CommitAsync(CancellationToken token = default);
-
-    /// <summary>
-    /// Discards all changes made to the database in the current transaction asynchronously.
-    /// </summary>
-    /// <param name="token">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
-    ValueTask RollbackAsync(CancellationToken token = default);
 }
