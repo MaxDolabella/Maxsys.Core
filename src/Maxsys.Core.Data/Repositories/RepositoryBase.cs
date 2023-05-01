@@ -6,16 +6,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Maxsys.DataCore.Interfaces;
-using Maxsys.ModelCore.Filtering;
-using Maxsys.ModelCore.Listing;
-using Maxsys.ModelCore.Sorting;
+using Maxsys.Core.Data.Interfaces;
+using Maxsys.Core.Extensions;
+using Maxsys.Core.Filtering;
+using Maxsys.Core.Listing;
+using Maxsys.Core.Sorting;
 using Microsoft.EntityFrameworkCore;
 
 namespace Maxsys.Core.Data;
 
 /// <inheritdoc cref="IRepository"/>
-public abstract class RepositoryBase<TContext> : IRepository, IDisposable
+public abstract class RepositoryBase<TContext> : IRepository
     where TContext : DbContext
 {
     #region FIELDS
@@ -52,7 +53,7 @@ public abstract class RepositoryBase<TContext> : IRepository, IDisposable
 public abstract class RepositoryBase<TContext, TKey, TEntity> : RepositoryBase<TContext>, IRepository<TKey, TEntity>
     where TContext : DbContext
     where TKey : notnull
-    where TEntity : class
+    where TEntity : Entity<TKey>
 {
     protected readonly DbSet<TEntity> DbSet;
 
@@ -135,24 +136,12 @@ public abstract class RepositoryBase<TContext, TKey, TEntity> : RepositoryBase<T
         return true;
     }
 
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(bool @readonly = true, CancellationToken cancellation = default)
-    {
-        if (cancellation.IsCancellationRequested)
-            throw new OperationCanceledException(cancellation);
-
-        var query = await GetQueryable(null, @readonly);
-
-        return await query.ToListAsync(cancellation);
-    }
-
     public async ValueTask<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate, bool @readonly = true, CancellationToken cancellation = default)
     {
         if (cancellation.IsCancellationRequested)
             throw new OperationCanceledException(cancellation);
 
         var query = await GetQueryable(predicate, @readonly);
-
-        //System.Diagnostics.Debug.Write(query.ToQueryString());
 
         return await query.ToListAsync(cancellation);
     }
@@ -200,11 +189,13 @@ public abstract class RepositoryBase<TContext, TKey, TEntity> : RepositoryBase<T
 }
 
 /// <inheritdoc cref="IRepository{TKey, TEntity, TFilter}"/>
-public abstract class RepositoryBase<TContext, TKey, TEntity, TFilter> : RepositoryBase<TContext, TKey, TEntity>, IRepository<TKey, TEntity, TFilter>
+public abstract class RepositoryBase<TContext, TKey, TEntity, TFilter>
+    : RepositoryBase<TContext, TKey, TEntity>
+    , IRepository<TKey, TEntity, TFilter>
     where TContext : DbContext
     where TKey : notnull
-    where TEntity : class
-    where TFilter : IFilter<TEntity>
+    where TEntity : Entity<TKey>
+    where TFilter : class, IFilter<TEntity>
 {
     protected readonly IMapper _mapper;
 
@@ -218,8 +209,29 @@ public abstract class RepositoryBase<TContext, TKey, TEntity, TFilter> : Reposit
 
     #endregion CONSTRUCTOR
 
+    /// <summary>
+    /// Método para mapear um IQueryable&lt;<typeparamref name="TEntity"/>&gt; para um
+    /// IQueryable&lt;<typeparamref name="TDestination"/>&gt; aplicando filtro quando disponibilizado.
+    /// </summary>
+    /// <typeparam name="TDestination"></typeparam>
+    /// <param name="predicate"></param>
+    /// <param name="cancellation"></param>
+    /// <returns></returns>
+    /// <exception cref="OperationCanceledException"></exception>
+    protected async Task<IQueryable<TDestination>> GetMappedQueryableAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellation = default) where TDestination : class
+    {
+        if (cancellation.IsCancellationRequested)
+            throw new OperationCanceledException(cancellation);
+
+        var query = (await GetQueryable(predicate, @readonly: true, cancellation: cancellation))
+            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+
+        return query;
+    }
+
     #region IBaseRepository<TEntity, TFilter>
 
+    /// <inheritdoc />
     public virtual async ValueTask<int> CountAsync(TFilter filters, CancellationToken cancellation = default)
     {
         if (cancellation.IsCancellationRequested)
@@ -228,6 +240,7 @@ public abstract class RepositoryBase<TContext, TKey, TEntity, TFilter> : Reposit
         return await CountAsync(filters.ToExpression(), cancellation);
     }
 
+    /// <inheritdoc />
     public virtual async ValueTask<bool> AnyAsync(TFilter filters, CancellationToken cancellation = default)
     {
         if (cancellation.IsCancellationRequested)
@@ -236,31 +249,24 @@ public abstract class RepositoryBase<TContext, TKey, TEntity, TFilter> : Reposit
         return await AnyAsync(filters.ToExpression(), cancellation);
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> GetAsync<TDestination>(
-        TFilter filters,
-        Criteria criteria,
-        ISortColumnSelector<TDestination> sortColumnSelector,
-        CancellationToken cancellation = default)
-        where TDestination : class
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<TDestination>> GetMappedAsync<TDestination>(TFilter filters, Criteria criteria, ISortColumnSelector<TDestination> sortColumnSelector, CancellationToken cancellation = default) where TDestination : class
     {
-        if (cancellation.IsCancellationRequested)
-            throw new OperationCanceledException(cancellation);
+        var query = await GetMappedQueryableAsync<TDestination>(filters.ToExpression(), cancellation);
 
-        var query = (await GetQueryable(filters.ToExpression(), cancellation: cancellation))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
-            .ApplySort(criteria.Sorts, sortColumnSelector)
-            .ApplyPagination(criteria.Pagination);
-
-        return await query.ToListAsync(cancellation);
+        return await query.ApplyCriteria(criteria, sortColumnSelector).ToListAsync(cancellation);
     }
 
-    public virtual async Task<TDestination?> GetFirstAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellation = default) where TDestination : class
+    /// <inheritdoc />
+    public async Task<TDestination?> GetFirstMappedAsync<TDestination>(TFilter filters, CancellationToken cancellation = default) where TDestination : class
     {
-        if (cancellation.IsCancellationRequested)
-            throw new OperationCanceledException(cancellation);
+        return await GetFirstMappedAsync<TDestination>(filters.ToExpression(), cancellation);
+    }
 
-        var query = (await GetQueryable(predicate, cancellation: cancellation))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+    /// <inheritdoc />
+    public async Task<TDestination?> GetFirstMappedAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellation = default) where TDestination : class
+    {
+        var query = await GetMappedQueryableAsync<TDestination>(predicate, cancellation);
 
         return await query.FirstOrDefaultAsync(cancellation);
     }
@@ -268,54 +274,54 @@ public abstract class RepositoryBase<TContext, TKey, TEntity, TFilter> : Reposit
     #endregion IBaseRepository<TEntity, TFilter>
 }
 
-public abstract class RepositoryBase<TContext, TKey, TEntity, TJoin, TFilter> : RepositoryBase<TContext, TKey, TEntity, TFilter>, IRepository<TKey, TEntity, TFilter>
-    where TContext : DbContext
-    where TKey : notnull
-    where TEntity : class
-    where TJoin : class
-    where TFilter : IFilter<TEntity>
-{
-    #region CONSTRUCTOR
+//public abstract class RepositoryBase<TContext, TKey, TEntity, TJoin, TFilter> : RepositoryBase<TContext, TKey, TEntity, TFilter>, IRepository<TKey, TEntity, TFilter>
+//    where TContext : DbContext
+//    where TKey : notnull
+//    where TEntity : class
+//    where TJoin : class
+//    where TFilter : IFilter<TEntity>
+//{
+//    #region CONSTRUCTOR
 
-    public RepositoryBase(TContext context, IMapper mapper)
-        : base(context, mapper)
-    {
-    }
+//    public RepositoryBase(TContext context, IMapper mapper)
+//        : base(context, mapper)
+//    {
+//    }
 
-    #endregion CONSTRUCTOR
+//    #endregion CONSTRUCTOR
 
-    #region IBaseRepository<TEntity, TFilter>
+//    #region IBaseRepository<TEntity, TFilter>
 
-    public override async Task<IReadOnlyList<TDestination>> GetAsync<TDestination>(
-        TFilter filters,
-        Criteria criteria,
-        ISortColumnSelector<TDestination> sortColumnSelector,
-        CancellationToken cancellation = default)
-        where TDestination : class
-    {
-        if (cancellation.IsCancellationRequested)
-            throw new OperationCanceledException(cancellation);
+//    public override async Task<IReadOnlyList<TDestination>> GetAsync<TDestination>(
+//        TFilter filters,
+//        Criteria criteria,
+//        ISortColumnSelector<TDestination> sortColumnSelector,
+//        CancellationToken cancellation = default)
+//        where TDestination : class
+//    {
+//        if (cancellation.IsCancellationRequested)
+//            throw new OperationCanceledException(cancellation);
 
-        var query = (await GetJoinQueryable(filters.ToExpression(), true, cancellation))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
-            .ApplySort(criteria.Sorts, sortColumnSelector)
-            .ApplyPagination(criteria.Pagination);
+//        var query = (await GetJoinQueryable(filters.ToExpression(), true, cancellation))
+//            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
+//            .ApplySort(criteria.Sorts, sortColumnSelector)
+//            .ApplyPagination(criteria.Pagination);
 
-        return await query.ToListAsync(cancellation);
-    }
+//        return await query.ToListAsync(cancellation);
+//    }
 
-    public override async Task<TDestination?> GetFirstAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellation = default) where TDestination : class
-    {
-        if (cancellation.IsCancellationRequested)
-            throw new OperationCanceledException(cancellation);
+//    public override async Task<TDestination?> GetFirstAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellation = default) where TDestination : class
+//    {
+//        if (cancellation.IsCancellationRequested)
+//            throw new OperationCanceledException(cancellation);
 
-        var query = (await GetJoinQueryable(predicate, true, cancellation))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+//        var query = (await GetJoinQueryable(predicate, true, cancellation))
+//            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
 
-        return await query.FirstOrDefaultAsync(cancellation);
-    }
+//        return await query.FirstOrDefaultAsync(cancellation);
+//    }
 
-    #endregion IBaseRepository<TEntity, TFilter>
+//    #endregion IBaseRepository<TEntity, TFilter>
 
-    protected abstract ValueTask<IQueryable<TJoin>> GetJoinQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool @readonly = true, CancellationToken cancellation = default);
-}
+//    protected abstract ValueTask<IQueryable<TJoin>> GetJoinQueryable(Expression<Func<TEntity, bool>>? predicate = null, bool @readonly = true, CancellationToken cancellation = default);
+//}

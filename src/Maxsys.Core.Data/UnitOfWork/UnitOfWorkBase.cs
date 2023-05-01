@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
-using Maxsys.DataCore.Interfaces;
+using Maxsys.Core.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -54,20 +54,20 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
         }
 
         _semaphore++;
-        _logger.LogInformation("Transaction Semaphore={semaphore}.", _semaphore);
+        _logger.LogDebug("Transaction Semaphore={semaphore}.", _semaphore);
     }
 
     /// <inheritdoc/>
     public async ValueTask CommitTransactionAsync(CancellationToken cancellation = default)
     {
         _semaphore--;
-        _logger.LogInformation("Transaction Semaphore={semaphore}.", _semaphore);
+        _logger.LogInformation("Commiting Transaction | Semaphore[{semaphore}].", _semaphore);
 
         if (cancellation.IsCancellationRequested)
             await RollbackTransactionAsync(CancellationToken.None);
         else if (_semaphore == 0 && Transaction is not null)
         {
-            _logger.LogInformation("Commiting Transaction.");
+            _logger.LogInformation("Commiting Transaction (In fact).");
             await Transaction.CommitAsync(cancellation);
         }
     }
@@ -79,6 +79,7 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
             return;
 
         _semaphore = 0;
+        _logger.LogInformation("Rolling back Transaction | Semaphore[{semaphore}].", _semaphore);
 
         if (Transaction is not null)
         {
@@ -90,23 +91,29 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
     /// <inheritdoc/>
     public async Task<ValidationResult> CommitAsync(CancellationToken cancellation = default)
     {
+        _logger.LogInformation("Saving changes...");
+
         var result = new ValidationResult();
 
         try
         {
             if (cancellation.IsCancellationRequested)
-                return result.AddError("Cancelled operation");
+            {
+                _logger.LogWarning("Operation Cancelled.");
+                return result.AddError("Operation Cancelled.");
+            }
 
-            _ = await _context.SaveChangesAsync(cancellation);
+            var changes = await _context.SaveChangesAsync(cancellation);
+            _logger.LogInformation("Changes: [{changes}]", changes);
 
             _context.ChangeTracker.Clear();
         }
         catch (Exception ex)
         {
-            await RollbackAsync(CancellationToken.None);
+            _logger.LogError(ex, "Error while saving changes.");
+            result.AddException(ex, "Error while saving changes.");
 
-            _logger.LogError(ex, "Error at commit.");
-            result.AddException(ex, "Error at commit.");
+            await RollbackAsync(CancellationToken.None);
         }
 
         return result;
@@ -115,7 +122,7 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
     /// <inheritdoc/>
     public ValueTask RollbackAsync(CancellationToken cancellation = default)
     {
-        _logger.LogWarning("Applying Rollback.");
+        _logger.LogWarning("Applying (manual) Rollback.");
 
         var changedEntries = _context.ChangeTracker.Entries()
             .Where(x => x.State != EntityState.Unchanged);

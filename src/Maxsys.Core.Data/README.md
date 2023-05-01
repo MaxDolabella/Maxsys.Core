@@ -14,11 +14,17 @@ O framework de destino utilizado é o `.NET 7.0`.
 ## ⛓ Dependências
 
 
-- [Maxsys.Core (7.2.0)](https://www.nuget.org/packages/Maxsys.Core/7.2.0)
+- [Maxsys.Core (7.3.0)](https://www.nuget.org/packages/Maxsys.Core/7.3.0)
 - [Microsoft.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore/)
 
 
 ## 🛠 Release notes
+
+### [7.1.0](https://www.nuget.org/packages/Maxsys.Core.Data/7.1.0)
+- Atualização de pacotes NUGET (`Maxsys.Core` e `Microsoft.EntityFrameworkCore`).
+- Alteração de namespace em `IoCExtensions`.
+- `RepositoryBase` refatorado (adequação às alterações em `Maxsys.Core`).
+- Adicionado log em `UnitOfWorkBase`.
 
 ### [7.0.0](https://www.nuget.org/packages/Maxsys.Core.Data/7.0.0)
 - Commit Inicial com implementações de `IUnitOfWork` e `IRepository`
