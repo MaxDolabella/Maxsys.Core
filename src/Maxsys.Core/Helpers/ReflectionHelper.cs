@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Reflection;
 
 namespace Maxsys.Core.Helpers;
@@ -13,12 +10,12 @@ public static class ReflectionHelper
 {
     /// <summary>
     /// Obtém um dicionário com as interfaces públicas que herdam da interface <typeparamref name="TInterface"/> como Key,
-    /// sua implementação como Value. As interfaces e implementações serão obtidas a partir dos assemblies <paramref name="assemblies"/>.
-    /// Caso <paramref name="suffix"/> diferente de nulo, somente serão obtidas interfaces e implementações com o sufixo passado como parâmetro.<br/>
+    /// sua implementação como Value, a partir dos <paramref name="assemblies"/> referenciados
+    /// e, caso <paramref name="suffix"/> diferente de nulo, que terminam com o sufixo passado como parâmetro (interface e implementação).<br/>
     /// ATENÇÃO: Interfaces sem implementações serão ignoradas.
     /// </summary>
     /// <typeparam name="TInterface"></typeparam>
-    /// <param name="assemblies">assemblies de onde serão obtidas as intefaces e implementações.</param>
+    /// <param name="assemblies"></param>
     /// <param name="suffix"></param>
     /// <returns></returns>
     public static IReadOnlyDictionary<Type, Type> GetImplementationDictionary<TInterface>(Assembly[] assemblies, string? suffix = null) where TInterface : class
@@ -27,17 +24,17 @@ public static class ReflectionHelper
     }
 
     /// <summary>
-    /// Obtém um dicionário com as interfaces públicas que herdam da interface <typeparamref name="TInterface"/> como Key,
-    /// sua implementação como Value. As interfaces serão obtidas a partir dos assemblies <paramref name="interfaceAssemblies"/> e as implementações são
-    /// dos assemblies <paramref name="implementationAssemblies"/>.
-    /// Caso <paramref name="suffix"/> diferente de nulo, somente serão obtidas interfaces e implementações com o sufixo passado como parâmetro.<br/>
-    /// ATENÇÃO: Interfaces sem implementações serão ignoradas.
+    /// Obtém um dicionário com as interfaces públicas que herdam da interface <typeparamref name="TInterface"/> como Key, suas implementações como Value.<br/>
+    /// As interfaces herdadas de <typeparamref name="TInterface"/> são buscados nos assemblies <paramref name="interfaceAssemblies"/>.<br/>
+    /// As implementações dessas interfaces são buscadas nos assemblies <paramref name="implementationAssemblies"/>.<br/>
+    /// Caso <paramref name="suffix"/> diferente de nulo, somente interfaces e implementações terminadas com esse sufixo serão buscadas.
     /// </summary>
-    /// <typeparam name="TInterface"></typeparam>
-    /// <param name="interfaceAssemblies">assemblies de onde serão obtidas as intefaces.</param>
-    /// <param name="implementationAssemblies">assemblies de onde serão obtidas as implementações.</param>
-    /// <param name="suffix"></param>
-    /// <returns></returns>
+    /// <remarks>ATENÇÃO: Interfaces sem implementações serão ignoradas.</remarks>
+    /// <typeparam name="TInterface">O tipo do serviço a ser registrado.</typeparam>
+    /// <param name="interfaceAssemblies">os assemblies de onde serão obtidas as interfaces.</param>
+    /// <param name="implementationAssemblies">os assemblies de onde serão obtidas as implementações.</param>
+    /// <param name="suffix">O sufixo das interfaces e implementações a serem registrados.</param>
+    /// <returns>um dicionário de interface e implementação</returns>
     public static IReadOnlyDictionary<Type, Type> GetImplementationDictionary<TInterface>(Assembly[] interfaceAssemblies, Assembly[] implementationAssemblies, string? suffix = null) where TInterface : class
     {
         var interfaces = GetInterfaces<TInterface>(interfaceAssemblies, suffix);
@@ -60,7 +57,7 @@ public static class ReflectionHelper
     }
 
     /// <summary>
-    /// Obtém as interfaces públicas que herdam da interface <typeparamref name="TInterface"/>
+    /// Obtém as interfaces públicas não obsoletas que herdam da interface <typeparamref name="TInterface"/>
     /// a partir dos <paramref name="assemblies"/> referenciados
     /// e, caso <paramref name="suffix"/> diferente de nulo, que terminam com o sufixo passado como parâmetro.
     /// </summary>
@@ -74,11 +71,12 @@ public static class ReflectionHelper
             .Where(t => t.IsInterface)
             .Where(t => t.IsAssignableTo(typeof(TInterface)))
             .Where(t => suffix is null || t.Name.EndsWith(suffix))
+            .Where(t => t.GetCustomAttribute<ObsoleteAttribute>() == null)
             .ToList();
     }
 
     /// <summary>
-    /// Obtém as classes públicas não abtratas que implementam a interface <typeparamref name="TInterface"/>
+    /// Obtém as classes públicas não obsoletas e não abtratas que implementam a interface <typeparamref name="TInterface"/>
     /// a partir dos <paramref name="assemblies"/> referenciados
     /// e, caso <paramref name="suffix"/> diferente de nulo, que terminam com o sufixo passado como parâmetro.
     /// </summary>
@@ -92,6 +90,7 @@ public static class ReflectionHelper
             .Where(t => t.IsClass && !t.IsAbstract)
             .Where(t => t.IsAssignableTo(typeof(TInterface)))
             .Where(t => suffix is null || t.Name.EndsWith(suffix))
+            .Where(t => t.GetCustomAttribute<ObsoleteAttribute>() == null)
             .ToList();
     }
 }

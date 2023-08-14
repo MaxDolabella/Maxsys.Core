@@ -3,29 +3,29 @@
 namespace Maxsys.Core.Sorting;
 
 /// <summary>
-/// Direction of the sort. Can be Ascendant or Descendant
+/// SortDirection
 /// <list type="bullet">
 /// <item>
 ///     <term>1. <see cref="Ascendant"/></term>
-///     <description>Ascendant.</description>
+///     <description>Ascendente.</description>
 /// </item>
 /// <item>
 ///     <term>2. <see cref="Descendant"/></term>
-///     <description>Descendant.</description>
+///     <description>Descendente.</description>
 /// </item>
 /// </list>
 /// </summary>
 public enum SortDirection : byte
 {
     /// <summary>
-    /// Ascendant
+    /// Ascendente
     /// </summary>
-    [Description("Ascendant")]
+    [Description("Ascendente")]
     Ascendant = 1,
 
     /// <summary>
-    /// Descendant
+    /// Descendente
     /// </summary>
-    [Description("Descendant")]
+    [Description("Descendente")]
     Descendant = 2
 }

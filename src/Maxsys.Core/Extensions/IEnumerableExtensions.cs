@@ -1,13 +1,8 @@
-﻿#if NET5_0_OR_GREATER
-
-using System.Diagnostics.CodeAnalysis;
-
-#endif
-
-using System.Collections.ObjectModel;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Maxsys.Core.Extensions;
 
@@ -16,23 +11,6 @@ namespace Maxsys.Core.Extensions;
 /// </summary>
 public static class IEnumerableExtensions
 {
-#if NETSTANDARD2_0
-
-    /// <summary>
-    /// Determines whether an IEnumerable is structurally equal to the current instance.
-    /// </summary>
-    /// <typeparam name="T">The type of objects in IEnumerable.</typeparam>
-    /// <param name="array">current IEnumerable instance</param>
-    /// <param name="otherArray">The IEnumerable to compare with the current instance.</param>
-    /// <returns>true if the two IEnumerable are structurally equal; otherwise, false.</returns>
-    public static bool ArrayEquals<T>(this IEnumerable<T> array, IEnumerable<T> otherArray)
-    {
-        return !(otherArray is null)
-            && (array as IStructuralEquatable).Equals(otherArray, StructuralComparisons.StructuralEqualityComparer);
-    }
-
-#elif NET5_0_OR_GREATER
-
     /// <summary>
     /// Determines whether an IEnumerable is structurally equal to the current instance.
     /// </summary>
@@ -51,8 +29,6 @@ public static class IEnumerableExtensions
         return (array as IStructuralEquatable)?.Equals(otherArray
             , StructuralComparisons.StructuralEqualityComparer) == true;
     }
-
-#endif
 
     /// <summary>
     ///  Creates an <see cref="ObservableCollection{TSource}"/> from an <see cref="IEnumerable{TSource}"/>.

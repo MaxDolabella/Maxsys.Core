@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>net7.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <Version>7.3.0</Version>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  
+    <Version>9.0.0-beta</Version>
     <Authors>Max Dolabella</Authors>
     <Company>Maxsys Tech</Company>
     <Description>Core para aplicações Maxsys (.Net 7)</Description>
@@ -15,17 +17,7 @@
     <PackageId>Maxsys.Core</PackageId>
     <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
     <PackageReleaseNotes>
-		7.3.0
-		- Estrutura do projeto alterada (pastas físicas).
-		- Namespaces de todas classes de extensão (exceto FluentValidation) movidos para Maxsys.Core.Extensions.
-		- Refatoração de IUnitOfWork, IService, IRepository, ServiceBase, InfoDTO (Id para Key).
-		- Refatoração em IQueryableExtensions: 
-		    - Adicionado método LeftOuterJoin para Inner List.
-			- Assinatura de ApplySort alterada.
-		- Adicionadas classes Helpers (HashHelper e ReflectionHelper).
-		- Refatoração de Entity e EntityBase (guid Id).
-		- ValueObject e IDialogService removidos.
-		- Atualização de pacotes NUGET (AutoMapper e FluentValidation).
+		
 	</PackageReleaseNotes>
     <PackageIcon>maxsys-core.png</PackageIcon>
     <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
@@ -35,16 +27,21 @@
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
+	<ItemGroup>
+		<Using Include="Maxsys.Core" />
+		<Using Remove="System.IO" />
+	</ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="FluentValidation" Version="11.5.2" />
+    <PackageReference Include="FluentValidation" Version="11.6.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
   
 
   <ItemGroup>
+    <None Include="..\..\.editorconfig" Link=".editorconfig" />
     <None Include="LICENSE" Pack="true" PackagePath="" />
     <None Include="README.md">
       <Pack>True</Pack>

@@ -1,128 +1,106 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
-using Maxsys.Core.Data.Interfaces;
+using Maxsys.Core.Interfaces.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Maxsys.Core.Data;
 
-/// <summary>
-/// Provides an abstract object to wraps a database transaction.
-/// This class implements <see cref="IUnitOfWork"/> and <see cref="System.IDisposable"/>
-/// to allow use inside using blocks, and
-/// should automatically close the database transaction (without saving) when disposed.
-/// </summary>
-public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
-    where TContext : DbContext
+/// <inheritdoc cref="IUnitOfWork"/>
+public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : DbContext
 {
-    /// <inheritdoc/>
-    public Guid Id { get; } = Guid.NewGuid();
-
-    /// <inheritdoc/>
-    public Guid ContextId { get; }
-
-    private readonly ILogger _logger;
-    private readonly TContext _context;
-    private int _semaphore = 0;
+    protected readonly ILogger _logger;
+    protected readonly TContext _context;
+    protected int _semaphore = 0;
     private IDbContextTransaction? Transaction { get; set; }
 
-    /// <summary>
-    /// Constructor for EFUnitOfWork
-    /// </summary>
-    /// <param name="logger"></param>
-    /// <param name="context"></param>
+    public Guid Id { get; } = Guid.NewGuid();
+    public Guid ContextId { get; }
+
     protected UnitOfWorkBase(ILogger<UnitOfWorkBase<TContext>> logger, TContext context)
     {
         _logger = logger;
         _context = context;
-
         ContextId = context.ContextId.InstanceId;
     }
 
-    /// <inheritdoc/>
-    public async ValueTask BeginTransactionAsync(CancellationToken cancellation = default)
+    /// <inheritdoc cref="IUnitOfWork"/>
+    public virtual async ValueTask BeginTransactionAsync(string? name = null, CancellationToken token = default)
     {
+        var transactionName = string.IsNullOrWhiteSpace(name) ? Guid.NewGuid().ToString() : name;
+
         if (_semaphore == 0)
         {
-            _logger.LogInformation("Beginning a new transaction.");
-            Transaction = /*_context.Database.CurrentTransaction ??*/ await _context.Database.BeginTransactionAsync(cancellation);
+            _logger.LogInformation("Beginning a new transaction...");
+
+            Transaction = /*_context.Database.CurrentTransaction ??*/ await _context.Database.BeginTransactionAsync(token);
         }
 
         _semaphore++;
-        _logger.LogDebug("Transaction Semaphore={semaphore}.", _semaphore);
+        _logger.LogInformation("Transaction[{name}] | Semaphore[{semaphore}]", transactionName, _semaphore);
     }
 
-    /// <inheritdoc/>
-    public async ValueTask CommitTransactionAsync(CancellationToken cancellation = default)
+    /// <inheritdoc cref="IUnitOfWork"/>
+    public virtual async ValueTask CommitTransactionAsync(CancellationToken token = default)
     {
+        if (token.IsCancellationRequested)
+            await RollbackTransactionAsync(CancellationToken.None);
+
         _semaphore--;
+
         _logger.LogInformation("Commiting Transaction | Semaphore[{semaphore}].", _semaphore);
 
-        if (cancellation.IsCancellationRequested)
-            await RollbackTransactionAsync(CancellationToken.None);
-        else if (_semaphore == 0 && Transaction is not null)
+        if (_semaphore == 0 && Transaction is not null)
         {
-            _logger.LogInformation("Commiting Transaction (In fact).");
-            await Transaction.CommitAsync(cancellation);
+            _logger.LogInformation("Commiting Transaction");
+            await Transaction.CommitAsync(token);
         }
     }
 
-    /// <inheritdoc/>
-    public async ValueTask RollbackTransactionAsync(CancellationToken cancellation = default)
+    /// <inheritdoc cref="IUnitOfWork"/>
+    public virtual async ValueTask RollbackTransactionAsync(CancellationToken cancellation = default)
     {
         if (cancellation.IsCancellationRequested)
             return;
 
-        _semaphore = 0;
         _logger.LogInformation("Rolling back Transaction | Semaphore[{semaphore}].", _semaphore);
 
-        if (Transaction is not null)
+        if (Transaction is not null && _semaphore != 0)
         {
-            _logger.LogWarning("Applying Transaction Rollback.");
+            _logger.LogWarning("Rolling back Transaction...");
             await Transaction.RollbackAsync(CancellationToken.None);
         }
+
+        _semaphore = 0;
     }
 
-    /// <inheritdoc/>
-    public async Task<ValidationResult> CommitAsync(CancellationToken cancellation = default)
+    /// <inheritdoc cref="IUnitOfWork"/>
+    public virtual async Task<ValidationResult> CommitAsync(CancellationToken cancellation = default)
     {
-        _logger.LogInformation("Saving changes...");
-
         var result = new ValidationResult();
 
         try
         {
-            if (cancellation.IsCancellationRequested)
-            {
-                _logger.LogWarning("Operation Cancelled.");
-                return result.AddError("Operation Cancelled.");
-            }
+            _ = await _context.SaveChangesAsync(cancellation);
 
-            var changes = await _context.SaveChangesAsync(cancellation);
-            _logger.LogInformation("Changes: [{changes}]", changes);
-
-            _context.ChangeTracker.Clear();
+            if (_semaphore == 0)
+                _context.ChangeTracker.Clear();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while saving changes.");
-            result.AddException(ex, "Error while saving changes.");
+            RollBackDBContext();
 
-            await RollbackAsync(CancellationToken.None);
+            _logger.LogError(ex, CommonMessages.ERROR_SAVE);
+            result.AddException(ex, CommonMessages.ERROR_SAVE);
         }
 
         return result;
     }
 
-    /// <inheritdoc/>
-    public ValueTask RollbackAsync(CancellationToken cancellation = default)
+    private void RollBackDBContext()
     {
-        _logger.LogWarning("Applying (manual) Rollback.");
+        _logger.LogWarning("Applying Rollback...");
 
         var changedEntries = _context.ChangeTracker.Entries()
             .Where(x => x.State != EntityState.Unchanged);
@@ -141,17 +119,13 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
         }
 
         _logger.LogWarning("Rollback applied");
-
-        return ValueTask.CompletedTask;
     }
 
     #region DIPOSABLE IMPLEMENTATION
 
-    /// <summary/>
     protected bool _disposed = false;
 
     /// <summary/>
-    /// <param name="disposing"></param>
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
@@ -164,7 +138,7 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork
         _disposed = true;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IDisposable"/>
     public void Dispose()
     {
         Dispose(true);

@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
+using System.Reflection;
 
-namespace Maxsys.Core.Extensions;
+namespace System;
 
 /// <summary>
 /// Provides extension methods to Enums.
@@ -12,26 +11,52 @@ public static class EnumExtensions
     /// <summary>
     /// Converts the value of this instance to its friendly name string representation
     /// provided by a <see cref="DescriptionAttribute"/>.
+    /// <para/>
+    /// <example>
+    /// Example:
+    /// <code>
+    /// public enum SampleEnum : byte
+    /// {
+    ///     [Description("Este é o tipo A")]
+    ///     TipoA = 1,
+    ///
+    ///     [Description("Este é o tipo B")]
+    ///     TipoB,
+    ///
+    ///     // Sem description
+    ///     TipoC = 99
+    /// }
+    /// 
+    /// var enumA = SampleEnum.TipoA;
+    /// var enumC = SampleEnum.TipoC;
+    /// var enumNull = default(SampleEnum?);
+    /// var enumError = (SampleEnum)77;
+    /// 
+    /// Console.WriteLine(enumA.ToFriendlyName());              // "Este é o tipo A"
+	/// Console.WriteLine(enumC.ToFriendlyName());              // "TipoC"
+	/// Console.WriteLine(enumNull.ToFriendlyName());           // null
+	/// Console.WriteLine(enumNull.ToFriendlyName(""));         // ""
+	/// Console.WriteLine(enumNull.ToFriendlyName("Nenhum"));   // "Nenhum"
+	/// Console.WriteLine(enumError.ToFriendlyName());          // "77"
+    /// </code>
+    ///
+    /// </example>
     /// </summary>
-    /// <param name="value">An  <typeparamref name="T"/> value.</param>
-    /// <param name="defaultValue">a default value for an invalid enum.</param>
+    /// <param name="value">An enum value.</param>
+    /// <param name="defaultValue"></param>
     /// <returns>The friendly name string representation of the value of this instance.</returns>
     public static string? ToFriendlyName(this Enum? value, string? defaultValue = null)
     {
-        if (value == null)
+        if (value is null)
             return defaultValue;
 
-        var fieldInfo = value?.GetType().GetField(value.ToString());
-
+        var fieldInfo = value.GetType().GetField(value.ToString());
         if (fieldInfo is null)
-            return defaultValue;
+            return value.ToString();
 
-        var attributes = (DescriptionAttribute[])fieldInfo
-            .GetCustomAttributes(typeof(DescriptionAttribute), false);
+        var attDescription = fieldInfo.GetCustomAttribute<DescriptionAttribute>()?.Description;
 
-        return attributes is not null && attributes.Length > 0
-            ? attributes[0].Description
-            : value!.ToString();
+        return attDescription ?? value.ToString();
     }
 
     /// <summary>
@@ -58,7 +83,7 @@ public static class EnumExtensions
             result = Enum.GetValues<TEnum>()
                 .SingleOrDefault(x
                     => x.ToString().ToLower() == text.ToLower()
-                    || x.ToFriendlyName(null)?.ToLower() == text.ToLower());
+                    || x.ToFriendlyName(string.Empty)!.ToLower() == text.ToLower());
         }
         catch (Exception)
         {
@@ -69,25 +94,18 @@ public static class EnumExtensions
     }
 
     /// <summary>
-    /// Obtém um item do enum a partir de um valor <see langword="byte"/> ou nulo caso o enum não seja do tipo byte.
+    /// Obtém um item do enum a partir de um valor byte.
     /// </summary>
     /// <typeparam name="TEnum"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static TEnum? ToByteEnum<TEnum>(this byte? value) where TEnum : Enum
+    public static TEnum ToByteEnum<TEnum>(this byte? value) where TEnum : Enum
     {
-        try
-        {
-            var value2 = value ?? 0;
-            object sort = Enum.IsDefined(typeof(TEnum), value2)
-                ? value2
-                : Enum.GetValues(typeof(TEnum)).Cast<byte>().Min();
+        var value2 = value ?? 0;
+        object sort = Enum.IsDefined(typeof(TEnum), value2)
+            ? value2
+            : Enum.GetValues(typeof(TEnum)).Cast<byte>().Min();
 
-            return (TEnum)sort;
-        }
-        catch (Exception)
-        {
-            return default;
-        }
+        return (TEnum)sort;
     }
 }

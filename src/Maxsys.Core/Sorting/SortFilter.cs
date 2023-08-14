@@ -15,7 +15,7 @@ public sealed class SortFilter
     }
 
     /// <summary>
-    /// é o nome da coluna que se deseja ordenar
+    /// é o valor em byte (item de enum) que representa a coluna que se deseja ordenar
     /// </summary>
     public byte Column { get; set; } = 0;
 

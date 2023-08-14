@@ -3,39 +3,39 @@
 namespace Maxsys.Core.Filtering;
 
 /// <summary>
-/// Used in filtering to define which objects will be retrieve.
+/// SomeEnum
 /// <list type="bullet">
 /// <item>
 ///     <term>0. <see cref="OnlyActives"/></term>
-///     <description>Only Actives.</description>
+///     <description>Somente ativos.</description>
 /// </item>
 /// <item>
 ///     <term>1. <see cref="OnlyInactives"/></term>
-///     <description>Only Inactives.</description>
+///     <description>Somente inativos.</description>
 /// </item>
 /// <item>
 ///     <term>2. <see cref="All"/></term>
-///     <description>All.</description>
+///     <description>Ativos e inativos.</description>
 /// </item>
 /// </list>
 /// </summary>
 public enum ActiveTypes : byte
 {
     /// <summary>
-    /// Only Actives
+    /// Somente ativos
     /// </summary>
-    [Description("Only Actives")]
+    [Description("Somente ativos")]
     OnlyActives = 0,
 
     /// <summary>
-    /// Only Inactives
+    /// Somente inativos
     /// </summary>
-    [Description("Only Inactives")]
-    OnlyInactives = 1,
+    [Description("Somente inativos")]
+    OnlyInactives,
 
     /// <summary>
-    /// All
+    /// Ativos e inativos
     /// </summary>
-    [Description("All")]
+    [Description("Ativos e inativos")]
     All
 }

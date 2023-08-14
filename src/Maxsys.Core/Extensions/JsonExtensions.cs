@@ -1,13 +1,10 @@
-﻿using System;
+﻿using System.Collections;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Maxsys.Core.Extensions;
 
-/// <summary>
-/// Provides extension methods for JsonSerializer or string Deserialization.
-/// </summary>
 public static class JsonExtensions
 {
     /// <summary>
@@ -20,6 +17,16 @@ public static class JsonExtensions
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
+    private static Stream GenerateStreamFromString(string s)
+    {
+        var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+        writer.Write(s);
+        writer.Flush();
+        stream.Position = 0;
+        return stream;
+    }
+
     /// <summary>
     /// Converte uma string json em um objeto <typeparamref name="T"/>. <para/>
     /// Caso o json seja nulo ou inválido, ou ocorra um erro na conversão, retorna um valor padrão não nulo <br/>
@@ -28,47 +35,12 @@ public static class JsonExtensions
     /// <typeparam name="T"></typeparam>
     /// <param name="json"></param>
     /// <param name="defaultValue"></param>
-    /// <param name="options">options to control the behavior during parsing</param>
-    /// <returns></returns>
-    /// <exception cref="JsonException"></exception>
-    public static T Deserialize<T>(this string? json, T? defaultValue = null, JsonSerializerOptions? options = null)
-        where T : class
-    {
-        T? result = default;
-
-        if (json is not null)
-        {
-            try
-            {
-                result = JsonSerializer.Deserialize<T>(json, options ?? JSON_DEFAULT_OPTIONS);
-            }
-            catch (Exception ex)
-            {
-                if (defaultValue is null)
-                    throw new JsonException("Error converting from string.Deserialize() extension method", ex);
-            }
-        }
-
-        return result is not null
-            ? result
-            : defaultValue is not null
-                ? defaultValue
-                : throw new JsonException("Error converting from string.Deserialize(). Default value cannot be null when deserialization result is null.");
-    }
-
-    /// <summary>
-    /// Converte uma string json em um objeto <typeparamref name="T"/>. <para/>
-    /// Caso o json seja nulo ou inválido, ou ocorra um erro na conversão, retorna um valor padrão não nulo.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="json"></param>
-    /// <param name="defaultValue"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static T Deserialize<T>(this string? json, T defaultValue)
+    public static T FromJson<T>(this string? json, T defaultValue)
     {
         if (defaultValue is null)
-            throw new ArgumentNullException(nameof(defaultValue), "Default Value cannot be null.");
+            throw new ArgumentNullException(nameof(defaultValue), "Valor default não pode ser nulo.");
 
         T? result = default;
         if (json is not null)
@@ -84,44 +56,126 @@ public static class JsonExtensions
     }
 
     /// <summary>
-    /// Converte uma string json em um objeto <typeparamref name="T"/>. <para/>
-    /// Caso o json seja nulo ou inválido, ou ocorra um erro na conversão, retorna um instância padrão de <typeparamref name="T"/>.
+    /// Converte uma string json em um objeto <typeparamref name="T"/>.<para/>
+    /// Caso o json seja nulo ou inválido, ou ocorra um erro na conversão, retorna um array vazio,
+    /// uma lista vazia ou o objeto inicializado com um CTOR vazio.<br/>
+    /// Caso o objeto não seja um array/lista e não tenha um CTOR vazio, uma exception é lançada.<br/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="json"></param>
-    /// <returns></returns>
-    public static T Deserialize<T>(this string? json)
-        where T : new()
+    /// <exception cref="ArgumentNullException"></exception>
+    public static T FromJson<T>(this string? json)
     {
-        T? result = default;
+        object? result = default;
+        var returnType = typeof(T);
+
+        // Array
+        if (returnType.IsArray)
+        {
+            var elementType = returnType.GetElementType()!;
+            var arrayType = elementType.MakeArrayType();
+
+            if (json is not null)
+            {
+                try
+                {
+                    result = JsonSerializer.Deserialize<T>(GenerateStreamFromString(json), JSON_DEFAULT_OPTIONS);
+                }
+                catch { }
+            }
+
+            return (T)(result ?? Array.CreateInstance(arrayType, 0));
+        }
+
+        // IEnumerable
+        if (returnType.IsAssignableTo(typeof(IEnumerable)))
+        {
+            var genericType = returnType.GenericTypeArguments.First();
+            var listType = typeof(List<>).MakeGenericType(new[] { genericType });
+
+            if (json is not null)
+            {
+                try
+                {
+                    result = JsonSerializer.Deserialize(GenerateStreamFromString(json), listType, JSON_DEFAULT_OPTIONS);
+                }
+                catch { }
+            }
+
+            return (T)(IList)(result ?? Activator.CreateInstance(listType)!);
+        }
+
+        // Objeto comum
+        var hasDefaultCtor = returnType.GetConstructor(Type.EmptyTypes) != null;
+        if (!hasDefaultCtor)
+            throw new ArgumentException($"O Tipo {returnType.Name} não é um array, nem uma lista e nem possui construtor vazio.");
+
         if (json is not null)
         {
             try
             {
-                result = JsonSerializer.Deserialize<T>(json, options: JSON_DEFAULT_OPTIONS);
+                result = JsonSerializer.Deserialize(GenerateStreamFromString(json), returnType, JSON_DEFAULT_OPTIONS);
             }
             catch { }
         }
 
-        return result ?? new();
+        return (T)(result ?? Activator.CreateInstance(returnType)!);
     }
 
     /// <summary>
-    /// Converte uma string json em um objeto do tipo passado como parâmetro.<para/>
-    /// Caso o json seja nulo ou inválido, ou ocorra um erro na conversão, retorna um instância padrão do tipo passado como parâmetro.<br/>
-    /// O Tipo passado em <paramref name="returnType"/> precisa possuir um construtor vazio ou uma exception será lançada.
+    /// Converte uma string json em um objeto de acordo com o <paramref name="returnType"/> passado.<para/>
+    /// Caso o json seja nulo ou inválido, ou ocorra um erro na conversão, retorna um array vazio,
+    /// uma lista vazia ou o objeto inicializado com um CTOR vazio.<br/>
+    /// Caso o objeto não seja um array/lista e não tenha um CTOR vazio, uma exception é lançada.<br/>
     /// </summary>
     /// <param name="json"></param>
-    /// <param name="returnType">é o tipo do objeto desserializado. Precisa ser um tipo com construtor vazio ou uma exception será lançada.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public static object Deserialize(this string? json, Type returnType)
+    /// <param name="returnType">o tipo para qual se deseja converter o json</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static object FromJson(this string? json, Type returnType)
     {
+        object? result = default;
+
+        // Array
+        if (returnType.IsArray)
+        {
+            var elementType = returnType.GetElementType()!;
+            var arrayType = elementType.MakeArrayType();
+
+            if (json is not null)
+            {
+                try
+                {
+                    result = JsonSerializer.Deserialize(GenerateStreamFromString(json), arrayType, JSON_DEFAULT_OPTIONS);
+                }
+                catch { }
+            }
+
+            return result ?? Array.CreateInstance(arrayType, 0);
+        }
+
+        // IEnumerable
+        if (returnType.IsAssignableTo(typeof(IEnumerable)))
+        {
+            var genericType = returnType.GenericTypeArguments.First();
+            var listType = typeof(List<>).MakeGenericType(new[] { genericType });
+
+            if (json is not null)
+            {
+                try
+                {
+                    result = JsonSerializer.Deserialize(GenerateStreamFromString(json), listType, JSON_DEFAULT_OPTIONS);
+                }
+                catch { }
+            }
+
+            return result ?? (IList)Activator.CreateInstance(listType)!;
+        }
+
+        // Objeto comum
         var hasDefaultCtor = returnType.GetConstructor(Type.EmptyTypes) != null;
         if (!hasDefaultCtor)
             throw new ArgumentException($"O Tipo {returnType.Name} não possui construtor vazio.");
 
-        object? result = default;
         if (json is not null)
         {
             try
@@ -134,13 +188,15 @@ public static class JsonExtensions
         return result ?? Activator.CreateInstance(returnType)!;
     }
 
-    private static Stream GenerateStreamFromString(string s)
+    /// <summary>
+    /// Converte um objeto do tipo <typeparamref name="T"/> em uma string JSON.<para/>
+    /// Shortcut para <c>JsonSerializer.Serialize(value, options);</c>
+    /// </summary>
+    /// <param name="value">o valor a ser convertido</param>
+    /// <param name="options">options para controlar comportamento da serialização.</param>
+    /// <exception cref="NotSupportedException"/>
+    public static string ToJson<T>(this T? value, JsonSerializerOptions? options = null)
     {
-        var stream = new MemoryStream();
-        var writer = new StreamWriter(stream);
-        writer.Write(s);
-        writer.Flush();
-        stream.Position = 0;
-        return stream;
+        return JsonSerializer.Serialize(value, options ?? JSON_DEFAULT_OPTIONS);
     }
 }

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Maxsys.Core.Filtering;
 
 /// <summary>
-/// Provides a Filter typification for an object.
+/// Interface para tipificar um objeto como um Filtro de obtenção de entidades.
 /// </summary>
 public interface IFilter
 { }
 
 /// <summary>
-/// Provides a Filter typification for an object.
+/// Interface para tipificar um objeto como um Filtro de obtenção de entidades
+/// onde <typeparamref name="TEntity"/> é a entidade do filtro.
 /// </summary>
 public interface IFilter<TEntity> : IFilter
 {
-    /// <summary>
-    /// Converts this filter into a expression to be used with Linq.
-    /// </summary>
-    /// <returns></returns>
-    Expression<Func<TEntity, bool>> ToExpression();
+    List<Expression<Func<TEntity, bool>>> Expressions { get; }
+
+    public void SetExpressions();
 }

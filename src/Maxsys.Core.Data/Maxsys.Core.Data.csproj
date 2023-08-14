@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<Version>7.1.0</Version>
+	<Version>9.0.0-beta</Version>
 	<Authors>Max Dolabella</Authors>
 	<Company>Maxsys Tech</Company>
 	<Description>Data (Core) para aplicações Maxsys (.Net 7)</Description>
@@ -16,11 +16,6 @@
 	<PackageId>Maxsys.Core.Data</PackageId>
 	<PackageTags>maxsys;dotnet;dotnet-core;net7;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;ef-core;</PackageTags>
 	<PackageReleaseNotes>
-		7.1.0
-		- Atualização de pacotes NUGET (Maxsys.Core e Microsoft.EntityFrameworkCore).
-		- Alteração de namespace em IoCExtensions.
-		- RepositoryBase refatorado (adequação às alterações em Maxsys.Core).
-		- Adicionado log em UnitOfWorkBase.
 	</PackageReleaseNotes>
 	<PackageIcon>maxsys-core-data.png</PackageIcon>
 	<ApplicationIcon>maxsys-core-data.ico</ApplicationIcon>
@@ -40,8 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Maxsys.Core" Version="7.3.0" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
   </ItemGroup>
 
 

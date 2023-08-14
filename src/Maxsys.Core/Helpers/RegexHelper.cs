@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel;
 
 namespace Maxsys.Core.Helpers;
 
@@ -9,17 +9,82 @@ public static class RegexHelper
 {
     // accents: àáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ
 
+    /// <summary>
+    /// Flag para representar um ou mais padrões Regex.
+    /// <list type="bullet">
+    /// <item>
+    ///     <term>1. <see cref="Numbers"/></term>
+    ///     <description>Números.</description>
+    /// </item>
+    /// <item>
+    ///     <term>2. <see cref="Letters"/></term>
+    ///     <description>Letras.</description>
+    /// </item>
+    /// <item>
+    ///     <term>4. <see cref="Spaces"/></term>
+    ///     <description>Espaço.</description>
+    /// </item>
+    /// <item>
+    ///     <term>8. <see cref="Hyphen"/></term>
+    ///     <description>Hífen.</description>
+    /// </item>
+    /// <item>
+    ///     <term>16.<see cref="Dots"/></term>
+    ///     <description>Pontuação.</description>
+    /// </item>
+    /// <item>
+    ///     <term>32.<see cref="Commas"/></term>
+    ///     <description>Vírgula.</description>
+    /// </item>
+    /// <item>
+    ///     <term>64.<see cref="Parentesis"/></term>
+    ///     <description>Parêntesis.</description>
+    /// </item>
+    /// </list>
+    /// </summary>
     [Flags]
     public enum Pattern
     {
-        // 0-9
+        /// <summary>
+        /// Adiciona 0-9 ao pattern.
+        /// </summary>
+        [Description("Números")]
         Numbers = 1,
 
+        /// <summary>
+        /// Adiciona "a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ" ao pattern.
+        /// </summary>
+        [Description("Letras")]
         Letters = 2,
+
+        /// <summary>
+        /// Adiciona "\s" ao pattern.
+        /// </summary>
+        [Description("Espaço")]
         Spaces = 4,
+
+        /// <summary>
+        /// Adiciona "\-" ao pattern.
+        /// </summary>
+        [Description("Hífen")]
         Hyphen = 8,
+
+        /// <summary>
+        /// Adiciona "\." ao pattern.
+        /// </summary>
+        [Description("Ponto")]
         Dots = 16,
+
+        /// <summary>
+        /// Adiciona "\," ao pattern.
+        /// </summary>
+        [Description("Vírgula")]
         Commas = 32,
+
+        /// <summary>
+        /// Adiciona "\(\)" ao pattern.
+        /// </summary>
+        [Description("Parêntesis")]
         Parentesis = 64
     }
 
@@ -57,41 +122,6 @@ public static class RegexHelper
     }
 
     #region REGEX
-
-    /// <summary>
-    /// Only numbers (0-9).
-    /// </summary>
-    public const string PATTERN_NUMBERS = @"^[0-9]+$";
-
-    /// <summary>
-    /// Only letters (a-z + accents, ignoring caps)
-    /// </summary>
-    public const string PATTERN_LETTERS = @"^[a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ]+$";
-
-    /// <summary>
-    /// Only letters (a-z + accents, ignoring caps) and numbers
-    /// </summary>
-    public const string PATTERN_LETTERS_NUMBERS = @"^[0-9a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ]+$";
-
-    /// <summary>
-    /// Only letters (a-z + accents, ignoring caps), numbers and spaces
-    /// </summary>
-    public const string PATTERN_LETTERS_NUMBERS_SPACES = @"^[0-9a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ\s]+$";
-
-    /// <summary>
-    /// Only letters (a-z + accents, ignoring caps), numbers and spaces
-    /// </summary>
-    public const string PATTERN_LETTERS_SPACES = @"^[0-9a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ\s]+$";
-
-    /// <summary>
-    /// Only letters (ignore caps), numbers, space and hyphen
-    /// </summary>
-    public const string PATTERN_LETTERS_NUMBERS_SPACES_HYPHENS = @"^[0-9a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ\s\-]+$";
-
-    /// <summary>
-    /// Only letters (ignore caps), numbers, parenthesis, comma, dot, parenspace and hyphen
-    /// </summary>
-    public const string PATTERN_LETTERS_NUMBERS_PARENTHESIS_COMMA_DOT_SPACES_HYPHENS = @"^[0-9a-zA-ZàáéíóúãñõâêôäëïöüçÀÁÉÍÓÚÃÑÕÂÊÔÄËÏÖÜÇ\s\-\(\)\,\.]+$";
 
     /// <summary>
     /// Does work? IDK

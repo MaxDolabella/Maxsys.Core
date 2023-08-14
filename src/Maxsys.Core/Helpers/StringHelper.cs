@@ -1,14 +1,57 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
-namespace System;
+namespace Maxsys.Core.Helpers;
+
 
 /// <summary>
 /// Provides extension methods for strings
 /// </summary>
 public static class StringHelper
 {
+    /// <summary>
+    /// Retorna um texto a partir de outro texto, ou nulo se o texto testado for vazio/nulo
+    /// </summary>
+    public static string? GetTextOrNullIfEmpty(this string? text)
+    {
+        return string.IsNullOrWhiteSpace(text) ? null : text;
+    }
+
+    /// <summary>
+    /// Retorna um número decimal a partir de um texto, ou nulo se o texto testado for vazio/nulo
+    /// </summary>
+    public static decimal? GetDecimalOrNullIfEmpty(this string? text)
+    {
+        return !string.IsNullOrWhiteSpace(text)
+            ? decimal.TryParse(text!, out decimal value) ? value : default(decimal?)
+            : null;
+    }
+
+    /// <summary>
+    /// Retorna uma data a partir de um texto, ou nulo se o texto testado for vazio/nulo
+    /// </summary>
+    public static DateTime? GetDateTimeOrNullIfEmpty(this string? text)
+    {
+        return !string.IsNullOrWhiteSpace(text)
+            ? DateTime.TryParse(text, out DateTime dateTime) ? dateTime : default(DateTime?)
+            : null;
+    }
+
+    /// <summary>
+    /// Converte um array de bytes em uma string Hexadecimal.
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <returns></returns>
+    public static string ToHexString(this byte[] bytes)
+    {
+        var sb = new StringBuilder();
+
+        foreach (var @byte in bytes)
+            sb.Append(@byte.ToString("x2"));
+
+        return sb.ToString();
+    }
+
+
     /// <summary>
     /// Return the text with the first letter in low cap.<para/>
     /// "FirstLetterLowCap" will return "firstLetterLowCap"
@@ -46,18 +89,4 @@ public static class StringHelper
         return contents;
     }
 
-    /// <summary>
-    /// Converte um array de bytes em uma string Hexadecimal.
-    /// </summary>
-    /// <param name="bytes"></param>
-    /// <returns></returns>
-    public static string ToHexString(this byte[] bytes)
-    {
-        var sb = new StringBuilder();
-
-        foreach (var @byte in bytes)
-            sb.Append(@byte.ToString("x2"));
-
-        return sb.ToString();
-    }
 }
