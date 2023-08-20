@@ -22,6 +22,8 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 ## 🛠 Release notes
 
+Atualizando...
+<!--
 
 ### [7.3.0](https://www.nuget.org/packages/Maxsys.Core/7.3.0)
 - Estrutura do projeto alterada (pastas físicas).
@@ -142,6 +144,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações `Windows Forms
 
 ### [1.0.0](https://www.nuget.org/packages/Maxsys.Core/1.0.0)
 - Primeiro lançamento.
+-->
 
 ## ✒️ Autores
 

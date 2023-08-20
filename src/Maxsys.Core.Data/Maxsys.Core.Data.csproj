@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<Version>9.0.0-beta</Version>
+	<Version>9.0.0</Version>
 	<Authors>Max Dolabella</Authors>
 	<Company>Maxsys Tech</Company>
 	<Description>Data (Core) para aplicações Maxsys (.Net 7)</Description>
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
   </ItemGroup>
 
   <ItemGroup>

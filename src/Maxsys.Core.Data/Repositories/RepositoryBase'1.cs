@@ -21,7 +21,7 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
 
     #endregion CONSTRUCTOR
 
-    #region PRIV
+    #region PROT
 
     /// <remarks>
     /// <code>

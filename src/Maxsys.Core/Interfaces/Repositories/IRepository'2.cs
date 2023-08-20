@@ -16,61 +16,57 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
 {
     #region QTD
 
-    /// <summary>
-    /// Obtém uma quantidade de objetos a partir de um filtro.
-    /// </summary>
-    /// <param name="filters"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <summary>NEW</summary>
     ValueTask<int> CountAsync(TFilter filters, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Verifica se existe alguma entidade a partir de um filtro.
-    /// </summary>
-    /// <param name="filters"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <summary>NEW</summary>
     ValueTask<bool> AnyAsync(TFilter filters, CancellationToken cancellationToken = default);
 
     #endregion QTD
 
     #region LIST
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TEntity>> GetListAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default);
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TEntity>> GetListAsync(TFilter filters, ListCriteria criteria, ISortColumnSelector<TEntity> sortColumnSelector, bool @readonly = true, CancellationToken cancellationToken = default);
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TEntity>> GetListAsync(TFilter filters, Pagination? pagination, Expression<Func<TEntity, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, bool @readonly = true, CancellationToken cancellationToken = default);
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default) where TDestination : class;
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, ISortColumnSelector<TDestination> sortColumnSelector, CancellationToken cancellationToken = default) where TDestination : class;
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class;
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TDestination>> GetListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TDestination>> GetListAsync<TDestination>(TFilter filters, ListCriteria criteria, ISortColumnSelector<TDestination> sortColumnSelector, CancellationToken cancellationToken = default) where TDestination : class;
 
+    /// <summary>NEW</summary>
     Task<IReadOnlyList<TDestination>> GetListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class;
 
     #endregion LIST
 
     #region GET
 
+    /// <summary>NEW</summary>
     Task<TEntity?> GetAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default);
 
+    /// <summary>NEW</summary>
     Task<TEntity?> GetAsync<TProperty>(TFilter filters, Expression<Func<TEntity, TProperty>> includeNavigation, bool @readonly = true, CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Obtém a primeira entidade obtida de acordo com o <paramref name="predicate"/> e converte no objeto <typeparamref name="TDestination"/>.
-    /// </summary>
-    /// <typeparam name="TDestination"></typeparam>
-    /// <param name="predicate"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <summary>NEW</summary>
     Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class;
 
+    /// <summary>NEW</summary>
     Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
     #endregion GET

@@ -1,24 +1,19 @@
 ﻿using Maxsys.Core.DTO;
+using Maxsys.Core.Filtering;
 
 namespace Maxsys.Core.Interfaces.Services;
 
-/// <summary>
-/// Uma vez que a implementação dessa interface
-/// utiliza-se de ProjectTo (automapper) na chamada do repositório,
-/// é necessário garantir que os seguintes mapeamentos estão definidos:
-/// <list type="bullet">
-/// <item><description><typeparamref name="TCreateDTO"/> -> Entidade</description></item>
-/// <item><description><typeparamref name="TUpdateDTO"/> -> Entidade</description></item>
-/// </list>
-/// </summary>
-/// <typeparam name="TKey"></typeparam>
-/// <typeparam name="TCreateDTO"></typeparam>
-/// <typeparam name="TUpdateDTO"></typeparam>
-public interface IWriteService<TKey, TCreateDTO, TUpdateDTO> : IService
+public interface IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
+    : IService<TKey, TListDTO, TFormDTO, TFilter>
     where TKey : notnull
+    where TListDTO : class, IDTO
+    where TFormDTO : class, IDTO
     where TCreateDTO : class, IDTO
     where TUpdateDTO : class, IDTO, IKey<TKey>
+    where TFilter : IFilter, new()
 {
+    #region ADD
+
     /// <summary>
     /// Mapeamento necessário: <typeparamref name="TCreateDTO"/> -> Entidade
     /// </summary>
@@ -28,6 +23,10 @@ public interface IWriteService<TKey, TCreateDTO, TUpdateDTO> : IService
     /// Mapeamento necessário: <typeparamref name="TCreateDTO"/> -> Entidade
     /// </summary>
     Task<OperationResultCollection<TCreateDTO>> AddAsync(IEnumerable<TCreateDTO> items, bool stopOnFirstFail = true, CancellationToken cancellation = default);
+
+    #endregion ADD
+
+    #region UPDATE
 
     /// <summary>
     /// Mapeamento necessário: <typeparamref name="TUpdateDTO"/> -> Entidade<br/>
@@ -39,7 +38,13 @@ public interface IWriteService<TKey, TCreateDTO, TUpdateDTO> : IService
     /// </summary>
     Task<OperationResultCollection<TUpdateDTO>> UpdateAsync(IEnumerable<TUpdateDTO> itemsToUpdate, bool stopOnFirstFail = true, CancellationToken cancellation = default);
 
+    #endregion UPDATE
+
+    #region DELETE
+
     Task<OperationResult<TKey>> DeleteAsync(TKey id, CancellationToken cancellation = default);
 
     Task<OperationResultCollection<TKey>> DeleteAsync(IEnumerable<TKey> ids, bool stopOnFirstFail = true, CancellationToken cancellation = default);
+
+    #endregion DELETE
 }

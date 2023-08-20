@@ -39,5 +39,3 @@ Este código possui licença MIT e está liberado para uso da maneira que se des
 ## 📧 Feedback
 
 Quaisquer sugestões ou outro contato, escreva-me em maxsystech@outlook.com.
-
-  

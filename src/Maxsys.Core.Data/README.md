@@ -20,6 +20,9 @@ O framework de destino utilizado é o `.NET 7.0`.
 
 ## 🛠 Release notes
 
+Atualizando...
+
+<!--
 ### [7.1.0](https://www.nuget.org/packages/Maxsys.Core.Data/7.1.0)
 - Atualização de pacotes NUGET (`Maxsys.Core` e `Microsoft.EntityFrameworkCore`).
 - Alteração de namespace em `IoCExtensions`.
@@ -28,6 +31,7 @@ O framework de destino utilizado é o `.NET 7.0`.
 
 ### [7.0.0](https://www.nuget.org/packages/Maxsys.Core.Data/7.0.0)
 - Commit Inicial com implementações de `IUnitOfWork` e `IRepository`
+-->
 
 ## ✒️ Autores
 
