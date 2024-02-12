@@ -22,28 +22,29 @@
 		<PackageReleaseNotes>
 			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core.Data/PackageAssets/README.md#release-notes.
 		</PackageReleaseNotes>
-		<ApplicationIcon>PackageAssets\logo.ico</ApplicationIcon>
-		<PackageIcon>PackageAssets\logo.png</PackageIcon>
-		<PackageReadmeFile>PackageAssets\README.md</PackageReadmeFile>
-		<PackageLicenseFile>PackageAssets\LICENSE</PackageLicenseFile>
+		<ApplicationIcon>PackageAssets/logo.ico</ApplicationIcon>
+		<PackageIcon>PackageAssets/logo.png</PackageIcon>
+		<PackageReadmeFile>PackageAssets/README.md</PackageReadmeFile>
+		<PackageLicenseFile>PackageAssets/LICENSE</PackageLicenseFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Update="PackageAssets\LICENSE">
-			<Pack>true</Pack>
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\logo.png">
 			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
+			<Pack>true</Pack>
 		</None>
 		<None Update="PackageAssets\old-releases.md">
-			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
 		</None>
 		<None Update="PackageAssets\features.md">
-		  <PackagePath>\</PackagePath>
-		  <Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\README.md">
 			<PackagePath>\</PackagePath>
@@ -59,9 +60,6 @@
 		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
 	</ItemGroup>
 	
-  <ItemGroup>
-    <None Update="PackageAssets\logo.png" Pack="true" />
-  </ItemGroup>
 	
   <ItemGroup>
     <Folder Include="_ignore\" />

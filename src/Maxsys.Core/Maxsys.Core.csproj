@@ -20,9 +20,7 @@
 		<RepositoryType>Public</RepositoryType>
 		<PackageId>Maxsys.Core</PackageId>
 		<PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-		<PackageReleaseNotes>
-			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core/PackageAssets/README.md#release-notes.
-		</PackageReleaseNotes>
+		<PackageReleaseNotes>Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core/PackageAssets/README.md#release-notes.		</PackageReleaseNotes>
 		<ApplicationIcon>PackageAssets/logo.ico</ApplicationIcon>
 		<PackageIcon>PackageAssets/logo.png</PackageIcon>
 		<PackageReadmeFile>PackageAssets/README.md</PackageReadmeFile>
@@ -32,23 +30,24 @@
 
 	<ItemGroup>
 		<None Update="PackageAssets\LICENSE">
-			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\logo.png">
+			<PackagePath>\</PackagePath>
 			<Pack>true</Pack>
 		</None>
 		<None Update="PackageAssets\old-releases.md">
-			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
 		</None>
 		<None Update="PackageAssets\features.md">
 		  <PackagePath>\</PackagePath>
 		  <Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\README.md">
-			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
 	</ItemGroup>
 
