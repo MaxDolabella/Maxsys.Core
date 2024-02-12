@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using FluentValidation.Results;
 
 namespace Maxsys.Core;
@@ -11,16 +12,17 @@ public class OperationResult : IOperationResult
 {
     public static readonly OperationResult Empty = new();
 
-    public List<Notification>? Notifications { get; set; }
+    [JsonIgnore, MemberNotNullWhen(false, nameof(Notifications))]
+    public virtual bool IsValid => !(Notifications?.Where(n => n.ResultType <= ResultTypes.Warning).Any() == true);
+
+    public virtual List<Notification>? Notifications { get; set; }
 
     #region IOperationResult
 
     /// <summary>
     /// Corresponde ao ResultType mais severo.
     /// </summary>
-    public ResultTypes ResultType => IsValid
-        ? ResultTypes.Success
-        : Notifications!.Min(f => f.ResultType);
+    public ResultTypes ResultType => Notifications?.Count > 0 ? Notifications.Min(f => f.ResultType) : ResultTypes.Success;
 
     public bool ContainsNotification(string notificationMessage)
         => ContainsAnyNotification(notificationMessage);
@@ -30,9 +32,6 @@ public class OperationResult : IOperationResult
 
     public bool ContainsNotification(Func<Notification, bool> predicate)
         => Notifications?.Any(predicate) == true;
-
-    [JsonIgnore]
-    public bool IsValid => !(Notifications?.Where(n => n.ResultType <= ResultTypes.Warning).Any() == true);
 
     public virtual void SetDataToNull()
     { /* Faz nada pois não tem data. */ }
@@ -94,14 +93,14 @@ public class OperationResult : IOperationResult
 
     public void AddNotification(Notification notification)
     {
-        Notifications ??= new List<Notification>();
+        Notifications ??= [];
 
         Notifications.Add(notification);
     }
 
     public void AddNotifications(IEnumerable<Notification> notifications)
     {
-        Notifications ??= new List<Notification>();
+        Notifications ??= [];
 
         Notifications.AddRange(notifications);
     }
@@ -110,6 +109,28 @@ public class OperationResult : IOperationResult
     {
         return !IsValid ? string.Join(Environment.NewLine, Notifications!.Select(n => n.ToString())) : null;
     }
+
+    /// <summary>
+    /// Converte um <see cref="OperationResult"/> em um <see cref="OperationResult{TDestination}"/>
+    /// onde <see cref="OperationResult{TDestination}.Data"/> = <paramref name="data"/>;
+    /// </summary>
+    /// <typeparam name="TDestination"></typeparam>
+    /// <param name="data"></param>
+    public OperationResult<TDestination> Cast<TDestination>(TDestination? data)
+    {
+        return new OperationResult<TDestination>()
+        {
+            Data = data,
+            Notifications = Notifications?.Count > 0 ? Notifications : null
+        };
+    }
+
+    /// <summary>
+    /// Converte um <see cref="OperationResult"/> em um <see cref="OperationResult{TDestination}"/>
+    /// onde <see cref="OperationResult{TDestination}.Data"/> = <see langword="default"/>;
+    /// </summary>
+    /// <typeparam name="TDestination"></typeparam>
+    public OperationResult<TDestination> Cast<TDestination>() => Cast<TDestination>(default);
 
     #endregion METHODS
 }
@@ -123,6 +144,15 @@ public class OperationResult : IOperationResult
 public class OperationResult<T> : OperationResult
 {
     #region PROPS
+
+    [JsonIgnore, MemberNotNullWhen(true, nameof(Data)), MemberNotNullWhen(false, nameof(Notifications))]
+    public override bool IsValid => base.IsValid;
+
+    public override List<Notification>? Notifications
+    {
+        get => base.Notifications;
+        set => base.Notifications = value;
+    }
 
     public T? Data { get; set; }
 
@@ -170,7 +200,7 @@ public class OperationResult<T> : OperationResult
     }
 
     public OperationResult(T? data, Notification notification)
-       : this(data, new List<Notification> { notification })
+       : this(data, [notification])
     { }
 
     public OperationResult(Notification notification)
@@ -182,7 +212,7 @@ public class OperationResult<T> : OperationResult
     { }
 
     public OperationResult(T? data, string notificationMessage, ResultTypes resultType = ResultTypes.Error)
-       : this(data, new List<Notification> { new(notificationMessage, null, resultType) })
+       : this(data, [new(notificationMessage, null, resultType)])
     { }
 
     #endregion CTOR
@@ -192,6 +222,17 @@ public class OperationResult<T> : OperationResult
     // Usa-se default pois se T não for tipo referência (struct, por exemplo), data não terá valor null.
     // A não ser que T seja declarado como nulável. Ex.: OperationResult<Guid?>
     public override void SetDataToNull() => Data = default;
+
+    public OperationResult<TDestination> Cast<TDestination>(Func<T?, TDestination?> cast)
+    {
+        ArgumentNullException.ThrowIfNull(nameof(cast));
+
+        return new OperationResult<TDestination>()
+        {
+            Data = cast(Data),
+            Notifications = Notifications?.Count > 0 ? Notifications : null
+        };
+    }
 
     #endregion METHODS
 }

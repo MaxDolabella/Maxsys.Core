@@ -1,19 +1,36 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 
 namespace Maxsys.Core.Helpers;
 
-
-/// <summary>
-/// Provides extension methods for strings
-/// </summary>
 public static class StringHelper
 {
+    private static readonly char[] s_InvalidFileNameChars;
+
+    static StringHelper()
+    {
+        var invalidChars = new List<char>();
+        invalidChars.AddRange(Path.GetInvalidFileNameChars());
+        invalidChars.AddRange(new char[] { (char)37, (char)127 }); // 37=%, 127=del
+
+        s_InvalidFileNameChars = [.. invalidChars];
+    }
+
+    public static string? RemoveInvalidFileNameChars(this string? value)
+    {
+        if (value is null)
+            return null;
+
+        var newValue = string.Join("_", value.Split(s_InvalidFileNameChars)).Trim();
+        return newValue.All(c => c == '_') ? string.Empty : newValue;
+    }
+
     /// <summary>
     /// Retorna um texto a partir de outro texto, ou nulo se o texto testado for vazio/nulo
     /// </summary>
     public static string? GetTextOrNullIfEmpty(this string? text)
     {
-        return string.IsNullOrWhiteSpace(text) ? null : text;
+        return string.IsNullOrWhiteSpace(text) ? null : text.Trim();
     }
 
     /// <summary>
@@ -22,7 +39,7 @@ public static class StringHelper
     public static decimal? GetDecimalOrNullIfEmpty(this string? text)
     {
         return !string.IsNullOrWhiteSpace(text)
-            ? decimal.TryParse(text!, out decimal value) ? value : default(decimal?)
+            ? decimal.TryParse(text.Trim(), out decimal value) ? value : default(decimal?)
             : null;
     }
 
@@ -32,7 +49,7 @@ public static class StringHelper
     public static DateTime? GetDateTimeOrNullIfEmpty(this string? text)
     {
         return !string.IsNullOrWhiteSpace(text)
-            ? DateTime.TryParse(text, out DateTime dateTime) ? dateTime : default(DateTime?)
+            ? DateTime.TryParse(text.Trim(), out DateTime dateTime) ? dateTime : default(DateTime?)
             : null;
     }
 
@@ -50,43 +67,4 @@ public static class StringHelper
 
         return sb.ToString();
     }
-
-
-    /// <summary>
-    /// Return the text with the first letter in low cap.<para/>
-    /// "FirstLetterLowCap" will return "firstLetterLowCap"
-    /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    public static string FirstLetterLowCap(this string text)
-    {
-        return string.IsNullOrEmpty(text)
-            ? string.Empty
-            : text.Length == 1
-                ? text.ToLower()
-                : string.Concat(text[0].ToString().ToLower(), text.AsSpan(1));
-    }
-
-    /// <summary>
-    /// Replaces strings based on a Dictionary
-    /// </summary>
-    /// <param name="contents"></param>
-    /// <param name="replacementDictionary"></param>
-    /// <returns></returns>
-    public static string DictionaryBasedReplacement(this string contents
-        , Dictionary<string, string> replacementDictionary)
-    {
-        var sortedDic = new SortedDictionary<string, string>(replacementDictionary);
-        for (int i = sortedDic.Count - 1; i >= 0; i--)
-        {
-            var item = sortedDic.ElementAt(i);
-            contents = contents.Replace(item.Key, item.Value);
-        }
-
-        foreach (var key in replacementDictionary.Keys)
-            contents = contents.Replace(key, replacementDictionary[key]);
-
-        return contents;
-    }
-
 }

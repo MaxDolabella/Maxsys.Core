@@ -1,45 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);NU1507</NoWarn>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	<Version>9.0.0</Version>
-	<Authors>Max Dolabella</Authors>
-	<Company>Maxsys Tech</Company>
-	<Description>Data (Core) para aplicações Maxsys (.Net 7)</Description>
-	<PackageDescription>Data (Core) para aplicações Maxsys (.Net 7)</PackageDescription>
-	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-	<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/src/Maxsys.Core.Data</PackageProjectUrl>
-	<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
-	<RepositoryType>Public</RepositoryType>
-	<PackageId>Maxsys.Core.Data</PackageId>
-	<PackageTags>maxsys;dotnet;dotnet-core;net7;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;ef-core;</PackageTags>
-	<PackageReleaseNotes>
-	</PackageReleaseNotes>
-	<PackageIcon>maxsys-core-data.png</PackageIcon>
-	<ApplicationIcon>maxsys-core-data.ico</ApplicationIcon>
+	<PropertyGroup>
+		<Version>10.0.0</Version>
+		<Authors>Max Dolabella</Authors>
+		<Company>Maxsys Tech</Company>
+		<Description>Biblioteca Maxsys Core para acesso a dados utilizando Entity Framework, Repository Pattern e UnitOfWork Pattern.</Description>
+		<PackageDescription>Biblioteca Maxsys Core para acesso a dados utilizando Entity Framework, Repository Pattern e UnitOfWork Pattern.</PackageDescription>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Core.Data</RepositoryUrl>
+		<RepositoryType>Public</RepositoryType>
+		<PackageId>Maxsys.Core.Data</PackageId>
+		<PackageTags>Maxsys;entity-framework</PackageTags>
+		<PackageReleaseNotes>
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core.Data/PackageAssets/README.md#release-notes.
+		</PackageReleaseNotes>
+		<ApplicationIcon>PackageAssets\logo.ico</ApplicationIcon>
+		<PackageIcon>PackageAssets\logo.png</PackageIcon>
+		<PackageReadmeFile>PackageAssets\README.md</PackageReadmeFile>
+		<PackageLicenseFile>PackageAssets\LICENSE</PackageLicenseFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
 
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<PackageLicenseFile>LICENSE</PackageLicenseFile>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-	  <None Include="LICENSE" Pack="true" PackagePath="" />
-	  <None Include="README.md">
-		  <Pack>True</Pack>
+	<ItemGroup>
+		<None Update="PackageAssets\LICENSE">
+			<Pack>true</Pack>
+		</None>
+		<None Update="PackageAssets\logo.png">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\old-releases.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\features.md">
 		  <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="maxsys-core-data.png" Pack="true" PackagePath="" />
-  </ItemGroup>
+		  <Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+	</ItemGroup>
+	
   <ItemGroup>
-    <ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+    <None Update="PackageAssets\logo.png" Pack="true" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="_ignore\" />
   </ItemGroup>
 
 

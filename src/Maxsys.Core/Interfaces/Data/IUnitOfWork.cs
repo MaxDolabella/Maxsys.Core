@@ -7,20 +7,19 @@ public interface IUnitOfWork : IDisposable
     Guid Id { get; }
     Guid ContextId { get; }
 
-    ValueTask BeginTransactionAsync(string? name = null, CancellationToken cancellation = default);
+    ValueTask BeginTransactionAsync(string? name = null, CancellationToken cancellationToken = default);
 
-    ValueTask CommitTransactionAsync(CancellationToken cancellation = default);
+    ValueTask CommitTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Faz o rollback
     /// </summary>
-    ValueTask RollbackTransactionAsync(CancellationToken cancellation = default);
+    ValueTask RollbackTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executa o SaveChanges().
     /// <para/>
     /// ATENÇÃO: Uma vez usando o EF Core, também limpa o ChangeTracker.
     /// </summary>
-    /// <returns></returns>
-    Task<ValidationResult> CommitAsync(CancellationToken cancellation = default);
+    Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

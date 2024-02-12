@@ -1,80 +1,89 @@
 ﻿namespace Maxsys.Core.Web;
 
-public class DataWrapper<T>
+public class ApiResult : ApiResultBase
 {
-    /// <summary>
-    /// CTOR vazio necessário para conversão de Json
-    /// </summary>
-    public DataWrapper()
+    public IEnumerable<Notification>? Notifications { get; set; }
+
+    #region CTOR
+
+    public ApiResult() : base(string.Empty, 200, ResultTypes.Success)
     { }
 
-    public DataWrapper(T? data)
+    public ApiResult(string title, int statusCode, ResultTypes resultType, IEnumerable<Notification>? notifications)
+        : base(title, statusCode, notifications.ToResultType(resultType))
     {
-        Data = data;
+        Notifications = notifications;
     }
 
-    public T? Data { get; init; }
-}
-
-public class ApiResult
-{
-    public string Title { get; init; }
-    public int Status { get; init; }
-    public ResultTypes ResultType { get; init; }
-
-    /// <summary>
-    /// CTOR vazio necessário para conversão de Json
-    /// </summary>
-    public ApiResult()
+    public ApiResult(string title, int statusCode, OperationResult operationResult)
+        : this(title, statusCode, operationResult.ResultType, operationResult.Notifications)
     { }
 
-    public ApiResult(string title, int status, ResultTypes resultType)
-    {
-        Title = title;
-        ResultType = resultType;
-        Status = status;
-    }
+    #endregion CTOR
 }
 
 public class ApiResult<T> : ApiResult
 {
-    public T? Result { get; init; }
+    public T? Data { get; set; } = default;
 
-    /// <summary>
-    /// CTOR vazio necessário para conversão de Json
-    /// </summary>
-    public ApiResult()
+    #region CTOR
+
+    public ApiResult() : base()
     { }
 
-    public ApiResult(string title, T? result, int status, ResultTypes resultType = ResultTypes.Success)
-        : base(title, status, resultType)
+    public ApiResult(string title, int statusCode, ResultTypes resultType, T? data, IEnumerable<Notification>? notifications)
+        : base(title, statusCode, resultType, notifications)
     {
-        Result = result;
+        Data = data;
     }
+
+    public ApiResult(string title, int statusCode, ResultTypes resultType, T data)
+        : this(title, statusCode, resultType, data, null)
+    { }
+
+    public ApiResult(string title, int statusCode, ResultTypes resultType, IEnumerable<Notification> notifications)
+        : this(title, statusCode, resultType, default, notifications)
+    { }
+
+    public ApiResult(string title, int statusCode, OperationResult<T> operationResult)
+        : base(title, statusCode, operationResult)
+    {
+        Data = operationResult.Data;
+    }
+
+    #endregion CTOR
 }
 
-public class ApiDataResult<T> : ApiResult<DataWrapper<T>?>
+public class ApiMultipleResults<T> : ApiResult<IEnumerable<ResultItem<T?>>>
 {
+    #region CTOR
+
     /// <summary>
     /// CTOR vazio necessário para conversão de Json
     /// </summary>
-    public ApiDataResult()
+    public ApiMultipleResults()
     { }
 
-    public ApiDataResult(string title, T? data, int status, ResultTypes resultType = ResultTypes.Success)
-        : base(title, data is null ? null : new(data), status, resultType)
-    { }
-}
+    public ApiMultipleResults(string title, int statusCode, OperationResultCollection<T> operationResultCollection)
+        : base(title, statusCode, operationResultCollection.ResultType, operationResultCollection.Select(o => new ResultItem<T?>(o.Data, o.Notifications)).ToList())
+    {
+        if (Data?.Any() == true)
+        {
+            for (int i = 0; i < Data.Count(); i++)
+            {
+                // Se result.Notifications for vazio, então result.Notifications=null;
+                var result = Data.ElementAt(i);
+                if (!(result.Notifications?.Any() == true))
+                {
+                    result.Notifications = null;
+                }
+            }
+        }
+        else
+        {
+            Data = null;
+        }
+    }
 
-public class ApiListResult<T> : ApiResult<ListDTO<T>>
-{
-    /// <summary>
-    /// CTOR vazio necessário para conversão de Json
-    /// </summary>
-    public ApiListResult()
-    { }
-
-    public ApiListResult(string title, ListDTO<T> data, int status, ResultTypes resultType = ResultTypes.Success)
-        : base(title, data, status, resultType)
-    { }
+    #endregion CTOR
 }

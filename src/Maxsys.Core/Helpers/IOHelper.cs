@@ -79,7 +79,7 @@ public static class IOHelper
         }
         catch (Exception ex)
         {
-            validationResult.AddException(ex);
+            validationResult.AddException(ex, ex.Message);
         }
 
         return validationResult;
@@ -122,7 +122,7 @@ public static class IOHelper
         }
         catch (Exception ex)
         {
-            validationResult.AddException(ex);
+            validationResult.AddException(ex, ex.Message);
         }
 
         return validationResult;
@@ -152,7 +152,7 @@ public static class IOHelper
             }
             catch (Exception ex)
             {
-                validationResult.AddException(ex);
+                validationResult.AddException(ex, ex.Message);
             }
         }
         else
@@ -198,7 +198,7 @@ public static class IOHelper
         }
         catch (Exception ex)
         {
-            validationResult.AddException(ex);
+            validationResult.AddException(ex, ex.Message);
         }
 
         return validationResult;
@@ -249,7 +249,7 @@ public static class IOHelper
             }
             catch (Exception ex)
             {
-                validationResult.AddException(ex);
+                validationResult.AddException(ex, ex.Message);
             }
         }
         else
@@ -279,7 +279,7 @@ public static class IOHelper
         }
         catch (Exception ex)
         {
-            validationResult.AddException(ex);
+            validationResult.AddException(ex, ex.Message);
         }
 
         return validationResult;

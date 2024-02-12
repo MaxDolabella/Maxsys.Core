@@ -80,7 +80,7 @@ public static class ImageHelper
         }
         catch (Exception ex)
         {
-            result.AddException(ex);
+            result.AddException(ex, ex.Message);
         }
 
         return result;
@@ -127,7 +127,7 @@ public static class ImageHelper
         }
         catch (Exception ex)
         {
-            result.AddException(ex);
+            result.AddException(ex, ex.Message);
         }
 
         return result;

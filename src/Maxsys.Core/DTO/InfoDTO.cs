@@ -1,20 +1,16 @@
 ﻿using Maxsys.Core.DTO;
+using Maxsys.Core.Sorting.Columns;
 
 namespace Maxsys.Core;
 
+[Sortable<InfoSortableColumns>]
 public class InfoDTO<T> : IDTO, IKey<T> where T : notnull
 {
     public InfoDTO()
     { }
 
-    public InfoDTO(T id, string description, string? abbreviation = null)
-    { 
-        Id = id;
-        Description = description;
-        Abbreviation = abbreviation;
-    }
-
-    public T Id { get; set; }
-    public string Description { get; set; }
+    public required T Id { get; set; }
+    public required string Description { get; set; } = string.Empty;
     public string? Abbreviation { get; set; }
+    public object? CustomState { get; set; }
 }

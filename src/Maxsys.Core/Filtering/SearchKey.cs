@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Filtering;
+namespace Maxsys.Core.Filtering;
 
 public struct SearchKey<TKey> //where TKey : notnull, IComparable<TKey>, IEquatable<TKey>, IEqualityComparer<TKey>
 {
@@ -18,4 +18,9 @@ public struct SearchKey<TKey> //where TKey : notnull, IComparable<TKey>, IEquata
 
     public TKey Key { get; set; }
     public SearchKeyModes Mode { get; set; }
+
+    public override readonly string ToString()
+    {
+        return $"{Mode} {Key}";
+    }
 }

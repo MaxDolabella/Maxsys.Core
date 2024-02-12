@@ -1,54 +1,74 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net7.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-	  <ImplicitUsings>enable</ImplicitUsings>
-	  
-    <Version>9.0.0</Version>
-    <Authors>Max Dolabella</Authors>
-    <Company>Maxsys Tech</Company>
-    <Description>Core para aplicações Maxsys (.Net 7)</Description>
-    <PackageDescription>Core para aplicações Maxsys (.Net 7)</PackageDescription>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/src/Maxsys.Core</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
-    <RepositoryType>Public</RepositoryType>
-    <PackageId>Maxsys.Core</PackageId>
-    <PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-    <PackageReleaseNotes>
-		
-	</PackageReleaseNotes>
-    <PackageIcon>maxsys-core.png</PackageIcon>
-    <ApplicationIcon>maxsys-core.ico</ApplicationIcon>
-  
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-	  <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);NU1507</NoWarn>
+	</PropertyGroup>
+
+	<!-- Package -->
+	<PropertyGroup>
+		<Version>10.0.0</Version>
+		<Authors>Max Dolabella</Authors>
+		<Company>Maxsys Tech</Company>
+		<Description>Core para aplicações Maxsys (.Net 8)</Description>
+		<PackageDescription>Core para aplicações Maxsys (.Net 8)</PackageDescription>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
+		<RepositoryType>Public</RepositoryType>
+		<PackageId>Maxsys.Core</PackageId>
+		<PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
+		<PackageReleaseNotes>
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core/PackageAssets/README.md#release-notes.
+		</PackageReleaseNotes>
+		<ApplicationIcon>PackageAssets/logo.ico</ApplicationIcon>
+		<PackageIcon>PackageAssets/logo.png</PackageIcon>
+		<PackageReadmeFile>PackageAssets/README.md</PackageReadmeFile>
+		<PackageLicenseFile>PackageAssets/LICENSE</PackageLicenseFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Update="PackageAssets\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="PackageAssets\logo.png">
+			<Pack>true</Pack>
+		</None>
+		<None Update="PackageAssets\old-releases.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\features.md">
+		  <PackagePath>\</PackagePath>
+		  <Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<Using Include="Maxsys.Core" />
 		<Using Remove="System.IO" />
 	</ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="FluentValidation" Version="11.7.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-  </ItemGroup>
-  
 
-  <ItemGroup>
-    <None Include="..\..\.editorconfig" Link=".editorconfig" />
-    <None Include="LICENSE" Pack="true" PackagePath="" />
-    <None Include="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="maxsys-core.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Http" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+		<PackageReference Include="System.Drawing.Common" />
+	</ItemGroup>
+  
 
 </Project>

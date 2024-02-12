@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
 namespace Maxsys.Core.Filtering;
 
@@ -8,6 +8,11 @@ public class KeyList<TKey> : List<SearchKey<TKey>>// where TKey : struct
 
     public KeyList()
     { }
+
+    public KeyList(TKey key)
+    {
+        Add(new SearchKey<TKey>(key));
+    }
 
     public KeyList(IEnumerable<TKey> items, SearchKeyModes mode)
     {
@@ -44,9 +49,18 @@ public class KeyList<TKey> : List<SearchKey<TKey>>// where TKey : struct
         return new(itemsToInclude);
     }
 
+    public static implicit operator KeyList<TKey>(TKey key)
+    {
+        return new(key);
+    }
+
+
     public IEnumerable<TKey> Include => this.Where(k => k.Mode == SearchKeyModes.Include).Select(k => k.Key);
     public IEnumerable<TKey> Exclude => this.Where(k => k.Mode == SearchKeyModes.Exclude).Select(k => k.Key);
 
+    /// <summary>
+    /// Não funciona com EF
+    /// </summary>
     public Expression<Func<TEntity, bool>> ToExpression<TEntity>(TKey value)
     {
         return entity => (!AnyInclude() || Include.Contains(value)) && (!AnyExclude() || !Exclude.Contains(value));

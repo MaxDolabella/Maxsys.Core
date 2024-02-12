@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Maxsys.Core.Interfaces.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -26,7 +25,7 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
     }
 
     /// <inheritdoc cref="IUnitOfWork"/>
-    public virtual async ValueTask BeginTransactionAsync(string? name = null, CancellationToken token = default)
+    public virtual async ValueTask BeginTransactionAsync(string? name = null, CancellationToken cancellationToken = default)
     {
         var transactionName = string.IsNullOrWhiteSpace(name) ? Guid.NewGuid().ToString() : name;
 
@@ -34,7 +33,7 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
         {
             _logger.LogInformation("Beginning a new transaction...");
 
-            Transaction = /*_context.Database.CurrentTransaction ??*/ await _context.Database.BeginTransactionAsync(token);
+            Transaction = /*_context.Database.CurrentTransaction ??*/ await _context.Database.BeginTransactionAsync(cancellationToken);
         }
 
         _semaphore++;
@@ -42,9 +41,9 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
     }
 
     /// <inheritdoc cref="IUnitOfWork"/>
-    public virtual async ValueTask CommitTransactionAsync(CancellationToken token = default)
+    public virtual async ValueTask CommitTransactionAsync(CancellationToken cancellationToken = default)
     {
-        if (token.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             await RollbackTransactionAsync(CancellationToken.None);
 
         _semaphore--;
@@ -54,14 +53,14 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
         if (_semaphore == 0 && Transaction is not null)
         {
             _logger.LogInformation("Commiting Transaction");
-            await Transaction.CommitAsync(token);
+            await Transaction.CommitAsync(cancellationToken);
         }
     }
 
     /// <inheritdoc cref="IUnitOfWork"/>
-    public virtual async ValueTask RollbackTransactionAsync(CancellationToken cancellation = default)
+    public virtual async ValueTask RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
-        if (cancellation.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested)
             return;
 
         _logger.LogInformation("Rolling back Transaction | Semaphore[{semaphore}].", _semaphore);
@@ -76,23 +75,30 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
     }
 
     /// <inheritdoc cref="IUnitOfWork"/>
-    public virtual async Task<ValidationResult> CommitAsync(CancellationToken cancellation = default)
+    public async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var result = new ValidationResult();
+        _logger.LogInformation("Saving Changes...");
+
+        var result = new OperationResult();
 
         try
         {
-            _ = await _context.SaveChangesAsync(cancellation);
+            _ = await _context.SaveChangesAsync(cancellationToken);
 
             if (_semaphore == 0)
+            {
+                _logger.LogInformation("Cleaning Tracker...");
                 _context.ChangeTracker.Clear();
+            }
+
+            _logger.LogInformation("Changes Saved.");
         }
         catch (Exception ex)
         {
             RollBackDBContext();
 
-            _logger.LogError(ex, CommonMessages.ERROR_SAVE);
-            result.AddException(ex, CommonMessages.ERROR_SAVE);
+            _logger.LogError(ex, "{message}", GenericMessages.ERROR_SAVE);
+            result.AddNotification(new Notification(ex, GenericMessages.ERROR_SAVE));
         }
 
         return result;

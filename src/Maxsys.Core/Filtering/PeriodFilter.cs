@@ -1,5 +1,3 @@
-using Maxsys.Core.Filtering;
-
 namespace Maxsys.Core.Filtering;
 
 public class PeriodFilter : RangeFilter<DateTime?>
@@ -22,7 +20,7 @@ public class PeriodFilter<TDateTypeFilter> : PeriodFilter
     #region CTOR
 
     public PeriodFilter()
-        : this(null, null, default)
+        : base()
     { }
 
     public PeriodFilter(DateTime? minValue, DateTime? maxValue, TDateTypeFilter dateType)
@@ -33,5 +31,5 @@ public class PeriodFilter<TDateTypeFilter> : PeriodFilter
 
     #endregion CTOR
 
-    public TDateTypeFilter DateType { get; set; }
+    public required TDateTypeFilter DateType { get; set; }
 }

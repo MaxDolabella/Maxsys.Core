@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maxsys.Core", "src\Maxsys.C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66452108-81E5-45E5-806E-C440F433F8F5}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
+		Directory.Packages.props = Directory.Packages.props
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -22,6 +22,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maxsys.Core.Data", "src\Maxsys.Core.Data\Maxsys.Core.Data.csproj", "{73559EB1-D7CB-44EC-A647-C748520E38A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maxsys.Core.Excel", "src\Maxsys.Core.Excel\Maxsys.Core.Excel.csproj", "{3CA6D686-6759-4B87-95E4-B6822B5466BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maxsys.Core.Web", "src\Maxsys.Core.Web\Maxsys.Core.Web.csproj", "{7A734331-F61E-4133-9034-F0773BCA21C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,14 @@ Global
 		{73559EB1-D7CB-44EC-A647-C748520E38A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73559EB1-D7CB-44EC-A647-C748520E38A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73559EB1-D7CB-44EC-A647-C748520E38A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CA6D686-6759-4B87-95E4-B6822B5466BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CA6D686-6759-4B87-95E4-B6822B5466BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CA6D686-6759-4B87-95E4-B6822B5466BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CA6D686-6759-4B87-95E4-B6822B5466BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A734331-F61E-4133-9034-F0773BCA21C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A734331-F61E-4133-9034-F0773BCA21C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A734331-F61E-4133-9034-F0773BCA21C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A734331-F61E-4133-9034-F0773BCA21C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +57,8 @@ Global
 		{A78A38E3-6E95-49EB-91DB-D16C095EA825} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
 		{25EE3562-115E-42AE-BCAC-5F32C1018DCC} = {2FF19267-9BF4-441F-B536-341867C82FDA}
 		{73559EB1-D7CB-44EC-A647-C748520E38A1} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
+		{3CA6D686-6759-4B87-95E4-B6822B5466BE} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
+		{7A734331-F61E-4133-9034-F0773BCA21C6} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2A4EDFD5-F835-4736-AE34-1BE95C64D8EB}

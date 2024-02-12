@@ -17,10 +17,11 @@ public static class ReflectionHelper
     /// <typeparam name="TInterface"></typeparam>
     /// <param name="assemblies"></param>
     /// <param name="suffix"></param>
+    /// <param name="predicate"></param>
     /// <returns></returns>
-    public static IReadOnlyDictionary<Type, Type> GetImplementationDictionary<TInterface>(Assembly[] assemblies, string? suffix = null) where TInterface : class
+    public static IReadOnlyDictionary<Type, Type> GetImplementationDictionary<TInterface>(Assembly[] assemblies, string? suffix = null, Func<Type, bool>? predicate = null) where TInterface : class
     {
-        return GetImplementationDictionary<TInterface>(assemblies, assemblies, suffix);
+        return GetImplementationDictionary<TInterface>(assemblies, assemblies, suffix, predicate);
     }
 
     /// <summary>
@@ -34,11 +35,12 @@ public static class ReflectionHelper
     /// <param name="interfaceAssemblies">os assemblies de onde serão obtidas as interfaces.</param>
     /// <param name="implementationAssemblies">os assemblies de onde serão obtidas as implementações.</param>
     /// <param name="suffix">O sufixo das interfaces e implementações a serem registrados.</param>
+    /// <param name="predicate"></param>
     /// <returns>um dicionário de interface e implementação</returns>
-    public static IReadOnlyDictionary<Type, Type> GetImplementationDictionary<TInterface>(Assembly[] interfaceAssemblies, Assembly[] implementationAssemblies, string? suffix = null) where TInterface : class
+    public static IReadOnlyDictionary<Type, Type> GetImplementationDictionary<TInterface>(Assembly[] interfaceAssemblies, Assembly[] implementationAssemblies, string? suffix = null, Func<Type, bool>? predicate = null) where TInterface : class
     {
-        var interfaces = GetInterfaces<TInterface>(interfaceAssemblies, suffix);
-        var implementations = GetImplementation<TInterface>(implementationAssemblies, suffix);
+        var interfaces = GetInterfaces<TInterface>(interfaceAssemblies, suffix, predicate);
+        var implementations = GetImplementation<TInterface>(implementationAssemblies, suffix, predicate);
         var interfacesWithoutImplementations = new List<Type>();
         var dictionary = new Dictionary<Type, Type>();
         foreach (var @interface in interfaces)
@@ -64,14 +66,16 @@ public static class ReflectionHelper
     /// <typeparam name="TInterface"></typeparam>
     /// <param name="assemblies"></param>
     /// <param name="suffix"></param>
+    /// <param name="predicate"></param>
     /// <returns></returns>
-    public static IReadOnlyList<Type> GetInterfaces<TInterface>(Assembly[] assemblies, string? suffix = null) where TInterface : class
+    public static IReadOnlyList<Type> GetInterfaces<TInterface>(Assembly[] assemblies, string? suffix = null, Func<Type, bool>? predicate = null) where TInterface : class
     {
         return assemblies.SelectMany((a) => a.ExportedTypes)
+            .Where(t => !t.GetCustomAttributes<DependencyInjectionIgnoreAttribute>().Any())
             .Where(t => t.IsInterface)
             .Where(t => t.IsAssignableTo(typeof(TInterface)))
             .Where(t => suffix is null || t.Name.EndsWith(suffix))
-            .Where(t => t.GetCustomAttribute<ObsoleteAttribute>() == null)
+            .Where(t => predicate is null || predicate(t))
             .ToList();
     }
 
@@ -83,14 +87,16 @@ public static class ReflectionHelper
     /// <typeparam name="TInterface"></typeparam>
     /// <param name="assemblies"></param>
     /// <param name="suffix"></param>
+    /// <param name="predicate"></param>
     /// <returns></returns>
-    public static IReadOnlyList<Type> GetImplementation<TInterface>(Assembly[] assemblies, string? suffix = null) where TInterface : class
+    public static IReadOnlyList<Type> GetImplementation<TInterface>(Assembly[] assemblies, string? suffix = null, Func<Type, bool>? predicate = null) where TInterface : class
     {
         return assemblies.SelectMany((a) => a.ExportedTypes)
+            .Where(t => !t.GetCustomAttributes<DependencyInjectionIgnoreAttribute>().Any())
             .Where(t => t.IsClass && !t.IsAbstract)
             .Where(t => t.IsAssignableTo(typeof(TInterface)))
             .Where(t => suffix is null || t.Name.EndsWith(suffix))
-            .Where(t => t.GetCustomAttribute<ObsoleteAttribute>() == null)
+            .Where(t => predicate is null || predicate(t))
             .ToList();
     }
 }

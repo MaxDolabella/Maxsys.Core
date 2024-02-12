@@ -1,0 +1,49 @@
+<div align="center">
+<img src="logo.png" alt="drawing" width="256" />
+<h1>Maxsys Core Excel</h1>
+</div>
+
+![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Excel)
+![License](https://img.shields.io/github/license/maxdolabella/maxsys.core)
+
+**Maxsys.Core.Excel** é uma biblioteca em C# para dar suporte à criação de aplicações Maxsys.
+Complementa o pacote **Maxsys.Core**, porém voltado à manipulação de arquivos excel.
+O framework de destino utilizado é o `.NET 8.0`.
+
+
+## Nuget
+
+```xml
+    <PackageReference Include="Maxsys.Core.Excel" Version="10.0.0" />
+```
+
+## ⛓ Dependências
+- Maxsys.Core Version=10.0.0
+- ClosedXML Version=0.100.3
+
+- ## 🌟 Features
+
+As principais *features* do projeto, podem ser vistas [aqui](features.md).
+
+## ✒️ Autores
+
+- [@MaxDolabella](https://www.github.com/MaxDolabella)
+
+## 🧐 Aprendizagem
+
+Através desse projeto, tenho a oportunidade de por em prática parte do conhecimento adquirido. Obviamente, ainda é limitado, mas a intenção é sempre buscar a melhora.
+
+## 🗝 Licença
+
+Este código possui licença MIT e está liberado para uso da maneira que se desejar.
+  
+## 📧 Feedback
+
+Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsystech@outlook.com?subject=Github%20contact).
+
+## 🆕 Release Notes
+
+### 10.0.0
++ Primeiro release.
+
+<!-- #### [Old Releases](old-releases.md) -->

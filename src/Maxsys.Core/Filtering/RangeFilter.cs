@@ -1,7 +1,9 @@
-﻿namespace Maxsys.Core.Filtering;
+namespace Maxsys.Core.Filtering;
 
 public class RangeFilter<T>
 {
+    #region CTOR
+
     public RangeFilter()
     { }
 
@@ -11,6 +13,8 @@ public class RangeFilter<T>
         MaxValue = maxValue;
     }
 
-    public T? MinValue { get; set; }
-    public T? MaxValue { get; set; }
+    #endregion CTOR
+
+    public T? MinValue { get; set; } = default;
+    public T? MaxValue { get; set; } = default;
 }

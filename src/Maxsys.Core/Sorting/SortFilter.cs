@@ -14,18 +14,24 @@ public sealed class SortFilter
         Column = column;
     }
 
+    public SortFilter(string columnName, SortDirection direction)
+    {
+        Direction = direction;
+        ColumnName = columnName;
+    }
+
     /// <summary>
     /// é o valor em byte (item de enum) que representa a coluna que se deseja ordenar
     /// </summary>
     public byte Column { get; set; } = 0;
 
     /// <summary>
+    /// é nome da coluna que se deseja ordenar
+    /// </summary>
+    public string? ColumnName { get; set; } = null;
+
+    /// <summary>
     /// é a direção da ordenação.
     /// </summary>
     public SortDirection Direction { get; set; } = SortDirection.Ascendant;
-
-    /// <summary>
-    /// Representa um <see cref="SortFilter"/> padrão com <see cref="Column"/> = 0 e <see cref="Direction"/> = <see cref="SortDirection.Ascendant"/>.
-    /// </summary>
-    public static readonly SortFilter DEFAULT_SORT = new() { Column = 0, Direction = SortDirection.Ascendant };
 }

@@ -5,48 +5,38 @@
 /// </summary>
 public sealed class Notification
 {
-    #region CTORs
-
     /// <summary>
     /// CTOR vazio necessário para conversão de Json
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public Notification()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     { }
 
-    /// <summary>
-    /// CTOR full
-    /// </summary>
-    /// <param name="message"></param>
-    /// <param name="details"></param>
-    /// <param name="resultType"></param>
-    /// <param name="tag"></param>
-    public Notification(string message, string? details, ResultTypes resultType, object? tag)
+    public Notification(string message, ResultTypes resultType = ResultTypes.Error)
+        : this(message, null, resultType)
+    { }
+
+    public Notification(string message, string? details, ResultTypes resultType = ResultTypes.Error)
     {
         Message = message;
         Details = details;
         ResultType = resultType;
-        Tag = tag;
     }
-
-    public Notification(string message, ResultTypes resultType = ResultTypes.Error)
-        : this(message, null, resultType, null)
-    { }
-
-    public Notification(string message, string? details, ResultTypes resultType = ResultTypes.Error)
-        : this(message, details, resultType, null)
-    { }
-
-    public Notification(Exception exception, string message, ResultTypes resultType = ResultTypes.Error)
-        : this(message, exception.InnerException?.Message, resultType, exception.ToString())
-    { }
 
     public Notification(Exception exception, ResultTypes resultType = ResultTypes.Error)
         : this(exception, exception.Message, resultType)
     { }
 
-    #endregion CTORs
-
-    #region PROPS
+    public Notification(Exception exception, string message, ResultTypes resultType = ResultTypes.Error)
+    {
+        Message = message;
+        Details = exception.Message;
+#if DEBUG
+        Tag = exception.ToString();
+#endif
+        ResultType = resultType;
+    }
 
     /// <summary>
     /// Severidade do erro
@@ -54,8 +44,9 @@ public sealed class Notification
     public ResultTypes ResultType { get; init; }
 
     /// <summary>
-    /// Mensagem do erro.
+    /// Código do erro.
     /// </summary>
+    /// <remarks><example>Ex.:ITEM_NOT_FOUND</example></remarks>
     public string Message { get; init; }
 
     /// <summary>
@@ -68,13 +59,13 @@ public sealed class Notification
     /// </summary>
     public object? Tag { get; set; }
 
-    #endregion PROPS
-
+    /// <summary>
+    /// Custom ToString()
+    /// </summary>
     public override string ToString()
     {
-        var message = !string.IsNullOrWhiteSpace(Details)
+        return !string.IsNullOrWhiteSpace(Details)
             ? $"{Message} [{Details}]"
             : Message;
-        return $"{ResultType}: {message}";
     }
 }

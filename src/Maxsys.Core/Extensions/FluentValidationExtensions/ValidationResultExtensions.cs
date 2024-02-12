@@ -10,6 +10,7 @@ public static class ValidationResultExtensions
     /// </summary>
     /// <param name="validationResult">ValidationResult atual</param>
     /// <param name="errorMessage">mensagem de erro da falha</param>
+    /// <param name="severity">severidade da falha</param>
     public static ValidationResult AddError(this ValidationResult validationResult, string errorMessage, Severity severity = Severity.Error)
     {
         validationResult.Errors.Add(new ValidationFailure
@@ -29,6 +30,7 @@ public static class ValidationResultExtensions
     /// <param name="validationResult"></param>
     /// <param name="errorMessage"></param>
     /// <param name="identifier">é um idenificador para o item do erro. Pode ser por exemplo, um Id, uma propriedade, etc...</param>
+    /// <param name="severity">severidade da falha</param>
     public static ValidationResult AddError(this ValidationResult validationResult, string errorMessage, string identifier, Severity severity = Severity.Error)
     {
         validationResult.Errors.Add(new ValidationFailure
@@ -45,16 +47,9 @@ public static class ValidationResultExtensions
     /// Adiciona uma falha ao <see cref="ValidationResult"/> atual.<para/>
     /// </summary>
     /// <param name="validationResult">ValidationResult atual</param>
-    public static ValidationResult AddException(this ValidationResult validationResult, Exception exception, Severity severity = Severity.Error)
-    {
-        return validationResult.AddException(exception, exception.Message, severity);
-    }
-
-    /// <summary>
-    /// Adiciona uma falha ao <see cref="ValidationResult"/> atual.<para/>
-    /// </summary>
-    /// <param name="validationResult">ValidationResult atual</param>
+    /// <param name="exception">exception que causou o erro</param>
     /// <param name="errorMessage">código de erro da falha</param>
+    /// <param name="severity">severidade da falha</param>
     public static ValidationResult AddException(this ValidationResult validationResult, Exception exception, string errorMessage, Severity severity = Severity.Error)
     {
         validationResult.Errors.Add(new ValidationFailure
@@ -84,10 +79,9 @@ public static class ValidationResultExtensions
     {
         return validationResult?.Errors
             .Select(error => new Notification(
-                message: error.ErrorMessage,
-                details: !string.IsNullOrWhiteSpace(error.ErrorCode) ? error.ErrorCode : null,
-                resultType: (ResultTypes)(byte)error.Severity)
-            { Tag = error.CustomState ?? null})
+                error.ErrorMessage,
+                !string.IsNullOrWhiteSpace(error.ErrorCode) ? error.ErrorCode : null,
+                (ResultTypes)(byte)error.Severity))
             .ToList() ?? null;
     }
 }

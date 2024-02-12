@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Filtering;
+namespace Maxsys.Core.Filtering;
 
 public enum SearchKeyModes : byte
 {

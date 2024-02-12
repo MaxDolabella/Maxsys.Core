@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -7,14 +8,24 @@ namespace Maxsys.Core.Extensions;
 
 public static class JsonExtensions
 {
-    /// <summary>
-    /// PropertyNameCaseInsensitive=true, ReferenceHandler.IgnoreCycles
-    /// </summary>
+    /// <remarks>
+    /// <code>
+    /// {
+    ///     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    ///     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    ///     PropertyNameCaseInsensitive = true,
+    ///     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    ///     ReferenceHandler = ReferenceHandler.IgnoreCycles
+    /// }
+    /// </code>
+    /// </remarks>
     public static readonly JsonSerializerOptions JSON_DEFAULT_OPTIONS = new()
     {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         PropertyNameCaseInsensitive = true,
-        ReferenceHandler = ReferenceHandler.IgnoreCycles,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
     };
 
     private static Stream GenerateStreamFromString(string s)
@@ -198,5 +209,49 @@ public static class JsonExtensions
     public static string ToJson<T>(this T? value, JsonSerializerOptions? options = null)
     {
         return JsonSerializer.Serialize(value, options ?? JSON_DEFAULT_OPTIONS);
+    }
+
+    /// <summary>
+    /// Tenta converter uma <see langword="string"/> json em um objeto <typeparamref name="T"/>.<para/>
+    /// 
+    /// Se <paramref name="json"/> for <see langword="null"/>, 
+    /// então será retornado <see langword="true"/> e <paramref name="obj"/> será <see langword="null"/>.<para/>
+    /// Em caso de falha, o <paramref name="obj"/> será <see langword="null"/> e <paramref name="notification"/> 
+    /// conterá a mensagem relacionada a falha da conversão.<para/>
+    /// </summary>
+    /// <typeparam name="T">é o tipo do objeto de destino para o qual se deseja converter o json</typeparam>
+    /// <param name="json">é o texto que representa o JSON para conversão</param>
+    /// <param name="obj">é o objeto de destino convertido</param>
+    /// <param name="notification">é a <paramref name="notification"/> que contém informação sobre a falha da conversão</param>
+    /// <param name="options">
+    ///     Opcional. É um <see cref="JsonSerializerOptions"/> contendo as configurações para a conversão.<br/>
+    ///     Caso não seja passado, <see cref="JsonExtensions.JSON_DEFAULT_OPTIONS"/> será utilizado.
+    /// </param>
+    /// <returns><see langword="true"/> caso a convesão seja realizada com sucesso ou <see langword="false"/> caso contrário</returns>
+    public static bool TryFromJson<T>(this string? json, out T? obj, out Notification? notification, JsonSerializerOptions? options = null)
+    {
+        bool returnValue = false;
+
+        notification = default;
+        obj = default;
+
+        if (json is not null)
+        {
+            try
+            {
+                obj = JsonSerializer.Deserialize<T>(json, options ?? JsonExtensions.JSON_DEFAULT_OPTIONS);
+
+                returnValue = true;
+            }
+            catch (Exception ex)
+            {
+                notification = new Notification(ex)
+                {
+                    Details = ex.InnerException?.Message
+                };
+            }
+        }
+
+        return returnValue;
     }
 }

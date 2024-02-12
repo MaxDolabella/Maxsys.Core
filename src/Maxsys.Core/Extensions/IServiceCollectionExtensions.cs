@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Maxsys.Core.Helpers;
-using Maxsys.Core.Sorting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Maxsys.Core.Extensions;
 
@@ -24,11 +22,12 @@ public static class IServiceCollectionExtensions
     /// <param name="interfaceAssemblies">os assemblies de onde serão obtidas as interfaces.</param>
     /// <param name="implementationAssemblies">os assemblies de onde serão obtidas as implementações.</param>
     /// <param name="suffix">O sufixo das interfaces e implementações a serem registrados.</param>
+    /// <param name="predicate"></param>
     /// <returns>A mesma instância de <paramref name="services"/> após a operação completada.</returns>
-    public static IServiceCollection AddImplementations<TInterface>(this IServiceCollection services, Assembly[] interfaceAssemblies, Assembly[] implementationAssemblies, string? suffix = null)
+    public static IServiceCollection AddImplementations<TInterface>(this IServiceCollection services, Assembly[] interfaceAssemblies, Assembly[] implementationAssemblies, string? suffix = null, Func<Type, bool>? predicate = null)
         where TInterface : class
     {
-        var implementationDictionary = ReflectionHelper.GetImplementationDictionary<TInterface>(interfaceAssemblies, implementationAssemblies, suffix);
+        var implementationDictionary = ReflectionHelper.GetImplementationDictionary<TInterface>(interfaceAssemblies, implementationAssemblies, suffix, predicate);
 
         return RegisterImplementationDictionary(services, implementationDictionary);
     }
@@ -45,14 +44,15 @@ public static class IServiceCollectionExtensions
     /// <typeparam name="TImplementationEntry">O tipo de onde será obtido o assembly que contém as implementações a serem registradas.</typeparam>
     /// <param name="services">o <see cref="IServiceCollection"/> onde serão adicionadas as interfaces e suas implementações.</param>
     /// <param name="suffix">O sufixo das interfaces e implementações a serem registrados.</param>
+    /// <param name="predicate"></param>
     /// <returns>A mesma instância de <paramref name="services"/> após a operação completada.</returns>
-    public static IServiceCollection AddImplementations<TInterface, TInterfaceEntry, TImplementationEntry>(this IServiceCollection services, string? suffix = null)
+    public static IServiceCollection AddImplementations<TInterface, TInterfaceEntry, TImplementationEntry>(this IServiceCollection services, string? suffix = null, Func<Type, bool>? predicate = null)
         where TInterface : class
     {
         var interfaceAssemblies = new[] { typeof(TInterfaceEntry).Assembly };
         var implementationAssemblies = new[] { typeof(TImplementationEntry).Assembly };
 
-        return AddImplementations<TInterface>(services, interfaceAssemblies, implementationAssemblies, suffix);
+        return AddImplementations<TInterface>(services, interfaceAssemblies, implementationAssemblies, suffix, predicate);
     }
 
     /// <summary>
@@ -65,11 +65,12 @@ public static class IServiceCollectionExtensions
     /// <typeparam name="TEntry">O tipo de onde será obtido o assembly que contém as interfaces e suas implementações a serem registradas.</typeparam>
     /// <param name="services">o <see cref="IServiceCollection"/> onde serão adicionadas as interfaces e suas implementações.</param>
     /// <param name="suffix">O sufixo das interfaces e implementações a serem registrados.</param>
+    /// <param name="predicate"></param>
     /// <returns>A mesma instância de <paramref name="services"/> após a operação completada.</returns>
-    public static IServiceCollection AddImplementations<TInterface, TEntry>(this IServiceCollection services, string? suffix = null)
+    public static IServiceCollection AddImplementations<TInterface, TEntry>(this IServiceCollection services, string? suffix = null, Func<Type, bool>? predicate = null)
         where TInterface : class
     {
-        return AddImplementations<TInterface, TEntry, TEntry>(services, suffix);
+        return AddImplementations<TInterface, TEntry, TEntry>(services, suffix, predicate);
     }
 
     /// <summary>
@@ -110,38 +111,6 @@ public static class IServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Registra as dependências de <see cref="ISortColumnSelector{T}"/> para suas implementações.
-    /// </summary>
-    /// <typeparam name="TEntry">Um tipo para servir de referência a fim de se obter
-    /// os <see cref="ISortColumnSelector{T}"/> de seu Assembly.</typeparam>
-    /// <param name="services"></param>
-    /// <param name="lifetime"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddSortSelectors<TEntry>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
-    {
-        var sortableColumns = typeof(TEntry).Assembly.ExportedTypes
-            .Where(type
-                => !type.IsInterface
-                && !type.IsAbstract
-                && !type.GetCustomAttributes<DependencyInjectionIgnoreAttribute>().Any()
-                && type.GetInterfaces()
-                    .Where(t => t.IsGenericType)
-                    .Any(t => t.GetGenericTypeDefinition() == typeof(ISortColumnSelector<>)))
-            .ToList();
-
-        sortableColumns.ForEach(type =>
-        {
-            var implementedInterface = type.GetInterfaces()[0];
-            // 'implementedInterface.GetGenericArguments()[0].Name' é o tipo genérico.
-
-            var serviceDescriptor = new ServiceDescriptor(implementedInterface, type, lifetime);
-            services.TryAdd(serviceDescriptor);
-        });
-
-        return services;
-    }
-
-    /// <summary>
     /// Registra os itens do dicionário onde Key é a interface e Value é a implementação.
     /// <para/>
     /// <example>Exemplo de uso:
@@ -158,6 +127,27 @@ public static class IServiceCollectionExtensions
     {
         foreach (var item in keyValues)
             services.Add(new ServiceDescriptor(item.Key, item.Value, serviceLifetime));
+
+        return services;
+    }
+
+    /// <summary>
+    /// Substitui a implementação de um serviço previamente registrado.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="serviceLifetime"></param>
+    /// <returns></returns>
+    public static IServiceCollection ReplaceServiceImplementation<TService, TReplaceImplementation>(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+         where TService : class
+         where TReplaceImplementation : class, TService
+    {
+        var oldServiceDescriptor = services.Where(sd => sd.ServiceType == typeof(TService) && sd.Lifetime == serviceLifetime).FirstOrDefault();
+        if (oldServiceDescriptor is not null)
+        {
+            services.Remove(oldServiceDescriptor);
+
+            services.Add<TService, TReplaceImplementation>(serviceLifetime);
+        }
 
         return services;
     }

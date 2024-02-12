@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
 namespace Maxsys.Core.Filtering;
 
@@ -16,5 +16,7 @@ public interface IFilter<TEntity> : IFilter
 {
     List<Expression<Func<TEntity, bool>>> Expressions { get; }
 
-    public void SetExpressions();
+    void SetExpressions();
+
+    void AddExpression(Expression<Func<TEntity, bool>> expression);
 }

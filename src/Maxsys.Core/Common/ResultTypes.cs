@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Maxsys.Core;
 
@@ -23,6 +24,7 @@ namespace Maxsys.Core;
 /// </item>
 /// </list>
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ResultTypes : byte
 {
     /// <summary>

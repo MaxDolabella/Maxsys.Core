@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);NU1507</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Version>10.0.0</Version>
+		<Authors>Max Dolabella</Authors>
+		<Company>Maxsys Tech</Company>
+		<Description>Biblioteca Maxsys Core para utilização de recursos Web.</Description>
+		<PackageDescription>Biblioteca Maxsys Core para utilização de recursos Web.</PackageDescription>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Core.Web</RepositoryUrl>
+		<RepositoryType>Public</RepositoryType>
+		<PackageId>Maxsys.Core.Web</PackageId>
+		<PackageTags>Maxsys;asp-net-core</PackageTags>
+		<PackageReleaseNotes>
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core.Web/PackageAssets/README.md#release-notes.
+		</PackageReleaseNotes>
+		<ApplicationIcon>PackageAssets\logo.ico</ApplicationIcon>
+		<PackageIcon>PackageAssets\logo.png</PackageIcon>
+		<PackageReadmeFile>PackageAssets\README.md</PackageReadmeFile>
+		<PackageLicenseFile>PackageAssets\LICENSE</PackageLicenseFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<None Update="PackageAssets\features.md">
+		  <PackagePath>\</PackagePath>
+		  <Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\LICENSE">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\logo.png">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\old-releases.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+
+</Project>
