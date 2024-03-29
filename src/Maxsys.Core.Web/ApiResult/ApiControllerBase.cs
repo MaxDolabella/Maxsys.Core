@@ -1,5 +1,4 @@
-﻿using Maxsys.Core;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Maxsys.Core.Web;
@@ -28,11 +27,13 @@ public abstract class ApiControllerBase : ControllerBase
     ///     Padrão é <see cref="ResultTypes.Success"/>.
     /// </param>
     [NonAction]
-    protected ApiActionResult CustomDataResult<T>(string endpointTitle, T? data, int okStatus = StatusCodes.Status200OK, int nullDataStatusCode = StatusCodes.Status404NotFound, ResultTypes resultType = ResultTypes.Success)
+    protected ApiActionResult CustomDataResult<T>(string endpointTitle, T? data, int okStatus = StatusCodes.Status200OK, int nullDataStatusCode = StatusCodes.Status404NotFound, ResultTypes? resultType = null)
     {
-        var status = data is not null ? okStatus : nullDataStatusCode;
+        var statusCode = data is not null ? okStatus : nullDataStatusCode;
 
-        var apiResult = new ApiResult<T?>(endpointTitle, status, resultType, data);
+        var resultType2 = resultType ?? StatusCodeToResultType(statusCode);
+
+        var apiResult = new ApiResult<T?>(endpointTitle, statusCode, resultType2, data);
 
         return new ApiActionResult(apiResult);
     }
@@ -185,8 +186,28 @@ public abstract class ApiControllerBase : ControllerBase
                 ?? DefaultNotOkStatusCodeFunc?.Invoke(operationResult)
                 ?? StatusCodes.Status400BadRequest;
 
-        var apiResult = new ApiResult(endpointTitle, status, operationResult.ResultType, operationResult.Notifications);
+        var notifications = operationResult.Notifications?.Count > 0
+            ? operationResult.Notifications!
+            : null;
+
+        var apiResult = new ApiResult(endpointTitle, status, operationResult.ResultType, notifications);
 
         return new ApiActionResult(apiResult);
+    }
+
+    /// <summary>
+    /// <see href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"/>
+    /// </summary>
+    /// <param name="statusCode"></param>
+    [NonAction]
+    private static ResultTypes StatusCodeToResultType(int statusCode)
+    {
+        return statusCode switch
+        {
+            >= 100 and <= 199 => ResultTypes.Info,
+            >= 200 and <= 399 => ResultTypes.Success,
+            >= 400 and <= 499 => ResultTypes.Warning,
+            _ => ResultTypes.Error,
+        };
     }
 }

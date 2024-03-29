@@ -2,11 +2,15 @@
 
 public enum ExcelCellDataType : byte
 {
+    Boolean,
+    Byte,
     Date,
     DateTime,
     Decimal,
     Double,
     Guid,
     Integer,
-    Text,
+    Long,
+    Short,
+    Text
 }

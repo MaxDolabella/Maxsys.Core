@@ -70,6 +70,25 @@ public abstract class HttpClientBase : ServiceBase
     }
 
     /// <summary>
+    /// Monta HttpRequestMessage, sem inserir authentication (se tiver), insere headers (se tiver) e
+    /// retorna o HttpRequestMessage.
+    /// </summary>
+    protected virtual ValueTask<HttpRequestMessage> GetHttpRequestMessageWithoutAuthenticationAsync(HttpMethod requestMethod, string requestUri, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
+    {
+        var requestMessage = new HttpRequestMessage(requestMethod, requestUri);
+
+        if (requestHeaders?.Any() == true)
+        {
+            foreach (var header in requestHeaders)
+            {
+                requestMessage.Headers.Add(header.Key, header.Value);
+            }
+        }
+
+        return ValueTask.FromResult(requestMessage);
+    }
+
+    /// <summary>
     /// Monta HttpRequestMessage, insere authentication (se tiver), insere headers (se tiver), insere o body usando JsonContent e
     /// retorna o HttpRequestMessage.
     /// </summary>

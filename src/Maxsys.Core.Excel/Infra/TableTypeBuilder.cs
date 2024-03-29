@@ -35,11 +35,15 @@ public sealed class TableTypeBuilder<T>
 
         var dataType = typeName switch
         {
+            "System.Byte" => ExcelCellDataType.Byte,
+            "System.Boolean" => ExcelCellDataType.Boolean,
             "System.DateOnly" => ExcelCellDataType.Date,
             "System.DateTime" => ExcelCellDataType.DateTime,
             "System.Double" => ExcelCellDataType.Double,
             "System.Guid" => ExcelCellDataType.Guid,
+            "System.Int16" => ExcelCellDataType.Short,
             "System.Int32" => ExcelCellDataType.Integer,
+            "System.Int64" => ExcelCellDataType.Long,
             "System.String" => ExcelCellDataType.Text,
             "System.Decimal" => ExcelCellDataType.Decimal,
             _ => throw new ArgumentException($"Property of type {typeName} has no mapping.")

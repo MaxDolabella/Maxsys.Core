@@ -15,15 +15,11 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     where TEntity : class
     where TFilter : IFilter<TEntity>
 {
-    protected readonly IMapper _mapper;
-
     #region CONSTRUCTOR
 
     public RepositoryBase(DbContext context, IMapper mapper)
-        : base(context)
-    {
-        _mapper = mapper;
-    }
+        : base(context, mapper)
+    { }
 
     #endregion CONSTRUCTOR
 
@@ -75,14 +71,14 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
 
     #region LIST
 
-    public virtual async Task<IReadOnlyList<TEntity>> ToListAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default)
+    public virtual async Task<List<TEntity>> ToListAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default)
     {
         var query = await GetQueryable(filters, @readonly, cancellationToken);
 
         return await query.ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<IReadOnlyList<TEntity>> ToListAsync(
+    public virtual async Task<List<TEntity>> ToListAsync(
         TFilter filters,
         ListCriteria criteria,
         bool @readonly = true,
@@ -94,56 +90,17 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         return await query.ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<IReadOnlyList<TEntity>> ToListAsync(
+    public virtual async Task<List<TEntity>> ToListAsync(
         TFilter filters,
         Pagination? pagination,
         Expression<Func<TEntity, dynamic>> sortKeySelector,
-        SortDirection sortDirection = SortDirection.Ascendant,
+        SortDirection sortDirection = SortDirection.Ascending,
         bool @readonly = true,
         CancellationToken cancellationToken = default)
     {
         var query = await GetQueryable(filters, @readonly, cancellationToken);
 
-        var orderedQuery = sortDirection == SortDirection.Ascendant
-            ? query.OrderBy(sortKeySelector)
-            : query.OrderByDescending(sortKeySelector);
-
-        return await orderedQuery.ApplyPagination(pagination).ToListAsync(cancellationToken);
-    }
-
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(
-        Expression<Func<TEntity, bool>>? predicate,
-        CancellationToken cancellationToken = default) where TDestination : class
-    {
-        var query = (await GetQueryable(predicate, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
-
-        return await query.ToListAsync(cancellationToken);
-    }
-
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(
-        Expression<Func<TEntity, bool>>? predicate,
-        ListCriteria criteria,
-        CancellationToken cancellationToken = default) where TDestination : class
-    {
-        var query = (await GetQueryable(predicate, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
-            .ApplyCriteria(criteria);
-
-        return await query.ToListAsync(cancellationToken);
-    }
-
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(
-        Expression<Func<TEntity, bool>>? predicate,
-        Pagination? pagination,
-        Expression<Func<TDestination, dynamic>> sortKeySelector,
-        SortDirection sortDirection = SortDirection.Ascendant,
-        CancellationToken cancellationToken = default) where TDestination : class
-    {
-        var query = (await GetQueryable(predicate, false, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
-
-        var orderedQuery = sortDirection == SortDirection.Ascendant
+        var orderedQuery = sortDirection == SortDirection.Ascending
             ? query.OrderBy(sortKeySelector)
             : query.OrderByDescending(sortKeySelector);
 
@@ -152,7 +109,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
 
     // ===
 
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         TFilter filters,
         CancellationToken cancellationToken = default) where TDestination : class
     {
@@ -162,7 +119,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         return await query.ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         TFilter filters,
         ListCriteria criteria,
         CancellationToken cancellationToken = default) where TDestination : class
@@ -174,17 +131,17 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         return await query.ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         TFilter filters,
         Pagination? pagination,
         Expression<Func<TDestination, dynamic>> sortKeySelector,
-        SortDirection sortDirection = SortDirection.Ascendant,
+        SortDirection sortDirection = SortDirection.Ascending,
         CancellationToken cancellationToken = default) where TDestination : class
     {
         var query = (await GetQueryable(filters, false, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
 
-        var orderedQuery = sortDirection == SortDirection.Ascendant
+        var orderedQuery = sortDirection == SortDirection.Ascending
             ? query.OrderBy(sortKeySelector)
             : query.OrderByDescending(sortKeySelector);
 
@@ -195,32 +152,9 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
 
     #region GET
 
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken cancellationToken = default)
-    {
-        return await GetByIdAsync<TDestination>([id], cancellationToken);
-    }
-
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default)
-    {
-        var predicate = DbSet.EntityType.GetIdExpression<TEntity>(ids);
-        var query = await GetQueryable(predicate, true, cancellationToken);
-
-        return await query
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
     public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
-
-        return await query.FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class
-    {
-        var query = (await GetQueryable(predicate, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
 
         return await query.FirstOrDefaultAsync(cancellationToken);
@@ -240,11 +174,11 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         return await query.Include(includeNavigation).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class
     {
         var query = await GetQueryable(filters, true, cancellationToken);
 
-        var orderedQuery = sortDirection == SortDirection.Ascendant
+        var orderedQuery = sortDirection == SortDirection.Ascending
             ? query.OrderBy(sortKeySelector)
             : query.OrderByDescending(sortKeySelector);
 
@@ -253,35 +187,22 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class
-    {
-        var query = await GetQueryable(predicate, true, cancellationToken);
-
-        var orderedQuery = sortDirection == SortDirection.Ascendant
-            ? query.OrderBy(sortKeySelector)
-            : query.OrderByDescending(sortKeySelector);
-
-        return await orderedQuery
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    public virtual async Task<TEntity?> GetAsync(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascendant, bool @readonly = true, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity?> GetAsync(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default)
     {
         var query = await GetQueryable(filters, @readonly, cancellationToken);
 
-        var orderedQuery = sortDirection == SortDirection.Ascendant
+        var orderedQuery = sortDirection == SortDirection.Ascending
             ? query.OrderBy(sortKeySelector)
             : query.OrderByDescending(sortKeySelector);
 
         return await orderedQuery.FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual async Task<TEntity?> GetAsync<TProperty>(TFilter filters, Expression<Func<TEntity, TProperty>> includeNavigation, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascendant, bool @readonly = true, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity?> GetAsync<TProperty>(TFilter filters, Expression<Func<TEntity, TProperty>> includeNavigation, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default)
     {
         var query = (await GetQueryable(filters, @readonly, cancellationToken)).Include(includeNavigation);
 
-        var orderedQuery = sortDirection == SortDirection.Ascendant
+        var orderedQuery = sortDirection == SortDirection.Ascending
             ? query.OrderBy(sortKeySelector)
             : query.OrderByDescending(sortKeySelector);
 

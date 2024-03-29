@@ -9,80 +9,13 @@ namespace Maxsys.Core.Services;
 
 /// <inheritdoc cref="IService{TFilter}"/>
 public abstract class ServiceBase<TEntity, TRepository, TFilter>
-    : ServiceBase, IService<TFilter>
+    : ServiceBase<TEntity, TRepository>, IService<TFilter>
     where TEntity : class
     where TRepository : IRepository<TEntity, TFilter>
     where TFilter : IFilter<TEntity>, new()
 {
-    protected readonly TRepository _repository;
-
-    protected ServiceBase(TRepository repository) : base()
-    {
-        _repository = repository;
-    }
-
-    #region EVENTS
-
-    public event AsyncEventHandler<ValueEventArgs>? GetCompletedAsync;
-
-    public event AsyncEventHandler<ValueEventArgs>? ToListCompletedAsync;
-
-    public event AsyncEventHandler<ValueEventArgs>? GetListCompletedAsync;
-
-    public event ValueEventHandler? GetCompleted;
-
-    public event ValueEventHandler? ToListCompleted;
-
-    public event ValueEventHandler? GetListCompleted;
-
-    protected ValueTask OnGetCompletedAsync(object? e, CancellationToken cancellationToken)
-    {
-        return GetCompletedAsync != null
-            ? GetCompletedAsync(this, new ValueEventArgs(e), cancellationToken)
-            : ValueTask.CompletedTask;
-    }
-
-    protected ValueTask OnToListCompletedAsync(object? e, CancellationToken cancellationToken)
-    {
-        return ToListCompletedAsync != null
-            ? ToListCompletedAsync(this, new ValueEventArgs(e), cancellationToken)
-            : ValueTask.CompletedTask;
-    }
-
-    protected ValueTask OnGetListCompletedAsync(object? e, CancellationToken cancellationToken)
-    {
-        return GetListCompletedAsync != null
-            ? GetListCompletedAsync(this, new ValueEventArgs(e), cancellationToken)
-            : ValueTask.CompletedTask;
-    }
-
-    protected void OnGetCompleted(object? e)
-    {
-        GetCompleted?.Invoke(this, new ValueEventArgs(e));
-    }
-
-    protected void OnToListCompleted(object? e)
-    {
-        ToListCompleted?.Invoke(this, new ValueEventArgs(e));
-    }
-
-    protected void OnGetListCompleted(object? e)
-    {
-        GetListCompleted?.Invoke(this, new ValueEventArgs(e));
-    }
-
-    protected virtual void UnsubscribeEvents()
-    {
-        GetCompletedAsync = null;
-        ToListCompletedAsync = null;
-        GetListCompletedAsync = null;
-
-        GetCompleted = null;
-        ToListCompleted = null;
-        GetListCompleted = null;
-    }
-
-    #endregion EVENTS
+    protected ServiceBase(TRepository repository) : base(repository)
+    { }
 
     #region GET
 
@@ -90,17 +23,6 @@ public abstract class ServiceBase<TEntity, TRepository, TFilter>
         where TDestination : class
     {
         var item = await _repository.GetAsync<TDestination>(filters, cancellationToken);
-
-        OnGetCompleted(item);
-        await OnGetCompletedAsync(item, cancellationToken);
-
-        return item;
-    }
-
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default)
-        where TDestination : class
-    {
-        var item = await _repository.GetByIdAsync<TDestination>(ids, cancellationToken);
 
         OnGetCompleted(item);
         await OnGetCompletedAsync(item, cancellationToken);
@@ -139,7 +61,7 @@ public abstract class ServiceBase<TEntity, TRepository, TFilter>
         var list = new ListDTO<TDestination>()
         {
             Count = await _repository.CountAsync(filters, cancellationToken),
-            List = await _repository.ToListAsync<TDestination>(filters, criteria, cancellationToken)
+            Items = await _repository.ToListAsync<TDestination>(filters, criteria, cancellationToken)
         };
 
         OnGetListCompleted(list);
@@ -148,7 +70,7 @@ public abstract class ServiceBase<TEntity, TRepository, TFilter>
         return list;
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class
     {
         var items = await _repository.ToListAsync<TDestination>(filters, cancellationToken);
 
@@ -158,7 +80,7 @@ public abstract class ServiceBase<TEntity, TRepository, TFilter>
         return items;
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
     {
         var items = await _repository.ToListAsync<TDestination>(filters, criteria, cancellationToken);
 
@@ -168,7 +90,7 @@ public abstract class ServiceBase<TEntity, TRepository, TFilter>
         return items;
     }
 
-    public virtual async Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class
     {
         var items = await _repository.ToListAsync(filters, pagination, keySelector, sortDirection, cancellationToken);
 
@@ -182,14 +104,11 @@ public abstract class ServiceBase<TEntity, TRepository, TFilter>
 
     #region QTY
 
-    public virtual async Task<int> CountAsync(TFilter? filters, CancellationToken cancellationToken = default)
-        => await _repository.CountAsync(filters ?? new(), cancellationToken);
+    public virtual ValueTask<int> CountAsync(TFilter? filters, CancellationToken cancellationToken = default)
+        => _repository.CountAsync(filters ?? new(), cancellationToken);
 
-    public virtual async Task<bool> AnyAsync(TFilter? filters, CancellationToken cancellationToken = default)
-        => await _repository.AnyAsync(filters ?? new(), cancellationToken);
-
-    public virtual async ValueTask<bool> IdExistsAsync(object[] ids, CancellationToken cancellationToken = default)
-        => await _repository.IdExistsAsync(ids, cancellationToken);
+    public virtual ValueTask<bool> AnyAsync(TFilter? filters, CancellationToken cancellationToken = default)
+        => _repository.AnyAsync(filters ?? new(), cancellationToken);
 
     #endregion QTY
 }

@@ -98,8 +98,8 @@ public static partial class QueryableExtensions
 
             orderedQuery = (keySelector, sort.Direction) switch
             {
-                (not null, SortDirection.Ascendant) => orderedQuery is null ? query.OrderBy(keySelector) : orderedQuery.ThenBy(keySelector),
-                (not null, SortDirection.Descendant) => orderedQuery is null ? query.OrderByDescending(keySelector) : orderedQuery.ThenByDescending(keySelector),
+                (not null, SortDirection.Ascending) => orderedQuery is null ? query.OrderBy(keySelector) : orderedQuery.ThenBy(keySelector),
+                (not null, SortDirection.Descending) => orderedQuery is null ? query.OrderByDescending(keySelector) : orderedQuery.ThenByDescending(keySelector),
                 _ => orderedQuery
             };
         }
@@ -118,8 +118,8 @@ public static partial class QueryableExtensions
 
             orderedQuery = (keySelector, sort.Direction) switch
             {
-                (not null, SortDirection.Ascendant) => orderedQuery is null ? query.OrderBy(keySelector) : orderedQuery.ThenBy(keySelector),
-                (not null, SortDirection.Descendant) => orderedQuery is null ? query.OrderByDescending(keySelector) : orderedQuery.ThenByDescending(keySelector),
+                (not null, SortDirection.Ascending) => orderedQuery is null ? query.OrderBy(keySelector) : orderedQuery.ThenBy(keySelector),
+                (not null, SortDirection.Descending) => orderedQuery is null ? query.OrderByDescending(keySelector) : orderedQuery.ThenByDescending(keySelector),
                 _ => orderedQuery
             };
         }
@@ -138,11 +138,11 @@ public static partial class QueryableExtensions
         if (typeof(T).TryGetAttribute(out SortableAttribute? sortableAttribute))
         {
             var minEnum = EnumExtensions.Min<byte>(sortableAttribute.SortColumnsType);
-            defaultSort = new(minEnum, SortDirection.Ascendant);
+            defaultSort = new(minEnum, SortDirection.Ascending);
         }
         else if (typeof(T).TryGetAttribute(out DefaultSortAttribute? defaultSortAttribute))
         {
-            defaultSort = new SortFilter(defaultSortAttribute!.Property, SortDirection.Ascendant);
+            defaultSort = new SortFilter(defaultSortAttribute!.Property, SortDirection.Ascending);
         }
         else
         {

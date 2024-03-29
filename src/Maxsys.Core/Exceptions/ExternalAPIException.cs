@@ -42,6 +42,6 @@ public sealed class ExternalAPIException : Exception
     {
         return string.IsNullOrWhiteSpace(message)
             ? $"StatusCode[{(int)statusCode}]: {DEFAULT_MESSAGE}"
-            : $"StatusCode[{(int)statusCode}]: {DEFAULT_MESSAGE}\n{message}";
+            : $"StatusCode[{(int)statusCode}]: {DEFAULT_MESSAGE}{Environment.NewLine}{message}";
     }
 }

@@ -1,9 +1,5 @@
-# Maxsys.Core.Web (Principais Features)
-
-## Exceptions 
-- `NotLoggedUserException`
-    - Representa um erro que ocorre quando o usuário não está logado.
-
+# Maxsys.Core.Web
+Biblioteca Maxsys Core para utilização de recursos Web.
 
 ## Attributes
 - `TitledActionAttribute`

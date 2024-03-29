@@ -33,5 +33,5 @@ public sealed class SortFilter
     /// <summary>
     /// é a direção da ordenação.
     /// </summary>
-    public SortDirection Direction { get; set; } = SortDirection.Ascendant;
+    public SortDirection Direction { get; set; } = SortDirection.Ascending;
 }

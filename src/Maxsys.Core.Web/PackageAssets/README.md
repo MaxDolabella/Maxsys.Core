@@ -3,7 +3,6 @@
 <h1>Maxsys Core Web</h1>
 </div>
 
-![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web)
 ![License](https://img.shields.io/github/license/maxdolabella/maxsys.core)
 
 **Maxsys.Core.Web** é uma biblioteca em C# para dar suporte à criação de aplicações Maxsys.
@@ -11,20 +10,22 @@ Complementa o pacote **Maxsys.Core**, porém voltado à projetos web.
 O framework de destino utilizado é o `.NET 8.0`.
 
 
-## Nuget
+## :package: Nuget
+![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Web" Version="10.0.0" />
+    <PackageReference Include="Maxsys.Core.Web" Version="10.1.0" />
 ```
 
 ## ⛓ Dependências
-+ Maxsys.Core Version=10.0.0
-+ Swashbuckle.AspNetCore.Annotations Version=6.5.0
-+ **Microsoft.AspNetCore.App** (Framework)
+![Microsoft.AspNetCore.App](https://img.shields.io/badge/Microsoft.AspNetCore.App-Framework-red?style=for-the-badge)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-10.1.*-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-6.5.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSwashbuckle.AspNetCore.Annotations)
+
 
 ## 🌟 Features
 
-As principais *features* do projeto, podem ser vistas [aqui](features.md).
+As principais *features* do projeto, podem ser vistas [aqui](README-features.md).
 
 ## ✒️ Autores
 
@@ -44,7 +45,7 @@ Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsyste
 
 ## 🆕 Release Notes
 
-### 10.0.0
+### 10.1.0
 + Primeiro release.
 
-<!-- #### [Old Releases](old-releases.md) -->
+#### [Old Releases](README-old-releases.md)

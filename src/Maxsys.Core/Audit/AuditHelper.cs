@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Maxsys.Experimental.Core.Audit;
+namespace Maxsys.Core.Audit;
 
 public static class AuditHelper
 {
@@ -32,11 +32,11 @@ public static class AuditHelper
         return dic;
     }
 
-    public static AuditLog GetAuditLog(object obj1, object obj2)
+    public static AuditLog GetAuditLog(string json1, string json2)
     {
         // convert JSON to object
-        var jsonDoc1 = JsonDocument.Parse(JsonSerializer.Serialize(obj1));
-        var jsonDoc2 = JsonDocument.Parse(JsonSerializer.Serialize(obj2));
+        var jsonDoc1 = JsonDocument.Parse(json1);
+        var jsonDoc2 = JsonDocument.Parse(json2);
 
         // read properties
         var jsonDic1 = GetPropertyDictionary(jsonDoc1.RootElement, null);
@@ -74,4 +74,7 @@ public static class AuditHelper
 
         return new AuditLog { Fields = logs };
     }
+
+    public static AuditLog GetAuditLog(object obj1, object obj2)
+        => GetAuditLog(JsonSerializer.Serialize(obj1), JsonSerializer.Serialize(obj2));
 }

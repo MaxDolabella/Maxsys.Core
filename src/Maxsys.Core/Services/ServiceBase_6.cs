@@ -22,29 +22,21 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
 
     #region GET
 
-    public virtual async Task<TFormDTO?> GetAsync(TKey id, CancellationToken cancellationToken = default)
-    {
-        return await base.GetAsync<TFormDTO>(id, cancellationToken);
-    }
+    public virtual Task<TFormDTO?> GetAsync(TKey id, CancellationToken cancellationToken = default)
+        => base.GetAsync<TFormDTO>(id, cancellationToken);
 
-    public virtual async Task<TFormDTO?> GetAsync(TFilter filters, CancellationToken cancellationToken = default)
-    {
-        return await base.GetAsync<TFormDTO>(filters, cancellationToken);
-    }
+    public virtual Task<TFormDTO?> GetAsync(TFilter filters, CancellationToken cancellationToken = default)
+        => base.GetAsync<TFormDTO>(filters, cancellationToken);
 
     #endregion GET
 
     #region LIST
 
-    public virtual async Task<ListDTO<TListDTO>> GetListAsync(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default)
-    {
-        return await base.GetListAsync<TListDTO>(filters, criteria, cancellationToken);
-    }
+    public virtual Task<ListDTO<TListDTO>> GetListAsync(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default)
+        => base.GetListAsync<TListDTO>(filters, criteria, cancellationToken);
 
-    public virtual async Task<IReadOnlyList<TListDTO>> ToListAsync(TFilter filters, CancellationToken cancellationToken = default)
-    {
-        return await base.ToListAsync<TListDTO>(filters, cancellationToken);
-    }
+    public virtual Task<List<TListDTO>> ToListAsync(TFilter filters, CancellationToken cancellationToken = default)
+        => base.ToListAsync<TListDTO>(filters, cancellationToken);
 
     #endregion LIST
 }

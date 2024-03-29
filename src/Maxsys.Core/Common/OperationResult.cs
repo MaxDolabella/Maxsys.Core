@@ -68,24 +68,8 @@ public class OperationResult : IOperationResult
     }
 
     public OperationResult(Exception exception, ResultTypes resultType = ResultTypes.Error)
-    {
-        var failures = new List<Notification>();
-
-        if (exception.InnerException is not null)
-        {
-            failures.Add(new Notification(
-                exception.InnerException.Message,
-                exception.InnerException.ToString(),
-                resultType));
-        }
-
-        failures.Add(new Notification(
-                exception.Message,
-                exception.ToString(),
-                resultType));
-
-        Notifications = failures;
-    }
+        : this(new Notification(exception, resultType))
+    { }
 
     #endregion CTOR
 
@@ -173,7 +157,7 @@ public class OperationResult<T> : OperationResult
         Notifications = notifications;
     }
 
-    public OperationResult(List<Notification>? notifications)
+    public OperationResult(List<Notification> notifications)
        : this(default, notifications)
     { }
 

@@ -187,6 +187,13 @@ public class WorkbookFacade : ServiceBase, IWorkbookFacade
                 (ExcelCellDataType.Guid, XLDataType.Text) => Guid.Parse(xlValue.ToString().Trim()),
                 (ExcelCellDataType.Decimal, XLDataType.Text) => Convert.ToDecimal(xlValue.ToString().Trim()),
                 (ExcelCellDataType.Decimal, XLDataType.Number) => Convert.ToDecimal(xlValue.GetNumber()),
+                (ExcelCellDataType.Long, XLDataType.Text) => Convert.ToInt64(xlValue.ToString().Trim()),
+                (ExcelCellDataType.Long, XLDataType.Number) => Convert.ToInt64(xlValue.GetNumber()),
+                (ExcelCellDataType.Short, XLDataType.Text) => Convert.ToInt16(xlValue.ToString().Trim()),
+                (ExcelCellDataType.Short, XLDataType.Number) => Convert.ToInt16(xlValue.GetNumber()),
+                (ExcelCellDataType.Byte, XLDataType.Text) => Convert.ToByte(xlValue.ToString().Trim()),
+                (ExcelCellDataType.Byte, XLDataType.Number) => Convert.ToByte(xlValue.GetNumber()),
+                (ExcelCellDataType.Boolean, XLDataType.Boolean) => xlValue.GetBoolean(),
                 _ => throw new InvalidCastException($"Formato inválido."),
             };
         }

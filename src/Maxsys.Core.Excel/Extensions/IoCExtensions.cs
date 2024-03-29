@@ -1,5 +1,7 @@
-﻿using Maxsys.Core.Excel.Abstractions;
+﻿using System.Reflection;
+using Maxsys.Core.Excel.Abstractions;
 using Maxsys.Core.Excel.Infra;
+using Maxsys.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Maxsys.Core.Excel.Extensions;
@@ -7,12 +9,32 @@ namespace Maxsys.Core.Excel.Extensions;
 public static class IoCExtensions
 {
     /// <summary>
-    /// Adiciona os mapeamentos de objeto (<see cref="TableTypeConfigurationBase{T}"/>) e suas implementações no <see cref="IServiceCollection"/>.
+    /// Adiciona as implementações dos mapeamentos de excel para objeto (<see cref="TableTypeConfigurationBase{T}"/>)
+    /// no <see cref="IServiceCollection"/> a partir do assembly ao qual <typeparamref name="TEntry"/> faz parte.
     /// </summary>
-    public static IServiceCollection AddTableTypeConfiguration<TImplementation, T>(this IServiceCollection services)
-        where TImplementation : TableTypeConfigurationBase<T>
+    public static IServiceCollection AddTableTypeConfigurations<TEntry>(this IServiceCollection services, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
     {
-        services.AddScoped<TableTypeConfigurationBase<T>, TImplementation>();
+        services.AddTableTypeConfigurations([typeof(TEntry).Assembly], serviceLifetime);
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adiciona as implementações dos mapeamentos de excel para objeto (<see cref="TableTypeConfigurationBase{T}"/>)
+    /// no <see cref="IServiceCollection"/> a partir de um array de assembly.
+    /// </summary>
+    public static IServiceCollection AddTableTypeConfigurations(this IServiceCollection services, Assembly[] assemblies, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+    {
+        var types = assemblies.SelectMany((a) => a.ExportedTypes)
+            .Where(t => !t.GetCustomAttributes<DependencyInjectionIgnoreAttribute>().Any())
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .Where(t => t.IsAssignableToGenericType(typeof(TableTypeConfigurationBase<>)))
+            .ToList();
+
+        foreach (var type in types)
+        {
+            services.Add(new ServiceDescriptor(type.BaseType!, type, serviceLifetime));
+        }
 
         return services;
     }

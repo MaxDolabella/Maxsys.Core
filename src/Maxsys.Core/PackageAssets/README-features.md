@@ -1,4 +1,4 @@
-# Maxsys.Core (Principais Features)
+# Maxsys.Core
 
 ## Attributes
 
@@ -32,7 +32,7 @@
 ---
 ## ListCriteria (Sorts)
 
-Um `SortFilter` contém a informação de qual *property* do DTO será ordenada, bem como sua orientação (`Ascendant`, `Descendant`).
+Um `SortFilter` contém a informação de qual *property* do DTO será ordenada, bem como sua orientação (`Ascending`, `Descending`).
 A *property* a ser ordenada pode ser informada através de `SortFilter.Column` (*byte/enum*) ou `SortFilter.ColumnName` (*string/nome da property a ordenar*).
 
 <hr style="border: 1px dashed lightgray;"/>
@@ -68,9 +68,9 @@ public class CityDTO
 ```
 
 ```csharp
-var sortByAbbreviation = new SortFilter(2, Direction.Ascendant);
+var sortByAbbreviation = new SortFilter(2, Direction.Ascending);
 // ou
-// var sortByAbbreviation = new SortFilter((byte)CityColumns.Abbreviation, Direction.Ascendant);
+// var sortByAbbreviation = new SortFilter((byte)CityColumns.Abbreviation, Direction.Ascending);
 
 ListCriteria criteria = new ()
 {
@@ -188,7 +188,7 @@ public class CityDTO
 ```
 
 ```csharp
-var sortByAbbreviation = new SortFilter("Abbreviation", Direction.Ascendant);
+var sortByAbbreviation = new SortFilter("Abbreviation", Direction.Ascending);
 
 ListCriteria criteria = new ()
 {
@@ -234,9 +234,9 @@ A definição de ordenação das propriedades aninhadas poderá ser feita passan
 ##### Exemplo 
 
 ```csharp
-var sortByCountry = new SortFilter("State.Country.Name", Direction.Ascendant);
-var sortByState = new SortFilter("State.Name", Direction.Ascendant);
-var sortByAbbreviation = new SortFilter("Abbreviation", Direction.Ascendant);
+var sortByCountry = new SortFilter("State.Country.Name", Direction.Ascending);
+var sortByState = new SortFilter("State.Name", Direction.Ascending);
+var sortByAbbreviation = new SortFilter("Abbreviation", Direction.Ascending);
 
 ListCriteria criteria = new ()
 {
@@ -788,3 +788,5 @@ public sealed class MovieService : HttpClientBase, IMovieService
 
 	Além desse método, existem mais overloads.
 	</details>
+	
+#### [README](README.md)

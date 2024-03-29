@@ -9,6 +9,7 @@ public sealed class Notification
     /// CTOR vazio necessário para conversão de Json
     /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
     public Notification()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     { }
@@ -31,11 +32,12 @@ public sealed class Notification
     public Notification(Exception exception, string message, ResultTypes resultType = ResultTypes.Error)
     {
         Message = message;
-        Details = exception.Message;
+        Details = exception.InnerException?.Message;
+        ResultType = resultType;
+
 #if DEBUG
         Tag = exception.ToString();
 #endif
-        ResultType = resultType;
     }
 
     /// <summary>

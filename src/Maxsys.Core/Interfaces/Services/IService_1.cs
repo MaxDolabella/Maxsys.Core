@@ -58,13 +58,13 @@ public interface IService<TFilter> : IService
     Task<ListDTO<TDestination>> GetListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/></remarks>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/></remarks>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/></remarks>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
 
     #endregion LIST
 
@@ -76,7 +76,7 @@ public interface IService<TFilter> : IService
     /// <param name="filters"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<int> CountAsync(TFilter? filters, CancellationToken cancellationToken = default);
+    ValueTask<int> CountAsync(TFilter? filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Verifica se existe alguma entidade a partir de um filtro.
@@ -84,7 +84,7 @@ public interface IService<TFilter> : IService
     /// <param name="filters"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<bool> AnyAsync(TFilter? filters, CancellationToken cancellationToken = default);
+    ValueTask<bool> AnyAsync(TFilter? filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Verifica se existe alguma entidade <typeparamref name="TEntity"/> com o(s) id(s) especificados.

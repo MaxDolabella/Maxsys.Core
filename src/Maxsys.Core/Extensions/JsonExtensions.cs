@@ -208,7 +208,8 @@ public static class JsonExtensions
     /// <exception cref="NotSupportedException"/>
     public static string ToJson<T>(this T? value, JsonSerializerOptions? options = null)
     {
-        return JsonSerializer.Serialize(value, options ?? JSON_DEFAULT_OPTIONS);
+        var type = value?.GetType() ?? typeof(T);
+        return JsonSerializer.Serialize(value, type, options ?? JSON_DEFAULT_OPTIONS);
     }
 
     /// <summary>

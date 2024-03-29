@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Maxsys.Core.Helpers;
+using Maxsys.Core.Messaging.Pipelines;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Maxsys.Core.Extensions;
@@ -148,6 +149,24 @@ public static class IServiceCollectionExtensions
 
             services.Add<TService, TReplaceImplementation>(serviceLifetime);
         }
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registra os Handlers (MediatR) para Messaging que pertencem ao Assembly contenedor do tipo <typeparamref name="TEntry"/>.
+    /// </summary>
+    /// <typeparam name="TEntry"></typeparam>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddMessaging<TEntry>(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(typeof(TEntry).Assembly);
+
+            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
 
         return services;
     }

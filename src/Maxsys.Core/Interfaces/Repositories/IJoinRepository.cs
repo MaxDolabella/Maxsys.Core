@@ -39,22 +39,22 @@ internal interface IJoinRepository<TEntity, TJoin, TFilter> : IRepository
     #region LIST
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TEntity>> ToListAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<List<TEntity>> ToListAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TEntity>> ToListAsync(TFilter filters, ListCriteria criteria, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<List<TEntity>> ToListAsync(TFilter filters, ListCriteria criteria, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TEntity>> ToListAsync(TFilter filters, Pagination? pagination, Expression<Func<TEntity, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<List<TEntity>> ToListAsync(TFilter filters, Pagination? pagination, Expression<Func<TEntity, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de um <typeparamref name="TFilter"/>,
@@ -66,7 +66,7 @@ internal interface IJoinRepository<TEntity, TJoin, TFilter> : IRepository
     /// <param name="filters"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de um <typeparamref name="TFilter"/>,
@@ -77,10 +77,10 @@ internal interface IJoinRepository<TEntity, TJoin, TFilter> : IRepository
     /// <param name="criteria"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>Documentar...</summary>
-    Task<IReadOnlyList<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascendant, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
 
     #endregion LIST
 

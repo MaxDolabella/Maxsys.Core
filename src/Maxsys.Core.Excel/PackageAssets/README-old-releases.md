@@ -2,4 +2,4 @@
 
 ## Old Release Notes
 
-Nada para mostrar.
+Nada a mostrar

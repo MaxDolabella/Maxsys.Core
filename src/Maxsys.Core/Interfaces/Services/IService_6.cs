@@ -1,4 +1,5 @@
 ﻿using Maxsys.Core.DTO;
+using Maxsys.Core.Events;
 using Maxsys.Core.Filtering;
 
 namespace Maxsys.Core.Interfaces.Services;
@@ -21,6 +22,52 @@ public interface IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFil
     where TUpdateDTO : class, IDTO, IKey<TKey>
     where TFilter : IFilter, new()
 {
+    #region EVENTS
+
+    /// <summary>
+    /// Evento que ocorre logo antes de adicionar um objeto ao repositório.
+    /// <br/>
+    /// TEventArgs é a entidade.
+    /// </summary>
+    event OperationResultAsyncEventHandler<object>? AddingAsync;
+
+    /// <summary>
+    /// Evento que ocorre logo antes de atualizar um objeto no repositório.
+    /// <br/>
+    /// TEventArgs é a entidade.
+    /// </summary>
+    event OperationResultAsyncEventHandler<object>? UpdatingAsync;
+
+    /// <summary>
+    /// Evento que ocorre logo antes de deletar um objeto do repositório.
+    /// <br/>
+    /// TEventArgs é a entidade.
+    /// </summary>
+    event OperationResultAsyncEventHandler<TKey>? DeletingAsync;
+
+    /// <summary>
+    /// Evento que ocorre logo após adicionar um objeto ao repositório.
+    /// <br/>
+    /// TEventArgs é a entidade.
+    /// </summary>
+    event AsyncEventHandler<AddedEventArgs<object, TCreateDTO>>? AddedAsync;
+
+    /// <summary>
+    /// Evento que ocorre logo após atualizar um objeto no repositório.
+    /// <br/>
+    /// TEventArgs é a entidade.
+    /// </summary>
+    event AsyncEventHandler<ValueEventArgs>? UpdatedAsync;
+
+    /// <summary>
+    /// Evento que ocorre logo após deletar um objeto do repositório.
+    /// <br/>
+    /// TEventArgs é a entidade.
+    /// </summary>
+    event AsyncEventHandler<ValueEventArgs>? DeletedAsync;
+
+    #endregion EVENTS
+
 #pragma warning disable CS1735 // XML comment has a typeparamref tag, but there is no type parameter by that name
 
     #region ADD

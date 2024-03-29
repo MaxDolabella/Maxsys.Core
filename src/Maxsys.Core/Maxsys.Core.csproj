@@ -9,7 +9,7 @@
 
 	<!-- Package -->
 	<PropertyGroup>
-		<Version>10.0.0</Version>
+		<Version>10.1.0</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Core para aplicações Maxsys (.Net 8)</Description>
@@ -37,14 +37,6 @@
 			<PackagePath>\</PackagePath>
 			<Pack>true</Pack>
 		</None>
-		<None Update="PackageAssets\old-releases.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Update="PackageAssets\features.md">
-		  <PackagePath>\</PackagePath>
-		  <Pack>True</Pack>
-		</None>
 		<None Update="PackageAssets\README.md">
 			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
@@ -57,8 +49,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+	  <Content Include="PackageAssets\logo.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+		<PackageReference Include="MediatR" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />

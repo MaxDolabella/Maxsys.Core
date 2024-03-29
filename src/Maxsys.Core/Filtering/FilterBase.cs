@@ -15,9 +15,9 @@ public abstract class FilterBase : IFilter
 /// Fornece uma classe base para implementação de um filtro
 /// onde <typeparamref name="TKey"/> é o tipo de chave do objeto que se deseja filtrar.
 /// </summary>
-public abstract class FilterBase<TKey> : FilterBase
+public abstract class FilterBase<TKey> : FilterBase, IKeyFilter<TKey>
 {
-    public KeyList<TKey> IdList { get; set; } = new();
+    public KeyList<TKey> IdList { get; set; } = [];
 }
 
 /// <summary>
@@ -28,7 +28,7 @@ public abstract class FilterBase<TKey> : FilterBase
 public abstract class FilterBase<TKey, TEntity> : FilterBase<TKey>, IFilter<TEntity>
     where TEntity : class
 {
-    public List<Expression<Func<TEntity, bool>>> Expressions { get; } = new();
+    public List<Expression<Func<TEntity, bool>>> Expressions { get; } = [];
 
     public abstract void SetExpressions();
 

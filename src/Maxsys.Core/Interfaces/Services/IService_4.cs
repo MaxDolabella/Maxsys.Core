@@ -35,7 +35,7 @@ public interface IService<TKey, TListDTO, TFormDTO, TFilter>
     Task<ListDTO<TListDTO>> GetListAsync(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default);
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TListDTO"/></remarks>
-    Task<IReadOnlyList<TListDTO>> ToListAsync(TFilter filters, CancellationToken cancellationToken = default);
+    Task<List<TListDTO>> ToListAsync(TFilter filters, CancellationToken cancellationToken = default);
 
     #endregion LIST
 

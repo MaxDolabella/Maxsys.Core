@@ -6,11 +6,11 @@ namespace Maxsys.Core.Sorting;
 /// SortDirection
 /// <list type="bullet">
 /// <item>
-///     <term>1. <see cref="Ascendant"/></term>
+///     <term>1. <see cref="Ascending"/></term>
 ///     <description>Ascendente.</description>
 /// </item>
 /// <item>
-///     <term>2. <see cref="Descendant"/></term>
+///     <term>2. <see cref="Descending"/></term>
 ///     <description>Descendente.</description>
 /// </item>
 /// </list>
@@ -21,11 +21,11 @@ public enum SortDirection : byte
     /// Ascendente
     /// </summary>
     [Description("Ascendente")]
-    Ascendant = 1,
+    Ascending = 1,
 
     /// <summary>
     /// Descendente
     /// </summary>
     [Description("Descendente")]
-    Descendant = 2
+    Descending = 2
 }

@@ -1,4 +1,4 @@
-# Maxsys.Core.Data (Principais Features)
+# Maxsys.Core.Data
 
 ## Extensions (Principais)
 
@@ -38,10 +38,7 @@
 	</details>
 
 
-
-## Features (Principais)
-
-### RepositoryBase&lt;T&gt;
+## RepositoryBase&lt;T&gt;
 
 + `RepositoryBase<T>.GetById()`
 	+ Obtém uma entidade a partir de seu id ou null se não encontrada.

@@ -187,7 +187,7 @@ public static partial class QueryableExtensions
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TInner"></typeparam>
-    internal class LeftOuterJoinResult<TSource, TInner>
+    public class LeftOuterJoinResult<TSource, TInner>
     {
         public required TSource Outer { get; set; }
         public required TInner? Inner { get; set; }
@@ -198,7 +198,7 @@ public static partial class QueryableExtensions
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TInner"></typeparam>
-    internal class LeftOuterJoinListResult<TSource, TInner>
+    public class LeftOuterJoinListResult<TSource, TInner>
     {
         public required TSource Outer { get; set; }
         public required IEnumerable<TInner> InnerList { get; set; }
