@@ -26,7 +26,7 @@ O framework de destino utilizado é o `.NET 8.0`.
 As principais *features* do projeto podem ser vistas [aqui](FEATURES.md).
 
 ## :black_nib: Autores
-* [@MaxDolabella](https://www.github.com/MaxDolabella)
+[@MaxDolabella](https://www.github.com/MaxDolabella)
 
 ## :monocle_face: Aprendizagem
 Através desse projeto, tenho a oportunidade de por em prática parte do conhecimento adquirido. Obviamente, ainda é limitado, mas a intenção é sempre buscar a melhora.

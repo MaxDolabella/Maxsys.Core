@@ -3,13 +3,10 @@
 <h1>MAXSYS CORE</h1>
 </div>
 
- 
-
-
 Contém bibliotecas para aplicações Maxsys.
 Essas bibliotecas auxiliam no desenvolvimento de minhas aplicações pessoais em `Windows Forms`, `WPF` e `ASP.NET Core (WebAPI / MVC)`. Sinta-se livre pra estudar, alterar e utilizar todo ou parte do código como bem entender.
 
-## ⚙️ Projects (.NET8)
+## :gear: Projects (.NET8)
 
 | Projeto                                                                        | Versão                                                                        |
 |--------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
@@ -20,18 +17,19 @@ Essas bibliotecas auxiliam no desenvolvimento de minhas aplicações pessoais em
 
 
 
-## ✒️ Autor
+## :black_nib: Autores
+[@MaxDolabella](https://www.github.com/MaxDolabella)
 
-* [@MaxDolabella](https://www.github.com/MaxDolabella)
-
-## 🧐 Aprendizagem
-
+## :monocle_face: Aprendizagem
 Através desse projeto, tenho a oportunidade de por em prática parte do conhecimento adquirido. Obviamente, ainda é limitado, mas a intenção é sempre buscar a melhora.
 
-## 🗝 Licença
-
+## :old_key: Licença
 Este código possui licença MIT e está liberado para uso da maneira que se desejar.
   
-## 📧 Feedback
-
+## :email: Feedback
 Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsystech@outlook.com?subject=Github%20contact).
+
+<!-- 
+    hs41
+    https://github.com/ikatyang/emoji-cheat-sheet)
+-->

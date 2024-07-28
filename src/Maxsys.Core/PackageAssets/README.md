@@ -36,31 +36,21 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações pessoais `Wind
 
 
 ## :star2: Features
-
 As principais *features* do projeto podem ser vistas [aqui](FEATURES.md).
 
 ## :black_nib: Autores
-
-* [@MaxDolabella](https://www.github.com/MaxDolabella)
+[@MaxDolabella](https://www.github.com/MaxDolabella)
 
 Aqui uma menção à [Jeremy H. Todd](https://github.com/jhtodd), autor de uma das features usadas nesse projeto (geração de guid sequencial).
 
 ## :monocle_face: Aprendizagem
-
 Através desse projeto, tenho a oportunidade de por em prática parte do conhecimento adquirido. Obviamente, ainda é limitado, mas a intenção é sempre buscar a melhora.
 
 ## :old_key: Licença
-
 Este código possui licença MIT e está liberado para uso da maneira que se desejar.
   
 ## :email: Feedback
-
 Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsystech@outlook.com?subject=Github%20contact).
 
 ## :new: Release Notes
-
 Os *changelogs* do projeto podem ser vistos [aqui](CHANGELOGS.md)
-
-<!-- 
-    https://github.com/ikatyang/emoji-cheat-sheet)
--->
