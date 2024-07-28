@@ -14,36 +14,33 @@ O framework de destino utilizado é o `.NET 8.0`.
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Excel)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Excel" Version="10.1.0" />
+    <PackageReference Include="Maxsys.Core.Excel" Version="11.0.0" />
 ```
 
-## ⛓ Dependências
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-10.1.*-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
-![ClosedXML](https://img.shields.io/badge/ClosedXML-0.102.2-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
+## :link: Dependências
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-11.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![ClosedXML](https://img.shields.io/badge/ClosedXML-0.102.3-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
 
-- ## 🌟 Features
+## :star2: Features
 
-As principais *features* do projeto, podem ser vistas [aqui](README-features.md).
+As principais *features* do projeto, podem ser vistas [aqui](FEATURES.md).
 
-## ✒️ Autores
+## :black_nib: Autores
 
 - [@MaxDolabella](https://www.github.com/MaxDolabella)
 
-## 🧐 Aprendizagem
+## :monocle_face: Aprendizagem
 
 Através desse projeto, tenho a oportunidade de por em prática parte do conhecimento adquirido. Obviamente, ainda é limitado, mas a intenção é sempre buscar a melhora.
 
-## 🗝 Licença
+## :old_key: Licença
 
 Este código possui licença MIT e está liberado para uso da maneira que se desejar.
   
-## 📧 Feedback
+## :email: Feedback
 
 Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsystech@outlook.com?subject=Github%20contact).
 
-## 🆕 Release Notes
+## :new: Release Notes
 
-### 10.1.0
-+ Primeiro release.
-
-#### [Old Releases](README-old-releases.md)
+Os *changelogs* do projeto podem ser vistos [aqui](CHANGELOGS.md)
