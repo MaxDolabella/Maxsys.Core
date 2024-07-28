@@ -3,6 +3,5 @@
 /// <summary>
 /// Objeto para servir de referência para o assembly
 /// </summary>
-public class Entry
-{
-}
+public interface ICoreEntry
+{ }

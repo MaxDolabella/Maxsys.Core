@@ -26,4 +26,17 @@ public static class DateTimeHelper
     {
         return new DateTimeOffset(dateTime).ToUnixTimeMilliseconds();
     }
+
+    /// <summary>
+    /// Obtém uma nova instância da mesma data com horário 00:00:00
+    /// </summary>
+    /// <param name="date"></param>
+    public static DateTime StartDate(DateTime date) => date.Date;
+
+    /// <summary>
+    /// Obtém uma nova instância da mesma data com horário 23:59:59.9999...
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    public static DateTime EndDate(DateTime date) => date.Date.AddDays(1).AddTicks(-1);
 }

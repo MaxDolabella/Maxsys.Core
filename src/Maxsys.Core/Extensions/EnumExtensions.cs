@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace System;
 
@@ -56,7 +57,8 @@ public static class EnumExtensions
         if (fieldInfo is null)
             return defaultValue;
 
-        var attDescription = fieldInfo.GetCustomAttribute<DescriptionAttribute>()?.Description;
+        var attDescription = fieldInfo.GetCustomAttribute<EnumMemberAttribute>()?.Value 
+            ?? fieldInfo.GetCustomAttribute<DescriptionAttribute>()?.Description;
 
         return attDescription ?? value.ToString();
     }
@@ -64,7 +66,7 @@ public static class EnumExtensions
     /// <summary>
     /// Obtém um <typeparamref name="TEnum"/> a partir de um texto.
     /// <para/>
-    /// Se um item do enum ou sua descrição (<see cref="DescriptionAttribute"/>)
+    /// Se um item do enum ou seu nome amigável (<see cref="DescriptionAttribute"/> / <see cref="EnumMemberAttribute"/>)
     /// tiver o mesmo valor que <paramref name="text"/>, então o enum é
     /// retornado com seu valor correspondente.
     /// <br/>

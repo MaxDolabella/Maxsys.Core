@@ -6,10 +6,10 @@ using Maxsys.Core.Sorting;
 
 namespace Maxsys.Core.Services;
 
-/// <inheritdoc cref="IService{TKey, TFilter}"/>
+/// <inheritdoc cref="IService{TEntity, TKey, TFilter}"/>
 public abstract class ServiceBase<TEntity, TRepository, TKey, TFilter>
     : ServiceBase<TEntity, TRepository, TFilter>
-    , IService<TKey, TFilter>
+    , IService<TEntity, TKey, TFilter>
     where TKey : notnull
     where TEntity : class
     where TRepository : IRepository<TEntity, TFilter>
@@ -23,11 +23,19 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TFilter>
 
     #region GET
 
-    public virtual async Task<TDestination?> GetAsync<TDestination>(TKey id, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetAsync<TDestination>(TKey id, CancellationToken cancellationToken = default)
     {
-        var item = await _repository.GetAsync<TDestination>(IdSelector(id), cancellationToken);
+        var item = await _repository.GetByIdAsync<TDestination>(id, cancellationToken);
 
-        OnGetCompleted(item);
+        await OnGetCompletedAsync(item, cancellationToken);
+
+        return item;
+    }
+
+    public virtual async Task<TDestination?> GetAsync<TDestination>(TKey id, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    {
+        var item = await _repository.GetByIdAsync(id, projection, cancellationToken);
+
         await OnGetCompletedAsync(item, cancellationToken);
 
         return item;
@@ -50,31 +58,46 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TFilter>
         => base.ToListAsync(filters, pagination, keySelector, sortDirection, cancellationToken);
 
     public virtual Task<List<InfoDTO<TKey>>> ToInfoListAsync(IEnumerable<TKey> idList, CancellationToken cancellationToken = default)
-        => ToInfoListAsync(IdListToFilter(idList), cancellationToken);
+        => ToInfoListAsync(FilterFromIdList(idList), cancellationToken);
 
     public virtual Task<List<InfoDTO<TKey>>> ToInfoListAsync(IEnumerable<TKey> idList, ListCriteria criteria, CancellationToken cancellationToken = default)
-        => ToInfoListAsync(IdListToFilter(idList), criteria, cancellationToken);
+        => ToInfoListAsync(FilterFromIdList(idList), criteria, cancellationToken);
 
     public virtual Task<List<InfoDTO<TKey>>> ToInfoListAsync(IEnumerable<TKey> idList, Pagination? pagination, Expression<Func<InfoDTO<TKey>, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
-        => ToInfoListAsync(IdListToFilter(idList), pagination, keySelector, sortDirection, cancellationToken);
+        => ToInfoListAsync(FilterFromIdList(idList), pagination, keySelector, sortDirection, cancellationToken);
 
-    public virtual Task<List<TDestination>> ToListAsync<TDestination>(IEnumerable<TKey> idList, CancellationToken cancellationToken = default) where TDestination : class
-        => ToListAsync<TDestination>(IdListToFilter(idList), cancellationToken);
+    public virtual Task<List<TDestination>> ToListAsync<TDestination>(IEnumerable<TKey> idList, CancellationToken cancellationToken = default)
+        => ToListAsync<TDestination>(FilterFromIdList(idList), cancellationToken);
 
     public virtual Task<List<TDestination>> ToListAsync<TDestination>(IEnumerable<TKey> idList, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
-        => ToListAsync<TDestination>(IdListToFilter(idList), criteria, cancellationToken);
+        => ToListAsync<TDestination>(FilterFromIdList(idList), criteria, cancellationToken);
 
-    public virtual Task<List<TDestination>> ToListAsync<TDestination>(IEnumerable<TKey> idList, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class
-        => ToListAsync<TDestination>(IdListToFilter(idList), pagination, keySelector, sortDirection, cancellationToken);
+    public virtual Task<List<TDestination>> ToListAsync<TDestination>(IEnumerable<TKey> idList, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+        => ToListAsync(FilterFromIdList(idList), pagination, keySelector, sortDirection, cancellationToken);
 
     #endregion LIST
 
-    private static TFilter IdListToFilter(IEnumerable<TKey> idList)
+    protected static TFilter FilterFromIdList(IEnumerable<TKey> idList)
     {
-        var filter = new TFilter();
+        TFilter filter = new();
 
         (filter as IKeyFilter<TKey>)!.IdList = new(idList);
 
         return filter;
+    }
+
+    public Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default)
+    {
+        return base.ToListAsync<InfoDTO<TKey>>(predicate, criteria, cancellationToken);
+    }
+
+    public Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<InfoDTO<TKey>, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+    {
+        return base.ToListAsync(predicate, pagination, sortSelector, sortDirection, cancellationToken);
+    }
+
+    public Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        return base.ToListAsync<InfoDTO<TKey>>(predicate, ListCriteria.Empty, cancellationToken);
     }
 }

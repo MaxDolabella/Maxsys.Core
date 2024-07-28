@@ -148,7 +148,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     ///
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
@@ -162,46 +162,46 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TEntity}"/> com os registros filtrados.</returns>
-    Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TEntity, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression.
     /// </summary>
     ///
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> selector, Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> projection, Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
     /// aplicando-se paginação e ordenação.
     /// </summary>
     ///
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="criteria">contém critérios para obtenção dos items como paginação e lista de ordenações.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> selector, Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> projection, Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
     /// aplicando-se paginação e ordenação.
     /// </summary>
     ///
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> selector, Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> projection, Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression.
@@ -210,7 +210,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
@@ -230,38 +230,18 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     ///
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
     #endregion LIST
 
     #region GET
-
-    /// <summary>
-    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu id.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="id">é id para obtenção do item.</param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken cancellationToken = default) where TDestination : class;
-
-    /// <summary>
-    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="ids">são os ids para obtenção do item.</param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém um item <typeparamref name="TEntity"/> a partir de seu id.
@@ -296,6 +276,48 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>um objeto <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
     Task<TEntity?> GetByIdAsync(object[] ids, bool @readonly = true, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu id.
+    /// <br/>
+    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
+    /// </summary>
+    /// <param name="id">é id para obtenção do item.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
+    Task<TDestination?> GetByIdAsync<TDestination>(object id, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
+    /// <br/>
+    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
+    /// </summary>
+    /// <param name="ids">são os ids para obtenção do item.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
+    Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu id.
+    /// <br/>
+    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
+    /// </summary>
+    /// <param name="id">é id para obtenção do item.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
+    Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
+    /// <br/>
+    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
+    /// </summary>
+    /// <param name="ids">são os ids para obtenção do item.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
+    Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TEntity"/> a partir de uma expression.
@@ -426,35 +448,13 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     Task<TEntity?> GetSingleOrThrowsAsync(Expression<Func<TEntity, bool>> predicate, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu id.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="id">é id para obtenção do item.</param>
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object id, Expression<Func<TEntity, TDestination>> selector, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="ids">são os ids para obtenção do item.</param>
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, Expression<Func<TEntity, TDestination>> selector, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de uma expression.
     /// </summary>
     ///
     /// <param name="predicate">é a condição para obtenção do item.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de uma expression.
@@ -463,10 +463,10 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// </summary>
     ///
     /// <param name="predicate">é a condição para obtenção do item.</param>
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> selector, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de uma expression
@@ -476,7 +476,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// </summary>
     ///
     /// <param name="predicate">é a condição para obtenção do item.</param>
-    /// <param name="selector">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
@@ -484,7 +484,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> selector, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de uma expression
@@ -515,7 +515,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o único item <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
     /// <remarks>Esse método não lança exception.</remarks>
-    Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o único item <typeparamref name="TDestination"/> correspondente a partir de uma expression.
@@ -533,8 +533,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o único item <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
     /// <exception cref="InvalidOperationException"/>
-    Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class;
-
+    Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     #endregion GET
 }

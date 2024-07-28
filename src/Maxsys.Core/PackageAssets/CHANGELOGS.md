@@ -1,9 +1,29 @@
 # Maxsys.Core
 
-## Old Release Notes
+## :mortar_board: Cada lançamento é um novo aprendizado!!
 
-#### 🎓 Cada novo lançamento é um novo aprendizado!!
+### 11.0.0
+* :warning: Atualização de dependências;
+* :warning: `IService`s totalmente refatorados para utilizar `Entity` como genérico;
+* :warning: `AddedEventArgs` removido. Adicionados `AddedEntityEventArgs` e `UpdatedEntityEventArgs`;
+* :hammer_and_wrench: Corrigido `Notification` duplicando `Message` e `Details` quando usado CTOR com `Exception`;
+* `TextAttribute` depreciado. `TextColumnAttribute` e `XmlColumnAttribute` substitui;
+* Novos Helpers: `EncryptHelper`, `UIDHelper`, `XMLHelper`;
+* Novos métodos em `ExpressionHelper`, `StringHelper` e `DateTimeHelper`;
+* Add classe `StoredEvent` para `EventSourcing`;
+* `ToJson()` retorna *null* se objeto passado for *null*;
+* Novo param em CTOR de `PeriodFilter` aceitar {min, max}Value com hora *00:00:00* e *23:59:59* respectivamente;
+* Suporte à `EnumMemberAttribute` em `Enum.ToFriendlyName()`;
+* Novos métodos em `IRepository` que aceitam *Expression* para *projection*;
+* Outras pequenas refatorações;
 
+
+
+
+### 10.1.0
++ :warning: Projeto totalmente refatorado;
+
+---
 ### [7.3.0](https://www.nuget.org/packages/Maxsys.Core/7.3.0)
 - Estrutura do projeto alterada (pastas físicas).
 - Namespaces de todas classes de extensão (exceto FluentValidation) movidos para Maxsys.Core.Extensions.

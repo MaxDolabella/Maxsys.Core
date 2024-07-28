@@ -6,9 +6,9 @@ using Maxsys.Core.Sorting;
 
 namespace Maxsys.Core.Services;
 
-/// <inheritdoc cref="IService{TFilter}"/>
+/// <inheritdoc cref="IService{TEntity}"/>
 public abstract class ServiceBase<TEntity, TRepository>
-    : ServiceBase, IService
+    : ServiceBase, IService<TEntity>
     where TEntity : class
     where TRepository : IRepository<TEntity>
 {
@@ -26,12 +26,6 @@ public abstract class ServiceBase<TEntity, TRepository>
     public event AsyncEventHandler<ValueEventArgs>? ToListCompletedAsync;
 
     public event AsyncEventHandler<ValueEventArgs>? GetListCompletedAsync;
-
-    public event ValueEventHandler? GetCompleted;
-
-    public event ValueEventHandler? ToListCompleted;
-
-    public event ValueEventHandler? GetListCompleted;
 
     protected ValueTask OnGetCompletedAsync(object? e, CancellationToken cancellationToken)
     {
@@ -54,72 +48,57 @@ public abstract class ServiceBase<TEntity, TRepository>
             : ValueTask.CompletedTask;
     }
 
-    protected void OnGetCompleted(object? e)
-    {
-        GetCompleted?.Invoke(this, new ValueEventArgs(e));
-    }
-
-    protected void OnToListCompleted(object? e)
-    {
-        ToListCompleted?.Invoke(this, new ValueEventArgs(e));
-    }
-
-    protected void OnGetListCompleted(object? e)
-    {
-        GetListCompleted?.Invoke(this, new ValueEventArgs(e));
-    }
-
     protected virtual void UnsubscribeEvents()
     {
         GetCompletedAsync = null;
         ToListCompletedAsync = null;
         GetListCompletedAsync = null;
-
-        GetCompleted = null;
-        ToListCompleted = null;
-        GetListCompleted = null;
     }
 
     #endregion EVENTS
 
     #region GET
 
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default)
-        where TDestination : class
-    {
-        var item = await _repository.GetByIdAsync<TDestination>(ids, cancellationToken);
-
-        OnGetCompleted(item);
-        await OnGetCompletedAsync(item, cancellationToken);
-
-        return item;
-    }
-
-    public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var item = await _repository.GetAsync<TDestination>(predicate, cancellationToken);
 
-        OnGetCompleted(item);
         await OnGetCompletedAsync(item, cancellationToken);
 
         return item;
     }
 
-    public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    {
+        var item = await _repository.GetAsync(predicate, projection, cancellationToken);
+
+        await OnGetCompletedAsync(item, cancellationToken);
+
+        return item;
+    }
+
+    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default)
+    {
+        var item = await _repository.GetByIdAsync<TDestination>(ids, cancellationToken);
+
+        await OnGetCompletedAsync(item, cancellationToken);
+
+        return item;
+    }
+
+    public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var item = await _repository.GetSingleOrDefaultAsync<TDestination>(predicate, cancellationToken);
 
-        OnGetCompleted(item);
         await OnGetCompletedAsync(item, cancellationToken);
 
         return item;
     }
 
-    public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var item = await _repository.GetSingleOrThrowsAsync<TDestination>(predicate, cancellationToken);
 
-        OnGetCompleted(item);
         await OnGetCompletedAsync(item, cancellationToken);
 
         return item;
@@ -129,25 +108,10 @@ public abstract class ServiceBase<TEntity, TRepository>
 
     #region LIST
 
-    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
-    {
-        var list = new ListDTO<TDestination>()
-        {
-            Count = await _repository.CountAsync(predicate, cancellationToken),
-            Items = await _repository.ToListAsync<TDestination>(predicate, criteria, cancellationToken)
-        };
-
-        OnGetListCompleted(list);
-        await OnGetListCompletedAsync(list, cancellationToken);
-
-        return list;
-    }
-
-    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         var items = await _repository.ToListAsync<TDestination>(predicate, cancellationToken);
 
-        OnToListCompleted(items);
         await OnToListCompletedAsync(items, cancellationToken);
 
         return items;
@@ -157,20 +121,73 @@ public abstract class ServiceBase<TEntity, TRepository>
     {
         var items = await _repository.ToListAsync<TDestination>(predicate, criteria, cancellationToken);
 
-        OnToListCompleted(items);
         await OnToListCompletedAsync(items, cancellationToken);
 
         return items;
     }
 
-    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> keySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
     {
-        var items = await _repository.ToListAsync<TDestination>(predicate, pagination, keySelector, sortDirection, cancellationToken);
+        var items = await _repository.ToListAsync(predicate, pagination, sortSelector, sortDirection, cancellationToken);
 
-        OnToListCompleted(items);
         await OnToListCompletedAsync(items, cancellationToken);
 
         return items;
+    }
+
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    {
+        var items = await _repository.ToListAsync(projection, predicate, cancellationToken);
+
+        await OnToListCompletedAsync(items, cancellationToken);
+
+        return items;
+    }
+
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+    {
+        var items = await _repository.ToListAsync(projection, predicate, pagination, sortSelector, sortDirection, cancellationToken);
+
+        await OnToListCompletedAsync(items, cancellationToken);
+
+        return items;
+    }
+
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, ListCriteria criteria, CancellationToken cancellationToken = default)
+        where TDestination : class
+    {
+        var items = await _repository.ToListAsync(projection, predicate, criteria, cancellationToken);
+
+        await OnToListCompletedAsync(items, cancellationToken);
+
+        return items;
+    }
+
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
+    {
+        var list = new ListDTO<TDestination>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<TDestination>(predicate, criteria, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, ListCriteria criteria, CancellationToken cancellationToken = default)
+        where TDestination : class
+    {
+        var list = new ListDTO<TDestination>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync(projection, predicate, criteria, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
     }
 
     #endregion LIST

@@ -206,9 +206,12 @@ public static class JsonExtensions
     /// <param name="value">o valor a ser convertido</param>
     /// <param name="options">options para controlar comportamento da serialização.</param>
     /// <exception cref="NotSupportedException"/>
-    public static string ToJson<T>(this T? value, JsonSerializerOptions? options = null)
+    public static string? ToJson<T>(this T? value, JsonSerializerOptions? options = null)
     {
-        var type = value?.GetType() ?? typeof(T);
+        if (value is null)
+            return null;
+
+        var type = value.GetType() ?? typeof(T);
         return JsonSerializer.Serialize(value, type, options ?? JSON_DEFAULT_OPTIONS);
     }
 

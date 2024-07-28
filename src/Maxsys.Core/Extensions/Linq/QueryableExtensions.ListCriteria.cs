@@ -34,7 +34,6 @@ public static partial class QueryableExtensions
     /// <returns></returns>
     public static IQueryable<TSource> ApplyPagination<TSource>(
         this IQueryable<TSource> source, Pagination? pagination)
-        where TSource : class
     {
         if (pagination?.IsNotEmpty() == true)
             source = source

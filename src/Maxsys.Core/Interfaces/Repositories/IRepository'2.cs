@@ -77,7 +77,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
@@ -91,7 +91,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TEntity}"/> com os registros filtrados.</returns>
-    Task<List<TEntity>> ToListAsync(TFilter filters, Pagination? pagination, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<List<TEntity>> ToListAsync(TFilter filters, Pagination? pagination, Expression<Func<TEntity, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>.
@@ -100,7 +100,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>
@@ -120,14 +120,53 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression.
+    /// </summary>
+    ///
+    /// <param name="filters">contém as condições para obtenção dos items.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
+    /// aplicando-se paginação e ordenação.
+    /// </summary>
+    ///
+    /// <param name="filters">contém as condições para obtenção dos items.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="criteria">contém critérios para obtenção dos items como paginação e lista de ordenações.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
+
+    /// <summary>
+    /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
+    /// aplicando-se paginação e ordenação.
+    /// </summary>
+    ///
+    /// <param name="filters">contém as condições para obtenção dos items.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortDirection">
+    /// é a direção da ordenação.
+    /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
+    /// </param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
+    Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
     #endregion LIST
 
@@ -174,30 +213,40 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>
-    /// e ordenação definida por <paramref name="sortKeySelector"/> e <paramref name="sortDirection"/>.
+    /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>.
     /// </summary>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
+    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
+    Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>
+    /// e ordenação definida por <paramref name="sortSelector"/> e <paramref name="sortDirection"/>.
+    /// </summary>
+    ///
+    /// <param name="filters">contém as condições para obtenção dos items.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TEntity"/> a partir de um filtro <typeparamref name="TFilter"/>
-    /// e ordenação definida por <paramref name="sortKeySelector"/> e <paramref name="sortDirection"/>.
+    /// e ordenação definida por <paramref name="sortSelector"/> e <paramref name="sortDirection"/>.
     /// </summary>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
@@ -211,17 +260,17 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TEntity?> GetAsync(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<TEntity?> GetAsync(TFilter filters, Expression<Func<TEntity, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TEntity"/> a partir de um filtro <typeparamref name="TFilter"/>
     /// incluindo a navegação <typeparamref name="TProperty"/>
-    /// e ordenação definida por <paramref name="sortKeySelector"/> e <paramref name="sortDirection"/>.
+    /// e ordenação definida por <paramref name="sortSelector"/> e <paramref name="sortDirection"/>.
     /// </summary>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="includeNavigation">é a propriedade de navegação a ser incluída.</param>
-    /// <param name="sortKeySelector">é a propriedade a ser ordenada.</param>
+    /// <param name="sortSelector">é a propriedade a ser ordenada.</param>
     /// <param name="sortDirection">
     /// é a direção da ordenação.
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
@@ -235,7 +284,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o primeiro item <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TEntity?> GetAsync<TProperty>(TFilter filters, Expression<Func<TEntity, TProperty>> includeNavigation, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
+    Task<TEntity?> GetAsync<TProperty>(TFilter filters, Expression<Func<TEntity, TProperty>> includeNavigation, Expression<Func<TEntity, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o único item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>.
@@ -247,7 +296,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o único item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
     /// <remarks>Esse método não lança exception.</remarks>
-    Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o único item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>.
@@ -261,7 +310,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o único item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
     /// <exception cref="InvalidOperationException"/>
-    Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
+    Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
 
     #endregion GET
 }

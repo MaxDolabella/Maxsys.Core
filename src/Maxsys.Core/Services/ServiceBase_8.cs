@@ -8,10 +8,10 @@ using Maxsys.Core.Interfaces.Services;
 
 namespace Maxsys.Core.Services;
 
-/// <inheritdoc cref="IService{TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter}"/>
+/// <inheritdoc cref="IService{TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter}"/>
 public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
     : ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO, TFilter>
-    , IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
+    , IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
     where TEntity : class
     where TKey : notnull
     where TRepository : IRepository<TEntity, TFilter>
@@ -36,23 +36,23 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
 
     #region EVENTS
 
-    public event OperationResultAsyncEventHandler<object>? AddingAsync;
+    public event OperationResultAsyncEventHandler<TEntity>? AddingAsync;
 
-    public event OperationResultAsyncEventHandler<object>? UpdatingAsync;
+    public event OperationResultAsyncEventHandler<TEntity>? UpdatingAsync;
 
     public event OperationResultAsyncEventHandler<TKey>? DeletingAsync;
 
-    public event AsyncEventHandler<AddedEventArgs<object, TCreateDTO>>? AddedAsync;
+    public event AsyncEventHandler<AddedEntityEventArgs<TEntity, TCreateDTO>>? AddedAsync;
 
-    public event AsyncEventHandler<ValueEventArgs>? UpdatedAsync;
+    public event AsyncEventHandler<UpdatedEntityEventArgs<TEntity, TUpdateDTO>>? UpdatedAsync;
 
     public event AsyncEventHandler<ValueEventArgs>? DeletedAsync;
 
-    protected async ValueTask<OperationResult> OnAddingAsync(object e, CancellationToken cancellationToken)
+    protected async ValueTask<OperationResult> OnAddingAsync(TEntity e, CancellationToken cancellationToken)
     {
         if (AddingAsync is not null)
         {
-            foreach (var eventHandler in AddingAsync.GetInvocationList().Cast<OperationResultAsyncEventHandler<object>>())
+            foreach (var eventHandler in AddingAsync.GetInvocationList().Cast<OperationResultAsyncEventHandler<TEntity>>())
             {
                 if (eventHandler is null)
                     continue;
@@ -68,11 +68,11 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         return await ValueTask.FromResult(OperationResult.Empty);
     }
 
-    protected async ValueTask<OperationResult> OnUpdatingAsync(object e, CancellationToken cancellationToken)
+    protected async ValueTask<OperationResult> OnUpdatingAsync(TEntity e, CancellationToken cancellationToken)
     {
         if (UpdatingAsync is not null)
         {
-            foreach (var eventHandler in UpdatingAsync.GetInvocationList().Cast<OperationResultAsyncEventHandler<object>>())
+            foreach (var eventHandler in UpdatingAsync.GetInvocationList().Cast<OperationResultAsyncEventHandler<TEntity>>())
             {
                 if (eventHandler is null)
                     continue;
@@ -108,14 +108,14 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         return await ValueTask.FromResult(OperationResult.Empty);
     }
 
-    protected ValueTask OnAddedAsync(AddedEventArgs<object, TCreateDTO> e, CancellationToken cancellationToken)
+    protected ValueTask OnAddedAsync(AddedEntityEventArgs<TEntity, TCreateDTO> e, CancellationToken cancellationToken)
     {
         return AddedAsync != null
             ? AddedAsync(this, e, cancellationToken)
             : ValueTask.CompletedTask;
     }
 
-    protected ValueTask OnUpdatedAsync(ValueEventArgs e, CancellationToken cancellationToken)
+    protected ValueTask OnUpdatedAsync(UpdatedEntityEventArgs<TEntity, TUpdateDTO> e, CancellationToken cancellationToken)
     {
         return UpdatedAsync != null
             ? UpdatedAsync(this, e, cancellationToken)
@@ -254,7 +254,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         // depois de atualizar
         if (result.IsValid)
         {
-            await OnUpdatedAsync(new ValueEventArgs(entity), cancellationToken);
+            await OnUpdatedAsync(new UpdatedEntityEventArgs<TEntity, TUpdateDTO>(entity, itemToUpdate), cancellationToken);
         }
 
         return result;
@@ -278,7 +278,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
                 if (!operationResult.IsValid)
                 {
                     await _uow.RollbackTransactionAsync(cancellation);
-                    results.Add(operationResult.Cast<TKey?>(item.Id));
+                    results.Add(operationResult.Cast(item.Id));
 
                     if (stopOnFirstFail)
                         return results;
@@ -361,7 +361,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
                 if (!operationResult.IsValid)
                 {
                     await _uow.RollbackTransactionAsync(cancellation);
-                    results.Add(operationResult.Cast<TKey?>(id));
+                    results.Add(operationResult.Cast(id));
 
                     if (stopOnFirstFail)
                         return results;

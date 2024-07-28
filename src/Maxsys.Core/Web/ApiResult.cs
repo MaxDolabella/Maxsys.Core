@@ -1,7 +1,10 @@
-﻿namespace Maxsys.Core.Web;
+﻿using System.Text.Json.Serialization;
+
+namespace Maxsys.Core.Web;
 
 public class ApiResult : ApiResultBase
 {
+    [JsonPropertyOrder(-2147483644)]
     public IEnumerable<Notification>? Notifications { get; set; }
 
     #region CTOR
@@ -24,6 +27,7 @@ public class ApiResult : ApiResultBase
 
 public class ApiResult<T> : ApiResult
 {
+    [JsonPropertyOrder(-2147483645)]
     public T? Data { get; set; } = default;
 
     #region CTOR

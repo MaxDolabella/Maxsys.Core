@@ -1,4 +1,6 @@
-﻿namespace Maxsys.Core;
+﻿using System.Text;
+
+namespace Maxsys.Core;
 
 /// <summary>
 /// Representa uma notificação em uma operação (<see cref="OperationResult"/>).
@@ -31,8 +33,19 @@ public sealed class Notification
 
     public Notification(Exception exception, string message, ResultTypes resultType = ResultTypes.Error)
     {
+        var detailsBuilder = new StringBuilder();
+        if (exception.Message != message)
+        {
+            detailsBuilder.AppendLine(exception.Message);
+        }
+        if (exception.InnerException is not null)
+        {
+            // TODO método recursivo?
+            detailsBuilder.AppendLine(exception.InnerException.Message);
+        }
+
         Message = message;
-        Details = exception.InnerException?.Message;
+        Details = detailsBuilder.Length == 0 ? null : detailsBuilder.ToString();
         ResultType = resultType;
 
 #if DEBUG

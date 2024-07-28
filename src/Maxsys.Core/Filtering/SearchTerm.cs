@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
+using Maxsys.Core.Helpers;
 
 namespace Maxsys.Core.Filtering;
 
@@ -39,39 +40,5 @@ public class SearchTerm
     /// <exception cref="InvalidEnumArgumentException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
     public Expression<Func<T, bool>> ToExpression<T>(Expression<Func<T, string?[]>> entityFieldArray)
-    {
-        var methodName = Mode switch
-        {
-            SearchTermModes.Any => nameof(string.Contains),
-            SearchTermModes.StartsWith => nameof(string.StartsWith),
-            SearchTermModes.EndsWith => nameof(string.EndsWith),
-            _ => throw new InvalidEnumArgumentException(nameof(Mode), (int)Mode, typeof(SearchTermModes)),
-        };
-
-        var methodInfo = typeof(string).GetMethod(methodName, [typeof(string)]);
-
-        if (entityFieldArray.Body is NewArrayExpression arrayExpression)
-        {
-            var filterConstant = Expression.Constant(Term!);
-
-            Expression? memberFilteredExpression = null;
-
-            foreach (var expression in arrayExpression.Expressions)
-            {
-                if (expression is MemberExpression expressionMember)
-                {
-                    var memberGetValue = Expression.Lambda<Func<T, string>>(expressionMember, entityFieldArray.Parameters);
-                    var filteredMemberValue = Expression.Call(memberGetValue.Body, methodInfo!, filterConstant);
-
-                    memberFilteredExpression = memberFilteredExpression is null
-                        ? filteredMemberValue
-                        : Expression.Or(memberFilteredExpression, filteredMemberValue);
-                }
-            }
-
-            return Expression.Lambda<Func<T, bool>>(memberFilteredExpression!, entityFieldArray.Parameters);
-        }
-
-        throw new InvalidOperationException("Invalid expression.");
-    }
+        => ExpressionHelper.SearchTermToExpression(this, entityFieldArray);
 }

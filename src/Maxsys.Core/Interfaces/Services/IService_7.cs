@@ -7,20 +7,22 @@ namespace Maxsys.Core.Interfaces.Services;
 /// <summary>
 /// Fornece uma interface básica para obtenção e alteração de dados.<br/>
 /// </summary>
+/// <typeparam name="TEntity"></typeparam>
 /// <typeparam name="TKey"></typeparam>
 /// <typeparam name="TListDTO"></typeparam>
 /// <typeparam name="TFormDTO"></typeparam>
 /// <typeparam name="TCreateDTO"></typeparam>
 /// <typeparam name="TUpdateDTO"></typeparam>
 /// <typeparam name="TFilter"></typeparam>
-public interface IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
-    : IService<TKey, TListDTO, TFormDTO, TFilter>
+public interface IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
+    : IService<TEntity, TKey, TListDTO, TFormDTO, TFilter>
+    where TEntity : class
     where TKey : notnull
     where TListDTO : class, IDTO
     where TFormDTO : class, IDTO
     where TCreateDTO : class, IDTO
     where TUpdateDTO : class, IDTO, IKey<TKey>
-    where TFilter : IFilter, new()
+    where TFilter : IFilter<TEntity>, new()
 {
     #region EVENTS
 
@@ -29,35 +31,33 @@ public interface IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFil
     /// <br/>
     /// TEventArgs é a entidade.
     /// </summary>
-    event OperationResultAsyncEventHandler<object>? AddingAsync;
+    event OperationResultAsyncEventHandler<TEntity>? AddingAsync;
 
     /// <summary>
     /// Evento que ocorre logo antes de atualizar um objeto no repositório.
     /// <br/>
     /// TEventArgs é a entidade.
     /// </summary>
-    event OperationResultAsyncEventHandler<object>? UpdatingAsync;
+    event OperationResultAsyncEventHandler<TEntity>? UpdatingAsync;
 
     /// <summary>
     /// Evento que ocorre logo antes de deletar um objeto do repositório.
     /// <br/>
-    /// TEventArgs é a entidade.
+    /// <b>Retorno</b>: <c>ValueTask</c>
+    /// <br/>
+    /// <b>Delegate</b>: <c>(object? sender, TKey e, CancellationToken cancellationToken)</c>
     /// </summary>
     event OperationResultAsyncEventHandler<TKey>? DeletingAsync;
 
     /// <summary>
     /// Evento que ocorre logo após adicionar um objeto ao repositório.
-    /// <br/>
-    /// TEventArgs é a entidade.
     /// </summary>
-    event AsyncEventHandler<AddedEventArgs<object, TCreateDTO>>? AddedAsync;
+    event AsyncEventHandler<AddedEntityEventArgs<TEntity, TCreateDTO>>? AddedAsync;
 
     /// <summary>
     /// Evento que ocorre logo após atualizar um objeto no repositório.
-    /// <br/>
-    /// TEventArgs é a entidade.
     /// </summary>
-    event AsyncEventHandler<ValueEventArgs>? UpdatedAsync;
+    event AsyncEventHandler<UpdatedEntityEventArgs<TEntity, TUpdateDTO>>? UpdatedAsync;
 
     /// <summary>
     /// Evento que ocorre logo após deletar um objeto do repositório.
@@ -67,8 +67,6 @@ public interface IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFil
     event AsyncEventHandler<ValueEventArgs>? DeletedAsync;
 
     #endregion EVENTS
-
-#pragma warning disable CS1735 // XML comment has a typeparamref tag, but there is no type parameter by that name
 
     #region ADD
 
@@ -97,6 +95,4 @@ public interface IService<TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFil
     Task<OperationResultCollection<TKey?>> DeleteAsync(IEnumerable<TKey> ids, bool stopOnFirstFail = true, CancellationToken cancellation = default);
 
     #endregion DELETE
-
-#pragma warning restore CS1735 // XML comment has a typeparamref tag, but there is no type parameter by that name
 }
