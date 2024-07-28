@@ -61,12 +61,6 @@ Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsyste
 
 Os *changelogs* do projeto podem ser vistos [aqui](CHANGELOGS.md)
 
-### 10.1.0
-
-+ :warning: Projeto totalmente refatorado;
-
-#### [Old Releases](README-old-releases.md)
-
 <!-- 
     https://github.com/ikatyang/emoji-cheat-sheet)
 -->
