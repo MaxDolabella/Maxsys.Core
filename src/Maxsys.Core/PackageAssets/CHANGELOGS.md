@@ -17,9 +17,7 @@
 * Novos métodos em `IRepository` que aceitam *Expression* para *projection*;
 * Outras pequenas refatorações;
 
-
-
-
+---
 ### 10.1.0
 + :warning: Projeto totalmente refatorado;
 
