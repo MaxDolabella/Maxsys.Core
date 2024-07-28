@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Maxsys.Core.Data.Extensions;
 using Maxsys.Core.Extensions;
 using Maxsys.Core.Filtering;
 using Maxsys.Core.Interfaces.Repositories;
@@ -111,7 +110,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
 
     public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         TFilter filters,
-        CancellationToken cancellationToken = default) where TDestination : class
+        CancellationToken cancellationToken = default)
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
@@ -122,7 +121,8 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         TFilter filters,
         ListCriteria criteria,
-        CancellationToken cancellationToken = default) where TDestination : class
+        CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
@@ -136,10 +136,37 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         Pagination? pagination,
         Expression<Func<TDestination, dynamic>> sortKeySelector,
         SortDirection sortDirection = SortDirection.Ascending,
-        CancellationToken cancellationToken = default) where TDestination : class
+        CancellationToken cancellationToken = default)
     {
         var query = (await GetQueryable(filters, false, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+
+        var orderedQuery = sortDirection == SortDirection.Ascending
+            ? query.OrderBy(sortKeySelector)
+            : query.OrderByDescending(sortKeySelector);
+
+        return await orderedQuery.ApplyPagination(pagination).ToListAsync(cancellationToken);
+    }
+
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    {
+        var query = await GetQueryable(filters, @readonly: true, cancellationToken);
+
+        return await query.Select(projection).ToListAsync(cancellationToken);
+    }
+
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, ListCriteria criteria, CancellationToken cancellationToken = default)
+        where TDestination : class
+    {
+        var query = await GetQueryable(filters, @readonly: true, cancellationToken);
+
+        return await query.Select(projection).ApplyCriteria(criteria).ToListAsync(cancellationToken);
+    }
+
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+    {
+        var query = (await GetQueryable(filters, @readonly: true, cancellationToken))
+            .Select(projection);
 
         var orderedQuery = sortDirection == SortDirection.Ascending
             ? query.OrderBy(sortKeySelector)
@@ -152,12 +179,19 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
 
     #region GET
 
-    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default)
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
 
         return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    {
+        var query = await GetQueryable(filters, true, cancellationToken);
+
+        return await query.Select(projection).FirstOrDefaultAsync(cancellationToken);
     }
 
     public virtual async Task<TEntity?> GetAsync(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default)
@@ -174,7 +208,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         return await query.Include(includeNavigation).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
     {
         var query = await GetQueryable(filters, true, cancellationToken);
 
@@ -209,7 +243,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         return await orderedQuery.FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -217,11 +251,11 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
         }
         catch (Exception)
         {
-            return null;
+            return default;
         }
     }
 
-    public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default)
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);

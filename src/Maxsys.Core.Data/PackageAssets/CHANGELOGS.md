@@ -1,7 +1,14 @@
 # Maxsys.Core.Data
 
-## Old Release Notes
+### 11.0.0
+* :warning: Refatoração de implementações de `IRepository` incluindo adição de métodos que aceitam `Expression` para *projection* e remoção de *constraints*;
+* :warning: Removido `BusExtensions`. Usar *Interceptors*;
 
+---
+### 10.1.0
+* :warning: Projeto totalmente refatorado;
+
+---
 ### [7.1.0](https://www.nuget.org/packages/Maxsys.Core.Data/7.1.0)
 * Atualização de pacotes NUGET (`Maxsys.Core` e `Microsoft.EntityFrameworkCore`).
 * Alteração de namespace em `IoCExtensions`.
