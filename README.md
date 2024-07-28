@@ -16,7 +16,6 @@ Essas bibliotecas auxiliam no desenvolvimento de minhas aplicações pessoais em
 | [Maxsys.Core.Web](https://www.nuget.org/packages/Maxsys.Core.Web)              | ![Nuget Maxsys.Core.Web](https://img.shields.io/nuget/v/Maxsys.Core.Web)      |
 
 
-
 ## :black_nib: Autores
 [@MaxDolabella](https://www.github.com/MaxDolabella)
 
