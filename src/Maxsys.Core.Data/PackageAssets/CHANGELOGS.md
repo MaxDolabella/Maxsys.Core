@@ -1,6 +1,7 @@
 # Maxsys.Core.Data
 
 ### 11.0.0
+* :warning: Atualização de dependências;
 * :warning: Refatoração de implementações de `IRepository` incluindo adição de métodos que aceitam `Expression` para *projection* e remoção de *constraints*;
 * :warning: Removido `BusExtensions`. Usar *Interceptors*;
 
