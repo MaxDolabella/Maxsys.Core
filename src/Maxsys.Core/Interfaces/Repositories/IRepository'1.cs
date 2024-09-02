@@ -34,20 +34,11 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <summary>
     /// Delete an object of type <typeparamref name="TEntity"/> from the repository asynchronously.
     /// </summary>
-    /// <param name="id">Is the key of the <typeparamref name="TEntity"/> to remove.</param>
+    /// <param name="keys">Is the composite key of the <typeparamref name="TEntity"/> to remove.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns><see langword="true"/> is <typeparamref name="TEntity"/> is deleted,
     /// otherwise, <see langword="false"/></returns>
-    ValueTask<bool> DeleteAsync(object id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Delete an object of type <typeparamref name="TEntity"/> from the repository asynchronously.
-    /// </summary>
-    /// <param name="compositeKey">Is the composite key of the <typeparamref name="TEntity"/> to remove.</param>
-    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-    /// <returns><see langword="true"/> is <typeparamref name="TEntity"/> is deleted,
-    /// otherwise, <see langword="false"/></returns>
-    ValueTask<bool> DeleteAsync(object[] compositeKey, CancellationToken cancellationToken = default);
+    ValueTask<bool> DeleteAsync(object[] keys, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Update an object of type <typeparamref name="TEntity"/> in the repository asynchronously.
@@ -244,28 +235,11 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     #region GET
 
     /// <summary>
-    /// Obtém um item <typeparamref name="TEntity"/> a partir de seu id.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="id">é id para obtenção do item.</param>
-    /// <param name="readonly">
-    /// Para alguns ORMs como <see href="https://docs.microsoft.com/pt-br/ef/core/querying/tracking">
-    /// Entity Framework</see>, especifica se a entidade deve ser monitorada.
-    /// <br/>
-    /// Se <paramref name="readonly"/>=<see langword="false"/>, deve ser monitorada, caso contrário, não.
-    /// <para/>Padrão é <see langword="true"/> (somente leitura).
-    /// </param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TEntity?> GetByIdAsync(object id, bool @readonly = true, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Obtém um item <typeparamref name="TEntity"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
     /// <br/>
     /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
     /// </summary>
-    /// <param name="ids">são os ids para obtenção do item.</param>
+    /// <param name="keys">são os ids para obtenção do item.</param>
     /// <param name="readonly">
     /// Para alguns ORMs como <see href="https://docs.microsoft.com/pt-br/ef/core/querying/tracking">
     /// Entity Framework</see>, especifica se a entidade deve ser monitorada.
@@ -275,49 +249,28 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>um objeto <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TEntity?> GetByIdAsync(object[] ids, bool @readonly = true, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu id.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="id">é id para obtenção do item.</param>
-    /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object id, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
+    Task<TEntity?> GetByIdAsync(object[] keys, bool @readonly = true, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém um item <typeparamref name="TDestination"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
     /// <br/>
     /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
     /// </summary>
-    /// <param name="ids">são os ids para obtenção do item.</param>
+    /// <param name="keys">são os ids para obtenção do item.</param>
     /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Obtém um item <typeparamref name="TDestination"/> a partir de seu id.
-    /// <br/>
-    /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
-    /// </summary>
-    /// <param name="id">é id para obtenção do item.</param>
-    /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
-    /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém um item <typeparamref name="TDestination"/> a partir de seu(s) id(s). Pode ser usado para obtenção de objeto com chave múltipla.
     /// <br/>
     /// Caso nenhum item corresponda aos critérios, <see langword="null"/> será retornado.
     /// </summary>
-    /// <param name="ids">são os ids para obtenção do item.</param>
+    /// <param name="keys">são os ids para obtenção do item.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TEntity"/> a partir de uma expression.

@@ -22,6 +22,6 @@ public abstract class GetByIdQueryHandlerBase<TKey, TEntity, TQuery, TResponse>
 
     public override Task<TResponse> Handle(TQuery query, CancellationToken cancellationToken)
     {
-        return _repository.GetByIdAsync<TResponse>(query.Id!, cancellationToken);
+        return _repository.GetByIdAsync<TResponse>([query.Id!], cancellationToken);
     }
 }

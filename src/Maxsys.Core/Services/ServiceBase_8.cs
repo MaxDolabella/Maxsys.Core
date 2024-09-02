@@ -42,9 +42,9 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
 
     public event OperationResultAsyncEventHandler<TKey>? DeletingAsync;
 
-    public event AsyncEventHandler<AddedEntityEventArgs<TEntity, TCreateDTO>>? AddedAsync;
+    public event AsyncEventHandler<AddedEntityEventArgs<TEntity, object>>? AddedAsync;
 
-    public event AsyncEventHandler<UpdatedEntityEventArgs<TEntity, TUpdateDTO>>? UpdatedAsync;
+    public event AsyncEventHandler<UpdatedEntityEventArgs<TEntity, object>>? UpdatedAsync;
 
     public event AsyncEventHandler<ValueEventArgs>? DeletedAsync;
 
@@ -108,14 +108,14 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         return await ValueTask.FromResult(OperationResult.Empty);
     }
 
-    protected ValueTask OnAddedAsync(AddedEntityEventArgs<TEntity, TCreateDTO> e, CancellationToken cancellationToken)
+    protected ValueTask OnAddedAsync(AddedEntityEventArgs<TEntity, object> e, CancellationToken cancellationToken)
     {
         return AddedAsync != null
             ? AddedAsync(this, e, cancellationToken)
             : ValueTask.CompletedTask;
     }
 
-    protected ValueTask OnUpdatedAsync(UpdatedEntityEventArgs<TEntity, TUpdateDTO> e, CancellationToken cancellationToken)
+    protected ValueTask OnUpdatedAsync(UpdatedEntityEventArgs<TEntity, object> e, CancellationToken cancellationToken)
     {
         return UpdatedAsync != null
             ? UpdatedAsync(this, e, cancellationToken)
@@ -254,7 +254,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         // depois de atualizar
         if (result.IsValid)
         {
-            await OnUpdatedAsync(new UpdatedEntityEventArgs<TEntity, TUpdateDTO>(entity, itemToUpdate), cancellationToken);
+            await OnUpdatedAsync(new(entity, itemToUpdate), cancellationToken);
         }
 
         return result;
@@ -329,7 +329,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         }
 
         // deletando
-        await _repository.DeleteAsync(id, cancellationToken);
+        await _repository.DeleteAsync([id], cancellationToken);
 
         // SaveChanges
         var result = await _uow.SaveChangesAsync(cancellationToken);

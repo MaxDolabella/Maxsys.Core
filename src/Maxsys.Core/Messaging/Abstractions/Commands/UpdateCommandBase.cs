@@ -35,7 +35,7 @@ public abstract class UpdateCommandHandlerBase<TEntity, TKey, TCommand, TUpdated
     public virtual async Task<OperationResult> Handle(TCommand request, CancellationToken cancellationToken)
     {
         // Obtém a entity
-        var entity = await _repository.GetByIdAsync(request.Id!, @readonly: false, cancellationToken);
+        var entity = await _repository.GetByIdAsync([request.Id!], @readonly: false, cancellationToken);
         if (entity is null)
         {
             return new(GenericMessages.ITEM_NOT_FOUND);

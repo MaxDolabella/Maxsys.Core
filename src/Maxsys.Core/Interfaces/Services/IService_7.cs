@@ -52,12 +52,12 @@ public interface IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdate
     /// <summary>
     /// Evento que ocorre logo após adicionar um objeto ao repositório.
     /// </summary>
-    event AsyncEventHandler<AddedEntityEventArgs<TEntity, TCreateDTO>>? AddedAsync;
+    event AsyncEventHandler<AddedEntityEventArgs<TEntity, object>>? AddedAsync;
 
     /// <summary>
     /// Evento que ocorre logo após atualizar um objeto no repositório.
     /// </summary>
-    event AsyncEventHandler<UpdatedEntityEventArgs<TEntity, TUpdateDTO>>? UpdatedAsync;
+    event AsyncEventHandler<UpdatedEntityEventArgs<TEntity, object>>? UpdatedAsync;
 
     /// <summary>
     /// Evento que ocorre logo após deletar um objeto do repositório.

@@ -25,7 +25,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TFilter>
 
     public virtual async Task<TDestination?> GetAsync<TDestination>(TKey id, CancellationToken cancellationToken = default)
     {
-        var item = await _repository.GetByIdAsync<TDestination>(id, cancellationToken);
+        var item = await _repository.GetAsync<TDestination>(IdSelector(id), cancellationToken);
 
         await OnGetCompletedAsync(item, cancellationToken);
 
@@ -34,7 +34,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TFilter>
 
     public virtual async Task<TDestination?> GetAsync<TDestination>(TKey id, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
     {
-        var item = await _repository.GetByIdAsync(id, projection, cancellationToken);
+        var item = await _repository.GetAsync(IdSelector(id), projection, cancellationToken);
 
         await OnGetCompletedAsync(item, cancellationToken);
 
