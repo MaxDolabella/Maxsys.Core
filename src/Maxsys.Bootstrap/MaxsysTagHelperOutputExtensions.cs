@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Maxsys.ServiceDesk.MVC.Bootstrap;
+namespace Microsoft.AspNetCore.Mvc.TagHelpers;
 
 /// <summary>
 /// Utility related extensions for <see cref="TagHelperOutput"/>.

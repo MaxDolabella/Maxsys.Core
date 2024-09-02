@@ -132,7 +132,6 @@ public class BadgeTagHelper : TagHelper,
         IBootstrapText.Apply(this, context, output);
         IBootstrapBackground.Apply(this, context, output);
     }
-
 }
 
 /// <summary>

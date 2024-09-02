@@ -1,11 +1,23 @@
 ﻿using System.ComponentModel;
 using System.Text.Encodings.Web;
-using Maxsys.ServiceDesk.MVC.Bootstrap;
 using Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Maxsys.Bootstrap.TagHelpers;
+
+/*
+    Lembrar de adicionar o seguite código .css:
+
+.table {
+    --bs-table-bg: transparent;
+}
+
+thead.bg-dark {
+    --bs-table-bg: var(--bs-secondary-bg-subtle);
+    --bs-table-color: var(--bs-secondary-text-emphasis);
+}
+*/
 
 internal class TableContext
 {
@@ -28,18 +40,18 @@ public class TableTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = TableDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.None;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = TableDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = TableDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = TableDefaults.TextSize;
+    public TextColors TextColor { get; set; } = TableDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = TableDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = TableDefaults.IsMonospace;
 
     void IBootstrapForeground.ApplyTextColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -62,10 +74,10 @@ public class TableTagHelper : TagHelper,
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = TableDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = TableDefaults.CustomBackgroundColor;
 
     void IBootstrapBackground.ApplyBackgroundColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -83,37 +95,37 @@ public class TableTagHelper : TagHelper,
 
     #region Props
 
-    public BorderColors BorderColor { get; set; } = BorderColors.None;
+    public BorderColors BorderColor { get; set; } = TableDefaults.BorderColor;
 
     [HtmlAttributeName("small")]
-    public bool IsSmall { get; set; } = false;
+    public bool IsSmall { get; set; } = TableDefaults.IsSmall;
 
     [HtmlAttributeName("striped")]
-    public bool IsStriped { get; set; } = false;
+    public bool IsStriped { get; set; } = TableDefaults.IsStriped;
 
     [HtmlAttributeName("striped-columns")]
-    public bool IsStripedColumns { get; set; } = false;
+    public bool IsStripedColumns { get; set; } = TableDefaults.IsStripedColumns;
 
     [HtmlAttributeName("hover")]
-    public bool IsHover { get; set; } = false;
+    public bool IsHover { get; set; } = TableDefaults.IsHover;
 
     [HtmlAttributeName("bordered")]
-    public bool HasBorder { get; set; } = false;
+    public bool HasBorder { get; set; } = TableDefaults.HasBorder;
 
     [HtmlAttributeName("borderless")]
-    public bool IsBorderless { get; set; } = false;
+    public bool IsBorderless { get; set; } = TableDefaults.IsBorderless;
 
     [HtmlAttributeName("responsive")]
-    public bool IsResponsive { get; set; } = false;
+    public bool IsResponsive { get; set; } = TableDefaults.IsResponsive;
 
     [HtmlAttributeName("divider")]
-    public bool HasDivider { get; set; } = false;
+    public bool HasDivider { get; set; } = TableDefaults.HasDivider;
 
     [HtmlAttributeName("shadow")]
-    public bool HasShadow { get; set; } = false;
+    public bool HasShadow { get; set; } = TableDefaults.HasShadow;
 
     [HtmlAttributeName("caption-top")]
-    public bool IsCaptionTop { get; set; } = false;
+    public bool IsCaptionTop { get; set; } = TableDefaults.IsCaptionTop;
 
     [HtmlAttributeName(null, DictionaryAttributePrefix = "align-")]
     public IDictionary<string, bool> AlignmentDictionary { get; set; } = new Dictionary<string, bool>();
@@ -222,18 +234,18 @@ public class TableHeaderTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = TableHeaderDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.None;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = TableHeaderDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = TableHeaderDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = TableHeaderDefaults.TextSize;
+    public TextColors TextColor { get; set; } = TableHeaderDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = TableHeaderDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = TableHeaderDefaults.IsMonospace;
 
     void IBootstrapForeground.ApplyTextColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -256,10 +268,10 @@ public class TableHeaderTagHelper : TagHelper,
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = TableHeaderDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = TableHeaderDefaults.CustomBackgroundColor;
 
     void IBootstrapBackground.ApplyBackgroundColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -277,11 +289,11 @@ public class TableHeaderTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableStyle.None;
-    public BorderColors BorderColor { get; set; } = BorderColors.None;
+    public TableStyle TableStyle { get; set; } = TableHeaderDefaults.TableStyle;
+    public BorderColors BorderColor { get; set; } = TableHeaderDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
-    public bool HasBorder { get; set; } = false;
+    public bool HasBorder { get; set; } = TableHeaderDefaults.HasBorder;
 
     [HtmlAttributeName(null, DictionaryAttributePrefix = "align-")]
     public IDictionary<string, bool> AlignmentDictionary { get; set; } = new Dictionary<string, bool>();
@@ -363,18 +375,18 @@ public class TableBodyTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = TableBodyDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.None;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = TableBodyDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = TableBodyDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = TableBodyDefaults.TextSize;
+    public TextColors TextColor { get; set; } = TableBodyDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = TableBodyDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = TableBodyDefaults.IsMonospace;
 
     void IBootstrapForeground.ApplyTextColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -397,10 +409,10 @@ public class TableBodyTagHelper : TagHelper,
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = TableBodyDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = TableBodyDefaults.CustomBackgroundColor;
 
     void IBootstrapBackground.ApplyBackgroundColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -418,15 +430,15 @@ public class TableBodyTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableStyle.None;
+    public TableStyle TableStyle { get; set; } = TableBodyDefaults.TableStyle;
 
     [HtmlAttributeName("divider")]
-    public bool HasDivider { get; set; } = false; // <tbody class="table-group-divider">
+    public bool HasDivider { get; set; } = TableBodyDefaults.HasDivider; // <tbody class="table-group-divider">
 
-    public BorderColors BorderColor { get; set; } = BorderColors.None;
+    public BorderColors BorderColor { get; set; } = TableBodyDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
-    public bool HasBorder { get; set; } = false;
+    public bool HasBorder { get; set; } = TableBodyDefaults.HasBorder;
 
     [HtmlAttributeName(null, DictionaryAttributePrefix = "align-")]
     public IDictionary<string, bool> AlignmentDictionary { get; set; } = new Dictionary<string, bool>();
@@ -515,18 +527,18 @@ public class TableRowTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = TableRowDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.None;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = TableRowDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = TableRowDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = TableRowDefaults.TextSize;
+    public TextColors TextColor { get; set; } = TableRowDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = TableRowDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = TableRowDefaults.IsMonospace;
 
     void IBootstrapForeground.ApplyTextColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -549,10 +561,10 @@ public class TableRowTagHelper : TagHelper,
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = TableRowDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = TableRowDefaults.CustomBackgroundColor;
 
     void IBootstrapBackground.ApplyBackgroundColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -570,13 +582,13 @@ public class TableRowTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableStyle.None;
-    public bool IsActive { get; set; } = false; //table-active
+    public TableStyle TableStyle { get; set; } = TableRowDefaults.TableStyle;
+    public bool IsActive { get; set; } = TableRowDefaults.IsActive; //table-active
 
-    public BorderColors BorderColor { get; set; } = BorderColors.None;
+    public BorderColors BorderColor { get; set; } = TableRowDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
-    public bool HasBorder { get; set; } = false;
+    public bool HasBorder { get; set; } = TableRowDefaults.HasBorder;
 
     [HtmlAttributeName(null, DictionaryAttributePrefix = "align-")]
     public IDictionary<string, bool> AlignmentDictionary { get; set; } = new Dictionary<string, bool>();
@@ -655,18 +667,18 @@ public class TableColumnTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = TableColumnDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.None;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = TableColumnDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = TableColumnDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = TableColumnDefaults.TextSize;
+    public TextColors TextColor { get; set; } = TableColumnDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = TableColumnDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = TableColumnDefaults.IsMonospace;
 
     void IBootstrapForeground.ApplyTextColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -689,10 +701,10 @@ public class TableColumnTagHelper : TagHelper,
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = TableColumnDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = TableColumnDefaults.CustomBackgroundColor;
 
     void IBootstrapBackground.ApplyBackgroundColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -710,11 +722,11 @@ public class TableColumnTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableStyle.None;
-    public BorderColors BorderColor { get; set; } = BorderColors.None;
+    public TableStyle TableStyle { get; set; } = TableColumnDefaults.TableStyle;
+    public BorderColors BorderColor { get; set; } = TableColumnDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
-    public bool HasBorder { get; set; } = false;
+    public bool HasBorder { get; set; } = TableColumnDefaults.HasBorder;
 
     [HtmlAttributeName(null, DictionaryAttributePrefix = "align-")]
     public IDictionary<string, bool> AlignmentDictionary { get; set; } = new Dictionary<string, bool>();
@@ -784,7 +796,7 @@ public class TableColumnTagHelper : TagHelper,
 
 [HtmlTargetElement(TAG, ParentTag = "tr")]
 [HtmlTargetElement(TAG, ParentTag = TableRowTagHelper.TAG)]
-public class TableHeadColumTagHelper : TagHelper,
+public class TableHeadColumnTagHelper : TagHelper,
     IBootstrapText,
     IBootstrapBackground
 {
@@ -793,18 +805,18 @@ public class TableHeadColumTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = TableHeadColumnDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.None;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = TableHeadColumnDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = TableHeadColumnDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = TableHeadColumnDefaults.TextSize;
+    public TextColors TextColor { get; set; } = TableHeadColumnDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = TableHeadColumnDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = TableHeadColumnDefaults.IsMonospace;
 
     void IBootstrapForeground.ApplyTextColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -827,10 +839,10 @@ public class TableHeadColumTagHelper : TagHelper,
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = TableHeadColumnDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = TableHeadColumnDefaults.CustomBackgroundColor;
 
     void IBootstrapBackground.ApplyBackgroundColor(TagHelperContext context, TagHelperOutput output)
     {
@@ -848,16 +860,15 @@ public class TableHeadColumTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableStyle.None;
-    public BorderColors BorderColor { get; set; } = BorderColors.None;
+    public TableStyle TableStyle { get; set; } = TableHeadColumnDefaults.TableStyle;
+    public BorderColors BorderColor { get; set; } = TableHeadColumnDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
-    public bool HasBorder { get; set; } = false;
+    public bool HasBorder { get; set; } = TableHeadColumnDefaults.HasBorder;
 
     [HtmlAttributeName(null, DictionaryAttributePrefix = "align-")]
     public IDictionary<string, bool> AlignmentDictionary { get; set; } = new Dictionary<string, bool>();
 
-    public object? SortColumn { get; set; } = null;
     #endregion Props
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -878,11 +889,6 @@ public class TableHeadColumTagHelper : TagHelper,
         if (TableStyle is not TableStyle.None)
         {
             output.AddClass(TableStyle.ToFriendlyName(), HtmlEncoder.Default);
-        }
-
-        if (SortColumn is not null)
-        {
-            output.Attributes.Add("ondblclick", $"sortChange({(byte)SortColumn});");
         }
 
         #region TextAlignment
@@ -1003,3 +1009,112 @@ internal static class Extensions
         return $"var({@var})";
     }
 }
+
+#region DEFAULTS
+
+public static class TableDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+    public static BorderColors BorderColor = BorderColors.None;
+    public static bool IsSmall = false;
+    public static bool IsStriped = false;
+    public static bool IsStripedColumns = false;
+    public static bool IsHover = false;
+    public static bool HasBorder = false;
+    public static bool IsBorderless = false;
+    public static bool IsResponsive = false;
+    public static bool HasDivider = false;
+    public static bool HasShadow = false;
+    public static bool IsCaptionTop = false;
+}
+
+public static class TableHeaderDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+    public static TableStyle TableStyle = TableStyle.None;
+    public static BorderColors BorderColor = BorderColors.None;
+    public static bool HasBorder = false;
+}
+
+public static class TableBodyDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+    public static TableStyle TableStyle = TableStyle.None;
+    public static bool HasDivider = false; // <tbody class="table-group-divider">
+    public static BorderColors BorderColor = BorderColors.None;
+    public static bool HasBorder = false;
+}
+
+public static class TableRowDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+    public static TableStyle TableStyle = TableStyle.None;
+    public static bool IsActive = false; //table-active
+    public static BorderColors BorderColor = BorderColors.None;
+    public static bool HasBorder = false;
+}
+
+public static class TableColumnDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+    public static TableStyle TableStyle = TableStyle.None;
+    public static BorderColors BorderColor = BorderColors.None;
+    public static bool HasBorder = false;
+}
+
+public static class TableHeadColumnDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+    public static TableStyle TableStyle = TableStyle.None;
+    public static BorderColors BorderColor = BorderColors.None;
+    public static bool HasBorder = false;
+}
+#endregion

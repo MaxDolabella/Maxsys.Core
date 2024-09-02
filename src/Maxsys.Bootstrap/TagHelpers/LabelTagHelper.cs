@@ -1,5 +1,4 @@
 ﻿using System.Text.Encodings.Web;
-using Maxsys.ServiceDesk.MVC.Bootstrap;
 using Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -21,7 +20,7 @@ public class LabelTagHelper : TagHelper,
 
     #region IBootstrapText
 
-    [HtmlAttributeName("custom-fg")]
+    [HtmlAttributeName("custom-color")]
     public string? CustomTextColor { get; set; } = null;
 
     public FontWeights FontWeight { get; set; } = FontWeights.None;
@@ -58,6 +57,9 @@ public class LabelTagHelper : TagHelper,
 
     #endregion IBootstrapBackground
 
+    [HtmlAttributeName("small")]
+    public bool IsSmall { get; set; } = false;
+
     public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
     {
         output.TagName = "label";
@@ -74,6 +76,12 @@ public class LabelTagHelper : TagHelper,
 
         IBootstrapText.Apply(this, context, output);
         IBootstrapBackground.Apply(this, context, output);
+
+        // small
+        if (IsSmall)
+        {
+            output.AddClass("small", HtmlEncoder.Default);
+        }
 
         return base.ProcessAsync(context, output);
     }

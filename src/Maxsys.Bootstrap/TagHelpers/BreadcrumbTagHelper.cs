@@ -11,19 +11,18 @@ public class BreadcrumbTagHelper : TagHelper
 {
     #region Props
 
-    private const string DEFAULT_DIVIDER = "/";
-    public string Divider { get; set; } = DEFAULT_DIVIDER;
+    public string Divider { get; set; } = BreadcrumbDefaults.Divider;
 
     #region IBootstrapText
 
-    [HtmlAttributeName("transform")] public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    [HtmlAttributeName("size")] public FontSizes TextSize { get; set; } = FontSizes.None;
-    [HtmlAttributeName("weight")] public FontWeights FontWeight { get; set; } = FontWeights.None;
-    [HtmlAttributeName("color")] public TextColors TextColor { get; set; } = TextColors.None;
-    [HtmlAttributeName("custom-color")] public string? CustomTextColor { get; set; }
-    [HtmlAttributeName("small")] public bool IsSmall { get; set; } = false;
-    [HtmlAttributeName("italic")] public bool IsItalic { get; set; } = false;
-    [HtmlAttributeName("monospace")] public bool IsMonospace { get; set; } = false;
+    [HtmlAttributeName("transform")] public TextTransformations TextTransform { get; set; } = BreadcrumbDefaults.TextTransform;
+    [HtmlAttributeName("size")] public FontSizes TextSize { get; set; } = BreadcrumbDefaults.TextSize;
+    [HtmlAttributeName("weight")] public FontWeights FontWeight { get; set; } = BreadcrumbDefaults.FontWeight;
+    [HtmlAttributeName("color")] public TextColors TextColor { get; set; } = BreadcrumbDefaults.TextColor;
+    [HtmlAttributeName("custom-color")] public string? CustomTextColor { get; set; } = BreadcrumbDefaults.CustomTextColor;
+    [HtmlAttributeName("small")] public bool IsSmall { get; set; } = BreadcrumbDefaults.IsSmall;
+    [HtmlAttributeName("italic")] public bool IsItalic { get; set; } = BreadcrumbDefaults.IsItalic;
+    [HtmlAttributeName("monospace")] public bool IsMonospace { get; set; } = BreadcrumbDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
@@ -46,7 +45,7 @@ public class BreadcrumbTagHelper : TagHelper
         output.PreContent.AppendHtml("<ol class=\"breadcrumb\">");
         output.PostContent.AppendHtml("</ol>");
 
-        if (Divider != DEFAULT_DIVIDER)
+        if (Divider != BreadcrumbDefaults.DEFAULT_DIVIDER)
         {
             output.Attributes.SetAttribute("style", $"--bs-breadcrumb-divider: '{Divider}';");
         }
@@ -62,18 +61,18 @@ public class BreadcrumbItemTagHelper : TagHelper
     #region Props
 
     [HtmlAttributeName("active")]
-    public bool IsActive { get; set; } = false;
+    public bool IsActive { get; set; } = BreadcrumbItemDefaults.IsActive;
 
     #region IBootstrapText
 
-    [HtmlAttributeName("transform")] public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    [HtmlAttributeName("size")] public FontSizes TextSize { get; set; } = FontSizes.None;
-    [HtmlAttributeName("weight")] public FontWeights FontWeight { get; set; } = FontWeights.None;
-    [HtmlAttributeName("color")] public TextColors TextColor { get; set; } = TextColors.None;
-    [HtmlAttributeName("custom-color")] public string? CustomTextColor { get; set; }
-    [HtmlAttributeName("small")] public bool IsSmall { get; set; } = false;
-    [HtmlAttributeName("italic")] public bool IsItalic { get; set; } = false;
-    [HtmlAttributeName("monospace")] public bool IsMonospace { get; set; } = false;
+    [HtmlAttributeName("transform")] public TextTransformations TextTransform { get; set; } = BreadcrumbItemDefaults.TextTransform;
+    [HtmlAttributeName("size")] public FontSizes TextSize { get; set; } = BreadcrumbItemDefaults.TextSize;
+    [HtmlAttributeName("weight")] public FontWeights FontWeight { get; set; } = BreadcrumbItemDefaults.FontWeight;
+    [HtmlAttributeName("color")] public TextColors TextColor { get; set; } = BreadcrumbItemDefaults.TextColor;
+    [HtmlAttributeName("custom-color")] public string? CustomTextColor { get; set; } = BreadcrumbItemDefaults.CustomTextColor;
+    [HtmlAttributeName("small")] public bool IsSmall { get; set; } = BreadcrumbItemDefaults.IsSmall;
+    [HtmlAttributeName("italic")] public bool IsItalic { get; set; } = BreadcrumbItemDefaults.IsItalic;
+    [HtmlAttributeName("monospace")] public bool IsMonospace { get; set; } = BreadcrumbItemDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
@@ -97,4 +96,32 @@ public class BreadcrumbItemTagHelper : TagHelper
 
         IBootstrapText.Apply(this, context, output);
     }
+}
+
+public static class BreadcrumbDefaults
+{
+    public const string DEFAULT_DIVIDER = "/";
+    
+    public static string Divider = DEFAULT_DIVIDER;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextColors TextColor = TextColors.None;
+    public static string? CustomTextColor = null;
+    public static bool IsSmall = false;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+}
+
+public class BreadcrumbItemDefaults
+{
+    public static bool IsActive = false;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static TextColors TextColor = TextColors.None;
+    public static string? CustomTextColor = null;
+    public static bool IsSmall = false;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
 }
