@@ -14,6 +14,7 @@ Essas bibliotecas auxiliam no desenvolvimento de minhas aplicações pessoais em
 | [Maxsys.Core.Data](https://www.nuget.org/packages/Maxsys.Core.Data)            | ![Nuget Maxsys.Core.Data](https://img.shields.io/nuget/v/Maxsys.Core.Data)    |
 | [Maxsys.Core.Excel](https://www.nuget.org/packages/Maxsys.Core.Excel)          | ![Nuget Maxsys.Core.Excel](https://img.shields.io/nuget/v/Maxsys.Core.Excel)  |
 | [Maxsys.Core.Web](https://www.nuget.org/packages/Maxsys.Core.Web)              | ![Nuget Maxsys.Core.Web](https://img.shields.io/nuget/v/Maxsys.Core.Web)      |
+| [Maxsys.Bootstrap](https://www.nuget.org/packages/Maxsys.Bootstrap)            | ![Nuget Maxsys.Bootstrap](https://img.shields.io/nuget/v/Maxsys.Bootstrap)    |
 
 
 ## :black_nib: Autores
