@@ -11,7 +11,7 @@
 	</PropertyGroup>
 	
 	<PropertyGroup>
-		<Version>0.0.2</Version>
+		<Version>0.0.3</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Biblioteca com componentes bootstrap para utilização de recursos MVC.</Description>
@@ -21,7 +21,7 @@
 		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Bootstrap</RepositoryUrl>
 		<RepositoryType>Public</RepositoryType>
 		<PackageId>Maxsys.Bootstrap</PackageId>
-		<PackageTags>Maxsys;asp-net-mvc;mvc;bootstrap</PackageTags>
+		<PackageTags>maxsys;asp-net-mvc;mvc;bootstrap</PackageTags>
 		<PackageReleaseNotes>
 			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Bootstrap/PackageAssets/README.md#release-notes.
 		</PackageReleaseNotes>
@@ -38,9 +38,14 @@
 		</None>
 		<None Update="PackageAssets\logo.png">
 			<PackagePath>\</PackagePath>
-			<Pack>true</Pack>
+			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+
+		<None Update="PackageAssets\FEATURES.md">
 			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
 		</None>
