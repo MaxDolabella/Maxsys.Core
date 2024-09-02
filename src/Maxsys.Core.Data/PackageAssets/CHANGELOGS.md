@@ -1,5 +1,10 @@
 # Maxsys.Core.Data
 
+### 12.0.0
+* :warning: Atualização de dependências;
+* `RepositoryBase`: Métodos com `object id` em parametros removidos. Somente `object[] keys` mantidos.
+
+---
 ### 11.0.0
 * :warning: Atualização de dependências;
 * :warning: Refatoração de implementações de `IRepository` incluindo adição de métodos que aceitam `Expression` para *projection* e remoção de *constraints*;

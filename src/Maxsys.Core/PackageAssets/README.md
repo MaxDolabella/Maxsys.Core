@@ -17,7 +17,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações pessoais `Wind
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core)
 
 ```xml
-    <PackageReference Include="Maxsys.Core" Version="11.0.0" />
+    <PackageReference Include="Maxsys.Core" Version="12.0.0" />
 ```
 
 ## :link: Dependências
@@ -32,7 +32,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações pessoais `Wind
 ![Microsoft.Extensions.Http](https://img.shields.io/badge/Microsoft.Extensions.Http-8.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.Extensions.Http)
 ![Microsoft.Extensions.Logging.Abstractions](https://img.shields.io/badge/Microsoft.Extensions.Logging.Abstractions-8.0.1-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.Extensions.Logging.Abstractions)
 ![Microsoft.Extensions.Options.ConfigurationExtensions](https://img.shields.io/badge/Microsoft.Extensions.Options.ConfigurationExtensions-8.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.Extensions.Options.ConfigurationExtensions)
-![System.Drawing.Common](https://img.shields.io/badge/System.Drawing.Common-8.0.7-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSystem.Drawing.Common)
+![System.Drawing.Common](https://img.shields.io/badge/System.Drawing.Common-8.0.8-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSystem.Drawing.Common)
 
 
 ## :star2: Features
