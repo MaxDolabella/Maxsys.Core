@@ -20,7 +20,7 @@ public class BadgeTagHelper : TagHelper,
     public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; }
+    public string? CustomBackgroundColor { get; set; } = BadgeDefaults.CustomBackgroundColor;
 
     #endregion IBootstrapBackground
 
@@ -33,45 +33,45 @@ public class BadgeTagHelper : TagHelper,
     public FontWeights FontWeight { get; set; } = FontWeights.None;
 
     [HtmlAttributeName("size")]
-    public FontSizes TextSize { get; set; } = FontSizes.None;
+    public FontSizes TextSize { get; set; } = BadgeDefaults.TextSize;
 
     [HtmlAttributeNotBound]
     public TextColors TextColor { get; set; } = TextColors.None;
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; }
+    public string? CustomTextColor { get; set; } = BadgeDefaults.CustomTextColor;
 
     [HtmlAttributeName("small")]
-    public bool IsSmall { get; set; } = false;
+    public bool IsSmall { get; set; } = BadgeDefaults.IsSmall;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = BadgeDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = BadgeDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
     #region Props
 
-    public BadgeAppearance Appearance { get; set; } = BadgeAppearance.Primary;
+    public BadgeTypes Type { get; set; } = BadgeDefaults.Type;
 
-    [HtmlAttributeName("rounded-pill")]
-    public bool IsRounded { get; set; } = false;
+    [HtmlAttributeName("rounded")]
+    public bool IsRounded { get; set; } = BadgeDefaults.IsRounded;
 
     #endregion Props
 
-    private static bool IsMainAppearance(BadgeAppearance appearance)
+    private static bool IsTyped(BadgeTypes appearance)
     {
         return appearance
-            is BadgeAppearance.Primary
-            or BadgeAppearance.Secondary
-            or BadgeAppearance.Success
-            or BadgeAppearance.Danger
-            or BadgeAppearance.Warning
-            or BadgeAppearance.Info
-            or BadgeAppearance.Light
-            or BadgeAppearance.Dark;
+            is BadgeTypes.Primary
+            or BadgeTypes.Secondary
+            or BadgeTypes.Success
+            or BadgeTypes.Danger
+            or BadgeTypes.Warning
+            or BadgeTypes.Info
+            or BadgeTypes.Light
+            or BadgeTypes.Dark;
     }
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
@@ -81,13 +81,13 @@ public class BadgeTagHelper : TagHelper,
         output.AddClass("badge", HtmlEncoder.Default);
 
         // Appearance
-        if (IsMainAppearance(Appearance))
+        if (IsTyped(Type))
         {
-            output.AddClass(Appearance.ToFriendlyName(), HtmlEncoder.Default);
+            output.AddClass(Type.ToFriendlyName(), HtmlEncoder.Default);
         }
         else
         {
-            (TextColor, BackgroundColor) = Appearance switch
+            (TextColor, BackgroundColor) = Type switch
             {
                 //BadgeStyle.Primary => (TextColors.Light, BackgroundColors.Primary),
                 //BadgeStyle.Secondary => (TextColors.Light, BackgroundColors.Secondary),
@@ -98,20 +98,20 @@ public class BadgeTagHelper : TagHelper,
                 //BadgeStyle.Light => (TextColors.Dark, BackgroundColors.Light),
                 //BadgeStyle.Dark => (TextColors.Light, BackgroundColors.Dark),
 
-                BadgeAppearance.None => (TextColors.None, BackgroundColors.None),
-                BadgeAppearance.PrimarySubtle => (TextColors.PrimaryEmphasis, BackgroundColors.PrimarySubtle),
-                BadgeAppearance.SecondarySubtle => (TextColors.SecondaryEmphasis, BackgroundColors.SecondarySubtle),
-                BadgeAppearance.SuccessSubtle => (TextColors.SuccessEmphasis, BackgroundColors.SuccessSubtle),
-                BadgeAppearance.DangerSubtle => (TextColors.DangerEmphasis, BackgroundColors.DangerSubtle),
-                BadgeAppearance.WarningSubtle => (TextColors.WarningEmphasis, BackgroundColors.WarningSubtle),
-                BadgeAppearance.InfoSubtle => (TextColors.InfoEmphasis, BackgroundColors.InfoSubtle),
-                BadgeAppearance.LightSubtle => (TextColors.LightEmphasis, BackgroundColors.LightSubtle),
-                BadgeAppearance.DarkSubtle => (TextColors.DarkEmphasis, BackgroundColors.DarkSubtle),
-                BadgeAppearance.BodySecondary => (TextColors.Light, BackgroundColors.BodySecondary),
-                BadgeAppearance.BodyTertiary => (TextColors.Light, BackgroundColors.BodyTertiary),
-                BadgeAppearance.Body => (TextColors.Light, BackgroundColors.Body),
-                BadgeAppearance.Black => (TextColors.Light, BackgroundColors.Black),
-                BadgeAppearance.White => (TextColors.Dark, BackgroundColors.White),
+                BadgeTypes.None => (TextColors.None, BackgroundColors.None),
+                BadgeTypes.PrimarySubtle => (TextColors.PrimaryEmphasis, BackgroundColors.PrimarySubtle),
+                BadgeTypes.SecondarySubtle => (TextColors.SecondaryEmphasis, BackgroundColors.SecondarySubtle),
+                BadgeTypes.SuccessSubtle => (TextColors.SuccessEmphasis, BackgroundColors.SuccessSubtle),
+                BadgeTypes.DangerSubtle => (TextColors.DangerEmphasis, BackgroundColors.DangerSubtle),
+                BadgeTypes.WarningSubtle => (TextColors.WarningEmphasis, BackgroundColors.WarningSubtle),
+                BadgeTypes.InfoSubtle => (TextColors.InfoEmphasis, BackgroundColors.InfoSubtle),
+                BadgeTypes.LightSubtle => (TextColors.LightEmphasis, BackgroundColors.LightSubtle),
+                BadgeTypes.DarkSubtle => (TextColors.DarkEmphasis, BackgroundColors.DarkSubtle),
+                BadgeTypes.BodySecondary => (TextColors.Light, BackgroundColors.BodySecondary),
+                BadgeTypes.BodyTertiary => (TextColors.Light, BackgroundColors.BodyTertiary),
+                BadgeTypes.Body => (TextColors.Light, BackgroundColors.Body),
+                BadgeTypes.Black => (TextColors.Light, BackgroundColors.Black),
+                BadgeTypes.White => (TextColors.Dark, BackgroundColors.White),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -159,7 +159,7 @@ public class BadgeTagHelper : TagHelper,
 /// <item>21.<see cref="White"/></item>
 /// </list>
 /// </summary>
-public enum BadgeAppearance : byte
+public enum BadgeTypes : byte
 {
     None = 0,
 
@@ -208,4 +208,16 @@ public enum BadgeAppearance : byte
     Body = 19,
     Black = 20,
     White = 21,
+}
+
+public static class BadgeDefaults
+{
+    public static BadgeTypes Type = BadgeTypes.Primary;
+    public static bool IsRounded = false;
+    public static string? CustomBackgroundColor = null;
+    public static FontSizes TextSize = FontSizes.None;
+    public static string? CustomTextColor = null;
+    public static bool IsSmall = false;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
 }

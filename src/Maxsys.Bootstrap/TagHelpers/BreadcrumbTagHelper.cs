@@ -15,10 +15,10 @@ public class BreadcrumbTagHelper : TagHelper
 
     #region IBootstrapText
 
-    [HtmlAttributeName("transform")] public TextTransformations TextTransform { get; set; } = BreadcrumbDefaults.TextTransform;
-    [HtmlAttributeName("size")] public FontSizes TextSize { get; set; } = BreadcrumbDefaults.TextSize;
-    [HtmlAttributeName("weight")] public FontWeights FontWeight { get; set; } = BreadcrumbDefaults.FontWeight;
-    [HtmlAttributeName("color")] public TextColors TextColor { get; set; } = BreadcrumbDefaults.TextColor;
+    public TextTransformations TextTransform { get; set; } = BreadcrumbDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = BreadcrumbDefaults.TextSize;
+    public FontWeights FontWeight { get; set; } = BreadcrumbDefaults.FontWeight;
+    public TextColors TextColor { get; set; } = BreadcrumbDefaults.TextColor;
     [HtmlAttributeName("custom-color")] public string? CustomTextColor { get; set; } = BreadcrumbDefaults.CustomTextColor;
     [HtmlAttributeName("small")] public bool IsSmall { get; set; } = BreadcrumbDefaults.IsSmall;
     [HtmlAttributeName("italic")] public bool IsItalic { get; set; } = BreadcrumbDefaults.IsItalic;
@@ -65,10 +65,10 @@ public class BreadcrumbItemTagHelper : TagHelper
 
     #region IBootstrapText
 
-    [HtmlAttributeName("transform")] public TextTransformations TextTransform { get; set; } = BreadcrumbItemDefaults.TextTransform;
-    [HtmlAttributeName("size")] public FontSizes TextSize { get; set; } = BreadcrumbItemDefaults.TextSize;
-    [HtmlAttributeName("weight")] public FontWeights FontWeight { get; set; } = BreadcrumbItemDefaults.FontWeight;
-    [HtmlAttributeName("color")] public TextColors TextColor { get; set; } = BreadcrumbItemDefaults.TextColor;
+    public TextTransformations TextTransform { get; set; } = BreadcrumbItemDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = BreadcrumbItemDefaults.TextSize;
+    public FontWeights FontWeight { get; set; } = BreadcrumbItemDefaults.FontWeight;
+    public TextColors TextColor { get; set; } = BreadcrumbItemDefaults.TextColor;
     [HtmlAttributeName("custom-color")] public string? CustomTextColor { get; set; } = BreadcrumbItemDefaults.CustomTextColor;
     [HtmlAttributeName("small")] public bool IsSmall { get; set; } = BreadcrumbItemDefaults.IsSmall;
     [HtmlAttributeName("italic")] public bool IsItalic { get; set; } = BreadcrumbItemDefaults.IsItalic;
@@ -113,7 +113,7 @@ public static class BreadcrumbDefaults
     public static bool IsMonospace = false;
 }
 
-public class BreadcrumbItemDefaults
+public static class BreadcrumbItemDefaults
 {
     public static bool IsActive = false;
     public static TextTransformations TextTransform = TextTransformations.None;

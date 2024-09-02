@@ -35,10 +35,10 @@ public sealed class AccordionTagHelper : TagHelper
     #region Props
 
     [HtmlAttributeName("flush")]
-    public bool IsFlush { get; set; } = false;
+    public bool IsFlush { get; set; } = AccordionDefaults.IsFlush;
 
     [HtmlAttributeName("always-open")]
-    public bool IsAwaysOpen { get; set; } = false;
+    public bool IsAwaysOpen { get; set; } = AccordionDefaults.IsAwaysOpen;
 
     #endregion Props
 
@@ -179,4 +179,10 @@ public sealed class AccordionBodyTagHelper : TagHelper
         sb.AppendFormat("</div>\r\n");
         output.PostContent.SetHtmlContent(sb.ToString());
     }
+}
+
+public static class AccordionDefaults
+{
+    public static bool IsFlush { get; set; } = false;
+    public static bool IsAwaysOpen { get; set; } = false;
 }

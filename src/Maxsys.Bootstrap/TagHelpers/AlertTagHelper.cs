@@ -20,38 +20,38 @@ public class AlertTagHelper : TagHelper,
     public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; }
+    public string? CustomBackgroundColor { get; set; } = AlertDefaults.CustomBackgroundColor;
 
     #endregion IBootstrapBackground
 
     #region IBootstrapText
 
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
+    public TextTransformations TextTransform { get; set; } = AlertDefaults.TextTransform;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
+    public FontWeights FontWeight { get; set; } = AlertDefaults.FontWeight;
 
-    public FontSizes TextSize { get; set; } = FontSizes.None;
+    public FontSizes TextSize { get; set; } = AlertDefaults.TextSize;
 
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public TextColors TextColor { get; set; } = AlertDefaults.TextColor;
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; }
+    public string? CustomTextColor { get; set; } = AlertDefaults.CustomTextColor;
 
     [HtmlAttributeName("small")]
-    public bool IsSmall { get; set; } = false;
+    public bool IsSmall { get; set; } = AlertDefaults.IsSmall;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = AlertDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = AlertDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
     #region Props
 
-    public AlertTypes Type { get; set; } = AlertTypes.Primary;
-    public BootstrapIcons Icon { get; set; } = BootstrapIcons.None;
+    public AlertTypes Type { get; set; } = AlertDefaults.Type;
+    public BootstrapIcons Icon { get; set; } = AlertDefaults.Icon;
 
     #endregion Props
 
@@ -123,9 +123,7 @@ public class AlertTagHelper : TagHelper,
             //<i class="bi bi-0-circle-fill me-2"></i>
             var icon = $"<i class=\"{Icon.ToFriendlyName()} me-2\"></i>";
             output.PreContent.AppendHtml(icon);
-
         }
-
 
         IBootstrapText.Apply(this, context, output);
         IBootstrapBackground.Apply(this, context, output);
@@ -138,22 +136,22 @@ public class AlertHeaderTagHelper : TagHelper,
 {
     #region IBootstrapText
 
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
+    public TextTransformations TextTransform { get; set; } = AlertHeaderDefaults.TextTransform;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.None;
+    public FontWeights FontWeight { get; set; } = AlertHeaderDefaults.FontWeight;
 
-    public FontSizes TextSize { get; set; } = FontSizes.None;
+    public FontSizes TextSize { get; set; } = AlertHeaderDefaults.TextSize;
 
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public TextColors TextColor { get; set; } = AlertHeaderDefaults.TextColor;
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; }
+    public string? CustomTextColor { get; set; } = AlertHeaderDefaults.CustomTextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = AlertHeaderDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = AlertHeaderDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
@@ -220,4 +218,31 @@ public enum AlertTypes : byte
     Body = 19,
     Black = 20,
     White = 21,
+}
+
+public static class AlertDefaults
+{
+    public static AlertTypes Type = AlertTypes.Primary;
+    public static BootstrapIcons Icon = BootstrapIcons.None;
+    public static string? CustomBackgroundColor = null;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static string? CustomTextColor = null;
+    public static bool IsSmall = false;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+}
+
+public static class AlertHeaderDefaults
+{
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontWeights FontWeight = FontWeights.None;
+    public static FontSizes TextSize = FontSizes.None;
+    public static TextColors TextColor = TextColors.None;
+    public static string? CustomTextColor = null;
+    public static bool IsSmall = false;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
 }
