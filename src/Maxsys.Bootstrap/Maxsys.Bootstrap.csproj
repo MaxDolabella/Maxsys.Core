@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+		<Authors>Max Dolabella</Authors>
+		<Company>Maxsys Tech</Company>
+		<Description>Biblioteca com componentes bootstrap para utilização de recursos MVC.</Description>
+		<PackageDescription>Biblioteca com componentes bootstrap para utilização de recursos MVC.</PackageDescription>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Bootstrap</RepositoryUrl>
+		<RepositoryType>Public</RepositoryType>
+		<PackageId>Maxsys.Bootstrap</PackageId>
+		<PackageTags>Maxsys;asp-net-mvc;mvc;bootstrap</PackageTags>
+		<PackageReleaseNotes>
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Bootstrap/PackageAssets/README.md#release-notes.
+		</PackageReleaseNotes>
+		<ApplicationIcon>PackageAssets/logo.ico</ApplicationIcon>
+		<PackageIcon>PackageAssets/logo.png</PackageIcon>
+		<PackageReadmeFile>PackageAssets/README.md</PackageReadmeFile>
+		<PackageLicenseFile>PackageAssets/LICENSE</PackageLicenseFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="PackageAssets\logo.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="PackageAssets\LICENSE">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Update="PackageAssets\logo.png">
+			<PackagePath>\</PackagePath>
+			<Pack>true</Pack>
+		</None>
+		<None Update="PackageAssets\README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+</Project>
