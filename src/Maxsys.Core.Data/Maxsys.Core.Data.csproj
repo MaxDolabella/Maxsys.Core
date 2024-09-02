@@ -30,6 +30,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="_ignore\**" />
+	  <EmbeddedResource Remove="_ignore\**" />
+	  <None Remove="_ignore\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Content Include="PackageAssets\logo.ico" />
 	</ItemGroup>
 
@@ -55,11 +61,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
 	</ItemGroup>
-	
-	
-  <ItemGroup>
-    <Folder Include="_ignore\" />
-  </ItemGroup>
 
 
 </Project>

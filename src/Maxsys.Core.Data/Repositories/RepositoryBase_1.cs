@@ -85,14 +85,9 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
         return true;
     }
 
-    public virtual async ValueTask<bool> DeleteAsync(object id, CancellationToken cancellationToken = default)
+    public virtual async ValueTask<bool> DeleteAsync(object[] keys, CancellationToken cancellationToken = default)
     {
-        return await DeleteAsync(new object[] { id }, cancellationToken);
-    }
-
-    public virtual async ValueTask<bool> DeleteAsync(object[] id, CancellationToken cancellationToken = default)
-    {
-        var entity = await DbSet.FindAsync(id, cancellationToken: cancellationToken);
+        var entity = await DbSet.FindAsync(keys, cancellationToken: cancellationToken);
 
         return entity is null || await RemoveAsync(entity, cancellationToken);
     }
@@ -249,14 +244,9 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
 
     #region GET
 
-    public virtual Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken cancellationToken = default) //where TDestination : class
+    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, CancellationToken cancellationToken = default) //where TDestination : class
     {
-        return GetByIdAsync<TDestination>([id], cancellationToken);
-    }
-
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default) //where TDestination : class
-    {
-        var predicate = DbSet.EntityType.GetIdExpression<TEntity>(ids);
+        var predicate = DbSet.EntityType.GetIdExpression<TEntity>(keys);
         var query = await GetQueryable(predicate, true, cancellationToken);
 
         return await query
@@ -264,14 +254,9 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual Task<TEntity?> GetByIdAsync(object id, bool @readonly = true, CancellationToken cancellationToken = default)
+    public virtual async Task<TEntity?> GetByIdAsync(object[] keys, bool @readonly = true, CancellationToken cancellationToken = default)
     {
-        return GetByIdAsync([id], @readonly, cancellationToken);
-    }
-
-    public virtual async Task<TEntity?> GetByIdAsync(object[] ids, bool @readonly = true, CancellationToken cancellationToken = default)
-    {
-        var predicate = DbSet.EntityType.GetIdExpression<TEntity>(ids);
+        var predicate = DbSet.EntityType.GetIdExpression<TEntity>(keys);
         var query = await GetQueryable(predicate, @readonly, cancellationToken);
 
         return await query.FirstOrDefaultAsync(cancellationToken);
@@ -355,14 +340,9 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public virtual Task<TDestination?> GetByIdAsync<TDestination>(object id, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
     {
-        return GetByIdAsync([id], projection, cancellationToken);
-    }
-
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
-    {
-        var predicate = GetIdExpression(ids);
+        var predicate = GetIdExpression(keys);
         var query = await GetQueryable(predicate, true, cancellationToken);
 
         return await query.Select(projection).FirstOrDefaultAsync(cancellationToken);

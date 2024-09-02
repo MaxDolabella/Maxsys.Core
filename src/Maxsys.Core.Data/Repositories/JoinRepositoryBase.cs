@@ -361,12 +361,6 @@ public abstract class JoinRepositoryBase<TEntity, TJoin, TFilter> : RepositoryBa
         return await query.SingleOrDefaultAsync(cancellationToken);
     }
 
-    public override Task<TDestination?> GetByIdAsync<TDestination>(object id, CancellationToken cancellationToken = default)
-        where TDestination : default
-    {
-        return GetByIdAsync<TDestination>([id], cancellationToken);
-    }
-
     public override async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default)
          where TDestination : default
     {
