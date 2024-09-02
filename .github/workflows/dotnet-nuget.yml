@@ -13,10 +13,12 @@ jobs:
       PATH_PROJ_1: ./src/Maxsys.Core.Data/Maxsys.Core.Data.csproj
       PATH_PROJ_2: ./src/Maxsys.Core.Excel/Maxsys.Core.Excel.csproj
       PATH_PROJ_3: ./src/Maxsys.Core.Web/Maxsys.Core.Web.csproj
+      PATH_PROJ_4: ./src/Maxsys.Bootstrap/Maxsys.Bootstrap.csproj
       NAME_PROJ_0: CORE
       NAME_PROJ_1: CORE.DATA
       NAME_PROJ_2: CORE.EXCEL
       NAME_PROJ_3: CORE.WEB
+      NAME_PROJ_4: BOOTSTRAP
 
     runs-on: ubuntu-latest
 
@@ -39,6 +41,9 @@ jobs:
 
     - name: Geração do package ${{ env.NAME_PROJ_3 }}
       run: dotnet pack ${{ env.PATH_PROJ_3 }} -c Release -o out
+      
+    - name: Geração do package ${{ env.NAME_PROJ_4 }}
+      run: dotnet pack ${{ env.PATH_PROJ_4 }} -c Release -o out
 
     - name: Publicação de pacote NUGET
       run: |
