@@ -1,15 +1,12 @@
 ﻿using System.Text.Encodings.Web;
-using Maxsys.Bootstrap;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
+namespace Maxsys.Bootstrap.Interfaces;
 
 public interface IBootstrapTextAlign
 {
     IDictionary<string, bool> AlignmentDictionary { get; set; }
-    TextPositions TextPosition { get; set; }
-    Alignments TextAlignment { get; set; }
 
     public virtual void ApplyTextAlignment(TagHelperContext context, TagHelperOutput output)
     {

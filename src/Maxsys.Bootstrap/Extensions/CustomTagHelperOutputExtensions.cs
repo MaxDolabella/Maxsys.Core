@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Mvc.TagHelpers;
 /// <summary>
 /// Utility related extensions for <see cref="TagHelperOutput"/>.
 /// </summary>
-public static class MaxsysTagHelperOutputExtensions
+public static class CustomTagHelperOutputExtensions
 {
     /// <summary>
     /// Adds the given <paramref name="styleValue"/> to the <paramref name="tagHelperOutput"/>'s

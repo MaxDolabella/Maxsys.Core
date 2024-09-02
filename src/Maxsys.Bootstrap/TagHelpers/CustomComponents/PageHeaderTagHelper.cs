@@ -1,5 +1,5 @@
 ﻿using System.Text.Encodings.Web;
-using Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
+using Maxsys.Bootstrap.Interfaces;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -15,32 +15,31 @@ public class PageHeaderTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = PageHeaderDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.Light;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.Size4;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = PageHeaderDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = PageHeaderDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = PageHeaderDefaults.TextSize;
+    public TextColors TextColor { get; set; } = PageHeaderDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = PageHeaderDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = PageHeaderDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = PageHeaderDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = PageHeaderDefaults.CustomBackgroundColor;
 
     #endregion IBootstrapBackground
 
-    public bool NoDivisor { get; set; } = false;
-    public PageTitleAlignments Alignment { get; set; } = PageTitleAlignments.Start;
+    public PageTitleAlignments Alignment { get; set; } = PageHeaderDefaults.Alignment;
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
@@ -63,10 +62,6 @@ public class PageHeaderTagHelper : TagHelper,
 
         output.PreContent.AppendHtml($"<div class=\"col col-auto {textPosition.ToFriendlyName()}\">");
         output.PostContent.AppendHtml("</div>");
-        if (!NoDivisor)
-        {
-            output.PostElement.AppendHtml("<hr />");
-        }
     }
 }
 
@@ -80,27 +75,27 @@ public class PageHeaderTitleTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = PageHeaderTitleDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.Light;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.Size4;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = PageHeaderTitleDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = PageHeaderTitleDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = PageHeaderTitleDefaults.TextSize;
+    public TextColors TextColor { get; set; } = PageHeaderTitleDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = PageHeaderTitleDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = PageHeaderTitleDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = PageHeaderTitleDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = PageHeaderTitleDefaults.CustomBackgroundColor;
 
     #endregion IBootstrapBackground
 
@@ -124,27 +119,27 @@ public class PageHeaderSubTitleTagHelper : TagHelper,
     #region IBootstrapText
 
     [HtmlAttributeName("custom-fg")]
-    public string? CustomTextColor { get; set; } = null;
+    public string? CustomTextColor { get; set; } = PageHeaderSubTitleDefaults.CustomTextColor;
 
-    public FontWeights FontWeight { get; set; } = FontWeights.Lighter;
-    public TextTransformations TextTransform { get; set; } = TextTransformations.None;
-    public FontSizes TextSize { get; set; } = FontSizes.Size5;
-    public TextColors TextColor { get; set; } = TextColors.None;
+    public FontWeights FontWeight { get; set; } = PageHeaderSubTitleDefaults.FontWeight;
+    public TextTransformations TextTransform { get; set; } = PageHeaderSubTitleDefaults.TextTransform;
+    public FontSizes TextSize { get; set; } = PageHeaderSubTitleDefaults.TextSize;
+    public TextColors TextColor { get; set; } = PageHeaderSubTitleDefaults.TextColor;
 
     [HtmlAttributeName("italic")]
-    public bool IsItalic { get; set; } = false;
+    public bool IsItalic { get; set; } = PageHeaderSubTitleDefaults.IsItalic;
 
     [HtmlAttributeName("monospace")]
-    public bool IsMonospace { get; set; } = false;
+    public bool IsMonospace { get; set; } = PageHeaderSubTitleDefaults.IsMonospace;
 
     #endregion IBootstrapText
 
     #region IBootstrapBackground
 
-    public BackgroundColors BackgroundColor { get; set; } = BackgroundColors.None;
+    public BackgroundColors BackgroundColor { get; set; } = PageHeaderSubTitleDefaults.BackgroundColor;
 
     [HtmlAttributeName("custom-bg")]
-    public string? CustomBackgroundColor { get; set; } = null;
+    public string? CustomBackgroundColor { get; set; } = PageHeaderSubTitleDefaults.CustomBackgroundColor;
 
     #endregion IBootstrapBackground
 
@@ -163,4 +158,45 @@ public enum PageTitleAlignments : byte
     Center = 0,
     Start,
     End,
+}
+
+public static class PageHeaderDefaults
+{
+    public static bool NoDivisor = false;
+    public static PageTitleAlignments Alignment = PageTitleAlignments.Start;
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.Light;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.Size4;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+}
+
+public static class PageHeaderTitleDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.Light;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.Size4;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
+}
+
+public static class PageHeaderSubTitleDefaults
+{
+    public static string? CustomTextColor = null;
+    public static FontWeights FontWeight = FontWeights.Light;
+    public static TextTransformations TextTransform = TextTransformations.None;
+    public static FontSizes TextSize = FontSizes.Size5;
+    public static TextColors TextColor = TextColors.None;
+    public static bool IsItalic = false;
+    public static bool IsMonospace = false;
+    public static BackgroundColors BackgroundColor = BackgroundColors.None;
+    public static string? CustomBackgroundColor = null;
 }

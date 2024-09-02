@@ -1,9 +1,8 @@
 ﻿using System.Text.Encodings.Web;
-using Maxsys.Bootstrap;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
+namespace Maxsys.Bootstrap.Interfaces;
 
 public interface IBootstrapBackground
 {
@@ -14,7 +13,7 @@ public interface IBootstrapBackground
     {
         if (!string.IsNullOrWhiteSpace(CustomBackgroundColor))
         {
-            output.Attributes.Add("style", $"background-color:{CustomBackgroundColor};");
+            output.AddStyle($"background-color:{CustomBackgroundColor};", HtmlEncoder.Default);
         }
         else if (BackgroundColor is not BackgroundColors.None)
         {

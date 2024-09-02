@@ -4,25 +4,25 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Maxsys.Bootstrap.TagHelpers;
 
-[HtmlTargetElement(V_DIVIDER)]
-[HtmlTargetElement(H_DIVIDER)]
+[HtmlTargetElement(BS_VR)]
+[HtmlTargetElement(BS_HR)]
 public class DividerTagHelper : TagHelper
 {
     #region Consts
 
-    private const string V_DIVIDER = "bs-vr";
-    private const string H_DIVIDER = "bs-hr";
+    private const string BS_VR = "bs-vr";
+    private const string BS_HR = "bs-hr";
 
     #endregion Consts
 
     #region Props
 
-    public TextColors Color { get; set; } = TextColors.None;
+    public TextColors Color { get; set; } = DividerDefaults.Color;
 
     [HtmlAttributeName("custom-color")]
-    public string? CustomForeground { get; set; }
+    public string? CustomForeground { get; set; } = DividerDefaults.CustomForeground;
 
-    public string? Thickness { get; set; }
+    public string? Thickness { get; set; } = DividerDefaults.Thickness;
 
     #endregion Props
 
@@ -31,7 +31,7 @@ public class DividerTagHelper : TagHelper
         // <div class="vr"></div>
         // <hr>
 
-        if (context.TagName == V_DIVIDER)
+        if (context.TagName == BS_VR)
         {
             output.TagName = "div";
             output.TagMode = TagMode.StartTagAndEndTag;
@@ -73,4 +73,11 @@ public class DividerTagHelper : TagHelper
             }
         }
     }
+}
+
+public static class DividerDefaults
+{
+    public static TextColors Color = TextColors.None;
+    public static string? CustomForeground = null;
+    public static string? Thickness = null;
 }

@@ -1,9 +1,8 @@
 ﻿using System.Text.Encodings.Web;
-using Maxsys.Bootstrap;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
+namespace Maxsys.Bootstrap.Interfaces;
 
 public interface IBootstrapText : IBootstrapForeground//, IBootstrapTextAlign
 {
@@ -56,7 +55,7 @@ public interface IBootstrapText : IBootstrapForeground//, IBootstrapTextAlign
     public static void Apply(IBootstrapText me, TagHelperContext context, TagHelperOutput output)
     {
         IBootstrapForeground.Apply(me, context, output);
-        
+
         me.ApplyTextTransform(context, output);
         me.ApplyFontWeight(context, output);
         me.ApplyIsItalic(context, output);

@@ -54,7 +54,8 @@ public class FormLabelTagHelper : Microsoft.AspNetCore.Mvc.TagHelpers.LabelTagHe
 
         if (!string.IsNullOrWhiteSpace(CustomColor))
         {
-            output.Attributes.Add("style", $"color:{CustomColor};");
+            output.AddStyle($"color:{CustomColor};", HtmlEncoder.Default);
+            //output.Attributes.Add("style", $"color:{CustomColor};");
         }
         else if (Color is not TextColors.None)
         {

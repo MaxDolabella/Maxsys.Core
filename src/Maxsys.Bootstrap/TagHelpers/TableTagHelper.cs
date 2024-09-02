@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text.Encodings.Web;
-using Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
+using Maxsys.Bootstrap.Interfaces;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -289,7 +289,7 @@ public class TableHeaderTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableHeaderDefaults.TableStyle;
+    public TableTypes Type { get; set; } = TableHeaderDefaults.Type;
     public BorderColors BorderColor { get; set; } = TableHeaderDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
@@ -319,9 +319,9 @@ public class TableHeaderTagHelper : TagHelper,
             output.AddClass("table-bordered", HtmlEncoder.Default);
         }
 
-        if (TableStyle is not TableStyle.None)
+        if (Type is not TableTypes.None)
         {
-            output.AddClass(TableStyle.ToFriendlyName(), HtmlEncoder.Default);
+            output.AddClass(Type.ToFriendlyName(), HtmlEncoder.Default);
         }
 
         #region TextAlignment
@@ -430,7 +430,7 @@ public class TableBodyTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableBodyDefaults.TableStyle;
+    public TableTypes Type { get; set; } = TableBodyDefaults.Type;
 
     [HtmlAttributeName("divider")]
     public bool HasDivider { get; set; } = TableBodyDefaults.HasDivider; // <tbody class="table-group-divider">
@@ -469,9 +469,9 @@ public class TableBodyTagHelper : TagHelper,
             output.AddClass("table-bordered", HtmlEncoder.Default);
         }
 
-        if (TableStyle is not TableStyle.None)
+        if (Type is not TableTypes.None)
         {
-            output.AddClass(TableStyle.ToFriendlyName(), HtmlEncoder.Default);
+            output.AddClass(Type.ToFriendlyName(), HtmlEncoder.Default);
         }
 
         #region TextAlignment
@@ -582,8 +582,9 @@ public class TableRowTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableRowDefaults.TableStyle;
-    public bool IsActive { get; set; } = TableRowDefaults.IsActive; //table-active
+    public TableTypes Type { get; set; } = TableRowDefaults.Type;
+
+    //public bool IsActive { get; set; } = TableRowDefaults.IsActive; //table-active
 
     public BorderColors BorderColor { get; set; } = TableRowDefaults.BorderColor;
 
@@ -610,9 +611,9 @@ public class TableRowTagHelper : TagHelper,
             output.AddClass("table-bordered", HtmlEncoder.Default);
         }
 
-        if (TableStyle is not TableStyle.None)
+        if (Type is not TableTypes.None)
         {
-            output.AddClass(TableStyle.ToFriendlyName(), HtmlEncoder.Default);
+            output.AddClass(Type.ToFriendlyName(), HtmlEncoder.Default);
         }
 
         #region TextAlignment
@@ -722,7 +723,7 @@ public class TableColumnTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableColumnDefaults.TableStyle;
+    public TableTypes Type { get; set; } = TableColumnDefaults.Type;
     public BorderColors BorderColor { get; set; } = TableColumnDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
@@ -748,9 +749,9 @@ public class TableColumnTagHelper : TagHelper,
             output.AddClass("table-bordered", HtmlEncoder.Default);
         }
 
-        if (TableStyle is not TableStyle.None)
+        if (Type is not TableTypes.None)
         {
-            output.AddClass(TableStyle.ToFriendlyName(), HtmlEncoder.Default);
+            output.AddClass(Type.ToFriendlyName(), HtmlEncoder.Default);
         }
 
         #region TextAlignment
@@ -860,7 +861,7 @@ public class TableHeadColumnTagHelper : TagHelper,
 
     #region Props
 
-    public TableStyle TableStyle { get; set; } = TableHeadColumnDefaults.TableStyle;
+    public TableTypes Type { get; set; } = TableHeadColumnDefaults.Type;
     public BorderColors BorderColor { get; set; } = TableHeadColumnDefaults.BorderColor;
 
     [HtmlAttributeName("bordered")]
@@ -886,9 +887,9 @@ public class TableHeadColumnTagHelper : TagHelper,
             output.AddClass("table-bordered", HtmlEncoder.Default);
         }
 
-        if (TableStyle is not TableStyle.None)
+        if (Type is not TableTypes.None)
         {
-            output.AddClass(TableStyle.ToFriendlyName(), HtmlEncoder.Default);
+            output.AddClass(Type.ToFriendlyName(), HtmlEncoder.Default);
         }
 
         #region TextAlignment
@@ -944,7 +945,7 @@ public class TableHeadColumnTagHelper : TagHelper,
 /// <item><see cref="Dark"/></item>
 /// </list>
 /// </summary>
-public enum TableStyle : byte
+public enum TableTypes : byte
 {
     None = 0,
 
@@ -1047,7 +1048,7 @@ public static class TableHeaderDefaults
     public static bool IsMonospace = false;
     public static BackgroundColors BackgroundColor = BackgroundColors.None;
     public static string? CustomBackgroundColor = null;
-    public static TableStyle TableStyle = TableStyle.None;
+    public static TableTypes Type = TableTypes.None;
     public static BorderColors BorderColor = BorderColors.None;
     public static bool HasBorder = false;
 }
@@ -1063,7 +1064,7 @@ public static class TableBodyDefaults
     public static bool IsMonospace = false;
     public static BackgroundColors BackgroundColor = BackgroundColors.None;
     public static string? CustomBackgroundColor = null;
-    public static TableStyle TableStyle = TableStyle.None;
+    public static TableTypes Type = TableTypes.None;
     public static bool HasDivider = false; // <tbody class="table-group-divider">
     public static BorderColors BorderColor = BorderColors.None;
     public static bool HasBorder = false;
@@ -1080,7 +1081,7 @@ public static class TableRowDefaults
     public static bool IsMonospace = false;
     public static BackgroundColors BackgroundColor = BackgroundColors.None;
     public static string? CustomBackgroundColor = null;
-    public static TableStyle TableStyle = TableStyle.None;
+    public static TableTypes Type = TableTypes.None;
     public static bool IsActive = false; //table-active
     public static BorderColors BorderColor = BorderColors.None;
     public static bool HasBorder = false;
@@ -1097,7 +1098,7 @@ public static class TableColumnDefaults
     public static bool IsMonospace = false;
     public static BackgroundColors BackgroundColor = BackgroundColors.None;
     public static string? CustomBackgroundColor = null;
-    public static TableStyle TableStyle = TableStyle.None;
+    public static TableTypes Type = TableTypes.None;
     public static BorderColors BorderColor = BorderColors.None;
     public static bool HasBorder = false;
 }
@@ -1113,7 +1114,7 @@ public static class TableHeadColumnDefaults
     public static bool IsMonospace = false;
     public static BackgroundColors BackgroundColor = BackgroundColors.None;
     public static string? CustomBackgroundColor = null;
-    public static TableStyle TableStyle = TableStyle.None;
+    public static TableTypes Type = TableTypes.None;
     public static BorderColors BorderColor = BorderColors.None;
     public static bool HasBorder = false;
 }

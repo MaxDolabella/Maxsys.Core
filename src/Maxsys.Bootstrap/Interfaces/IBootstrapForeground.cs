@@ -1,9 +1,8 @@
 ﻿using System.Text.Encodings.Web;
-using Maxsys.Bootstrap;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace Maxsys.SolutionScaffolder.MVC.Bootstrap.Interfaces;
+namespace Maxsys.Bootstrap.Interfaces;
 
 public interface IBootstrapForeground
 {
@@ -14,7 +13,7 @@ public interface IBootstrapForeground
     {
         if (!string.IsNullOrWhiteSpace(CustomTextColor))
         {
-            output.Attributes.Add("style", $"color:{CustomTextColor};");
+            output.AddStyle($"color:{CustomTextColor};", HtmlEncoder.Default);
         }
         else if (TextColor is not TextColors.None)
         {
