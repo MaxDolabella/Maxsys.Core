@@ -9,7 +9,7 @@
 
 	<!-- Package -->
 	<PropertyGroup>
-		<Version>11.0.0</Version>
+		<Version>12.0.0</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Core para aplicações Maxsys (.Net 8)</Description>
@@ -19,7 +19,7 @@
 		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
 		<RepositoryType>Public</RepositoryType>
 		<PackageId>Maxsys.Core</PackageId>
-		<PackageTags>maxsys;dotnet;dotnet-core;net6;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
+		<PackageTags>maxsys;dotnet;dotnet-core;net8;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
 		<PackageReleaseNotes>Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core/PackageAssets/README.md#release-notes.		</PackageReleaseNotes>
 		<ApplicationIcon>PackageAssets/logo.ico</ApplicationIcon>
 		<PackageIcon>PackageAssets/logo.png</PackageIcon>
