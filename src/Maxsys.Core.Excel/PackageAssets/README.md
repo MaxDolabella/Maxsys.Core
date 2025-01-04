@@ -1,5 +1,5 @@
 <div align="center">
-<img src="logo.png" alt="drawing" width="256" />
+<img src="logo.png" alt="drawing" width="128" />
 <h1>Maxsys Core Excel</h1>
 </div>
 
@@ -7,19 +7,18 @@
 
 **Maxsys.Core.Excel** é uma biblioteca em C# para dar suporte à criação de aplicações Maxsys.
 Complementa o pacote **Maxsys.Core**, porém voltado à manipulação de arquivos excel.
-O framework de destino utilizado é o `.NET 8.0`.
 
 
 ## :package: Nuget
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Excel)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Excel" Version="11.0.0" />
+    <PackageReference Include="Maxsys.Core.Excel" Version="13.0.0" />
 ```
 
 ## :link: Dependências
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-11.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
-![ClosedXML](https://img.shields.io/badge/ClosedXML-0.102.3-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-13.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![ClosedXML](https://img.shields.io/badge/ClosedXML-0.104.2-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
 
 ## :star2: Features
 As principais *features* do projeto, podem ser vistas [aqui](FEATURES.md).

@@ -2,6 +2,11 @@
 
 ## :mortar_board: Cada lançamento é um novo aprendizado!!
 
+### 13.0.0
+* :warning: Atualização de framework (`.NET 9`);
+* :warning: Atualização de dependências;
+
+---
 ### 12.0.0
 * `IRepository`: Métodos com `object id` em parametros removidos. Somente `object[] keys` mantidos.
 * `IEntityService`/`EntityService`: Parâmetros genéricos em Eventos `AddedAsync` e `UpdatedAsync` alterados de `<TEntity, TDTO>` para `<TEntity, object>`

@@ -1,5 +1,5 @@
 <div align="center">
-<img src="logo.png" alt="drawing" width="256" />
+<img src="logo.png" alt="drawing" width="128" />
 <h1>Maxsys Core Web</h1>
 </div>
 
@@ -7,20 +7,18 @@
 
 **Maxsys.Core.Web** é uma biblioteca em C# para dar suporte à criação de aplicações Maxsys.
 Complementa o pacote **Maxsys.Core**, porém voltado à projetos web.
-O framework de destino utilizado é o `.NET 8.0`.
 
 
 ## :package: Nuget
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Web" Version="11.0.0" />
+    <PackageReference Include="Maxsys.Core.Web" Version="13.0.0" />
 ```
 
 ## :link: Dependências
 ![Microsoft.AspNetCore.App](https://img.shields.io/badge/Microsoft.AspNetCore.App-Framework-red?style=for-the-badge)
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-11.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
-![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-6.5.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSwashbuckle.AspNetCore.Annotations)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-13.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
 
 ## :star2: Features
 As principais *features* do projeto podem ser vistas [aqui](FEATURES.md).
