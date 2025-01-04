@@ -1,26 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<NoWarn>$(NoWarn);NU1507</NoWarn>
 	</PropertyGroup>
 
+	<!-- Package -->
 	<PropertyGroup>
-		<Version>11.0.0</Version>
+		<Version>13.0.0</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
-		<Description>Biblioteca Maxsys Core para utilização de recursos Web.</Description>
-		<PackageDescription>Biblioteca Maxsys Core para utilização de recursos Web.</PackageDescription>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<Description>Biblioteca Maxsys Core para utilização de recursos Swagger.</Description>
+		<PackageDescription>Biblioteca Maxsys Core para utilização de recursos Swagger.</PackageDescription>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Core.Web</RepositoryUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Core.Web.Swagger</RepositoryUrl>
 		<RepositoryType>Public</RepositoryType>
-		<PackageId>Maxsys.Core.Web</PackageId>
-		<PackageTags>Maxsys;asp-net-core</PackageTags>
+		<PackageId>Maxsys.Core.Web.Swagger</PackageId>
+		<PackageTags>Maxsys;asp-net-core;swagger</PackageTags>
 		<PackageReleaseNotes>
-			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core.Web/PackageAssets/README.md#release-notes.
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core.Web.Swagger/PackageAssets/README.md#release-notes.
 		</PackageReleaseNotes>
 		<ApplicationIcon>PackageAssets/logo.ico</ApplicationIcon>
 		<PackageIcon>PackageAssets/logo.png</PackageIcon>
@@ -28,10 +29,6 @@
 		<PackageLicenseFile>PackageAssets/LICENSE</PackageLicenseFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Content Include="PackageAssets\logo.ico" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="PackageAssets\LICENSE">
@@ -49,11 +46,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+		<ProjectReference Include="..\Maxsys.Core.Web\Maxsys.Core.Web.csproj" />
 	</ItemGroup>
 
 </Project>

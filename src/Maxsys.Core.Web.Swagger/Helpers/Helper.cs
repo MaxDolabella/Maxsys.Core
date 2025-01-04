@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace Maxsys.Swagger.Helpers;
+namespace Maxsys.Core.Web.Swagger.Helpers;
 
 internal static class Helper
 {

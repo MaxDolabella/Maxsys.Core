@@ -1,11 +1,11 @@
-﻿using Maxsys.Swagger.Helpers;
+﻿using Maxsys.Core.Web.Swagger.Helpers;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Maxsys.Core.Web.Swagger.Filters;
 
 /// <summary>
-/// Quando o parâmetro for enum, adiciona à description detalhes dos literals.
+/// Quando o Schema for enum, adiciona à description detalhes dos literals.
 /// Cada item do enum, terá na description, o seguinte formato:
 /// <para/>
 /// {valor} - {literal} ({atributo_description quando tiver})
@@ -26,7 +26,7 @@ namespace Maxsys.Core.Web.Swagger.Filters;
 /// }
 ///
 /// /*
-///     parameter.Description:
+///     schema.Description:
 ///     [
 ///         "Valores possíveis:",
 ///         "1 - TipoA (Este é o tipo A.)",
@@ -38,26 +38,8 @@ namespace Maxsys.Core.Web.Swagger.Filters;
 /// </code>
 /// </example>
 /// </summary>
-public class EnumParameterFilter : IParameterFilter
+public class EnumItemsDescriptionSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
-    {
-        if (context.ParameterInfo.ParameterType.IsEnum)
-        {
-            var referenceId = parameter.Schema?.Reference?.ReferenceV3;
-            var contents = new List<string>
-            {
-                $"[{context.ParameterInfo.ParameterType.Name}]({referenceId})."
-            };
-
-            contents.AddRange(Helper.GetEnumDescriptionsList(context.ParameterInfo.ParameterType));
-
-            var description = string.Join("<br/>", contents);
-
-            parameter.Description = description;
-        }
-    }
-
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         if (!context.Type.IsEnum)
