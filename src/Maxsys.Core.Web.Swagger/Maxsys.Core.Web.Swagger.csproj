@@ -14,7 +14,7 @@
 		<Company>Maxsys Tech</Company>
 		<Description>Biblioteca Maxsys Core para utilização de recursos Swagger.</Description>
 		<PackageDescription>Biblioteca Maxsys Core para utilização de recursos Swagger.</PackageDescription>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Core.Web.Swagger</RepositoryUrl>
 		<RepositoryType>Public</RepositoryType>
@@ -37,7 +37,7 @@
 		</None>
 		<None Update="PackageAssets\logo.png">
 			<PackagePath>\</PackagePath>
-			<Pack>true</Pack>
+			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\README.md">
 			<PackagePath>\</PackagePath>
