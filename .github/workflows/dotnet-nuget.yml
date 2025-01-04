@@ -13,7 +13,7 @@ jobs:
       PATH_PROJ_1: ./src/Maxsys.Core.Data/Maxsys.Core.Data.csproj
       PATH_PROJ_2: ./src/Maxsys.Core.Excel/Maxsys.Core.Excel.csproj
       PATH_PROJ_3: ./src/Maxsys.Core.Web/Maxsys.Core.Web.csproj
-      PATH_PROJ_4: ./src/Maxsys.Core.Web/Maxsys.Core.Web.Swagger.csproj
+      PATH_PROJ_4: ./src/Maxsys.Core.Web.Swagger/Maxsys.Core.Web.Swagger.csproj
       PATH_PROJ_5: ./src/Maxsys.Bootstrap/Maxsys.Bootstrap.csproj
       NAME_PROJ_0: CORE
       NAME_PROJ_1: CORE.DATA
