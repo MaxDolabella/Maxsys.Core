@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maxsys.Core.Web", "src\Maxs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maxsys.Bootstrap", "src\Maxsys.Bootstrap\Maxsys.Bootstrap.csproj", "{FA2E9379-07C0-45AC-81F3-537125864642}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maxsys.Core.Web.Swagger", "src\Maxsys.Core.Web.Swagger\Maxsys.Core.Web.Swagger.csproj", "{910D4843-9DCC-4C45-A5D7-9537966B4723}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{FA2E9379-07C0-45AC-81F3-537125864642}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA2E9379-07C0-45AC-81F3-537125864642}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA2E9379-07C0-45AC-81F3-537125864642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{910D4843-9DCC-4C45-A5D7-9537966B4723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{910D4843-9DCC-4C45-A5D7-9537966B4723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910D4843-9DCC-4C45-A5D7-9537966B4723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{910D4843-9DCC-4C45-A5D7-9537966B4723}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{3CA6D686-6759-4B87-95E4-B6822B5466BE} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
 		{7A734331-F61E-4133-9034-F0773BCA21C6} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
 		{FA2E9379-07C0-45AC-81F3-537125864642} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
+		{910D4843-9DCC-4C45-A5D7-9537966B4723} = {99E25893-90D6-4FC3-A2FC-95A014AF3315}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2A4EDFD5-F835-4736-AE34-1BE95C64D8EB}

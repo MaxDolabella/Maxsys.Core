@@ -1,14 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<NoWarn>$(NoWarn);NU1507</NoWarn>
 	</PropertyGroup>
 
+	<!-- Package -->
 	<PropertyGroup>
-		<Version>11.0.0</Version>
+		<Version>13.0.0</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Biblioteca Maxsys Core para utilização de recursos Web.</Description>
@@ -30,17 +31,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Include="PackageAssets\logo.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="PackageAssets\LICENSE">
 			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\logo.png">
 			<PackagePath>\</PackagePath>
-			<Pack>true</Pack>
+			<Pack>True</Pack>
 		</None>
 		<None Update="PackageAssets\README.md">
 			<PackagePath>\</PackagePath>
@@ -51,7 +48,7 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
 	</ItemGroup>
