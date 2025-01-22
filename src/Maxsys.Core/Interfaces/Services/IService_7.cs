@@ -1,5 +1,4 @@
 ﻿using Maxsys.Core.DTO;
-using Maxsys.Core.Events;
 using Maxsys.Core.Filtering;
 
 namespace Maxsys.Core.Interfaces.Services;
@@ -14,6 +13,7 @@ namespace Maxsys.Core.Interfaces.Services;
 /// <typeparam name="TCreateDTO"></typeparam>
 /// <typeparam name="TUpdateDTO"></typeparam>
 /// <typeparam name="TFilter"></typeparam>
+[Obsolete("Use IService<TEntity, TKey, TFilter> instead.", true)]
 public interface IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
     : IService<TEntity, TKey, TListDTO, TFormDTO, TFilter>
     where TEntity : class
@@ -24,6 +24,8 @@ public interface IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdate
     where TUpdateDTO : class, IDTO, IKey<TKey>
     where TFilter : IFilter<TEntity>, new()
 {
+    /*
+
     #region EVENTS
 
     /// <summary>
@@ -95,4 +97,6 @@ public interface IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdate
     Task<OperationResultCollection<TKey?>> DeleteAsync(IEnumerable<TKey> ids, bool stopOnFirstFail = true, CancellationToken cancellation = default);
 
     #endregion DELETE
+
+    */
 }

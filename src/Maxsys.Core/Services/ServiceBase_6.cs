@@ -7,7 +7,10 @@ using Maxsys.Core.Sorting;
 
 namespace Maxsys.Core.Services;
 
+
+
 /// <inheritdoc cref="IService{TEntity, TKey, TListDTO, TFormDTO, TFilter}"/>
+[Obsolete("Use ServiceBase<TEntity, TRepository, TKey, TFilter> instead.", true)]
 public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO, TFilter>
     : ServiceBase<TEntity, TRepository, TKey, TFilter>
     , IService<TEntity, TKey, TListDTO, TFormDTO, TFilter>
@@ -18,9 +21,11 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
     where TFormDTO : class, IDTO
     where TFilter : IFilter<TEntity>, new()
 {
+
     protected ServiceBase(TRepository repository)
-       : base(repository)
+       : base(repository, null, null)
     { }
+    /*
 
     #region GET
 
@@ -59,4 +64,5 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         => base.ToListAsync(filters, pagination, sortSelector, sortDirection, cancellationToken);
 
     #endregion LIST
+    */
 }

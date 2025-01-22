@@ -1,7 +1,5 @@
-﻿using System.Linq.Expressions;
-using Maxsys.Core.DTO;
+﻿using Maxsys.Core.DTO;
 using Maxsys.Core.Filtering;
-using Maxsys.Core.Sorting;
 
 namespace Maxsys.Core.Interfaces.Services;
 
@@ -13,6 +11,7 @@ namespace Maxsys.Core.Interfaces.Services;
 /// <typeparam name="TListDTO"></typeparam>
 /// <typeparam name="TFormDTO"></typeparam>
 /// <typeparam name="TFilter"></typeparam>
+[Obsolete("Use IService<TEntity, TKey, TFilter> instead.", true)]
 public interface IService<TEntity, TKey, TListDTO, TFormDTO, TFilter>
     : IService<TEntity, TKey, TFilter>
     where TEntity : class
@@ -21,6 +20,8 @@ public interface IService<TEntity, TKey, TListDTO, TFormDTO, TFilter>
     where TFormDTO : class, IDTO
     where TFilter : IFilter<TEntity>, new()
 {
+    /*
+
     #region GET
 
     Task<TFormDTO?> GetAsync(TKey id, CancellationToken cancellationToken = default);
@@ -49,4 +50,6 @@ public interface IService<TEntity, TKey, TListDTO, TFormDTO, TFilter>
     Task<ListDTO<TListDTO>> GetListAsync(TFilter filters, ListCriteria criteria, CancellationToken cancellationToken = default);
 
     #endregion LIST
+
+    */
 }

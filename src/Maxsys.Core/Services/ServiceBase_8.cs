@@ -9,6 +9,7 @@ using Maxsys.Core.Interfaces.Services;
 namespace Maxsys.Core.Services;
 
 /// <inheritdoc cref="IService{TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter}"/>
+[Obsolete("Use ServiceBase<TEntity, TRepository, TKey, TFilter> instead.", true)]
 public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
     : ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO, TFilter>
     , IService<TEntity, TKey, TListDTO, TFormDTO, TCreateDTO, TUpdateDTO, TFilter>
@@ -33,6 +34,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
         _uow = uow;
         _mapper = mapper;
     }
+    /*
 
     #region EVENTS
 
@@ -393,4 +395,5 @@ public abstract class ServiceBase<TEntity, TRepository, TKey, TListDTO, TFormDTO
     }
 
     #endregion DELETE
+    */
 }
