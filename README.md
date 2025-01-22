@@ -31,6 +31,6 @@ Este código possui licença MIT e está liberado para uso da maneira que se des
 Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsystech@outlook.com?subject=Github%20contact).
 
 <!-- 
-    hs41
+    hs43
     https://github.com/ikatyang/emoji-cheat-sheet)
 -->
