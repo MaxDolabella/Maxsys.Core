@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Maxsys.Core.Helpers;
 
 namespace Maxsys.Core.Filtering;
 
@@ -35,5 +36,16 @@ public abstract class FilterBase<TKey, TEntity> : FilterBase<TKey>, IFilter<TEnt
     public virtual void AddExpression(Expression<Func<TEntity, bool>> expression)
     {
         Expressions.Add(expression);
+    }
+
+    /// <exception cref="InvalidOperationException"></exception>
+    public virtual void AddSearchExpression(Expression<Func<TEntity, string?[]>> entityFieldArray)
+    {
+        if (Search is null)
+        {
+            throw new InvalidOperationException($"{nameof(Search)} is null. Check {nameof(Search)} nullability before call this method.");
+        }
+
+        Expressions.Add(ExpressionHelper.SearchTermToExpression(Search, entityFieldArray));
     }
 }
