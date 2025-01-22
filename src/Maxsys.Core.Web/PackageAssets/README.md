@@ -13,12 +13,12 @@ Complementa o pacote **Maxsys.Core**, porém voltado à projetos web.
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Web" Version="14.0.0" />
+    <PackageReference Include="Maxsys.Core.Web" Version="14.1.0" />
 ```
 
 ## :link: Dependências
 ![Microsoft.AspNetCore.App](https://img.shields.io/badge/Microsoft.AspNetCore.App-Framework-red?style=for-the-badge)
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-14.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-14.1.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
 
 ## :star2: Features
 As principais *features* do projeto podem ser vistas [aqui](FEATURES.md).

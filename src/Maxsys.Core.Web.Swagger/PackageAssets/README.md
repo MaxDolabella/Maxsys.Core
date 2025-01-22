@@ -13,11 +13,11 @@ Complementa o pacote **Maxsys.Core**, porém voltado à documentação swagger e
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web.Swagger)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Web" Version="14.0.0" />
+    <PackageReference Include="Maxsys.Core.Web" Version="14.1.0" />
 ```
 
 ## :link: Dependências
-![Maxsys.Core.Web](https://img.shields.io/badge/Maxsys.Core.Web-13.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![Maxsys.Core.Web](https://img.shields.io/badge/Maxsys.Core-14.1.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
 ![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-7.2.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSwashbuckle.AspNetCore.Annotations)
 
 ## :star2: Features

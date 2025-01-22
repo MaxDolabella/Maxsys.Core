@@ -14,11 +14,11 @@ Complementa o pacote **Maxsys.Core**, porém voltado ao acesso à dados e se uti
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Data)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Data" Version="14.0.0" />
+    <PackageReference Include="Maxsys.Core.Data" Version="14.1.0" />
 ```
 
 ## :link: Dependências
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-14.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-14.1.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
 ![Microsoft.EntityFrameworkCore](https://img.shields.io/badge/Microsoft.EntityFrameworkCore-9.0.1-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.EntityFrameworkCore)
 
 

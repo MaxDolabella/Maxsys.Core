@@ -13,11 +13,11 @@ Complementa o pacote **Maxsys.Core**, porém voltado à manipulação de arquivo
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Excel)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Excel" Version="14.0.0" />
+    <PackageReference Include="Maxsys.Core.Excel" Version="14.1.0" />
 ```
 
 ## :link: Dependências
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-14.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-14.1.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
 ![ClosedXML](https://img.shields.io/badge/ClosedXML-0.104.2-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
 
 ## :star2: Features
