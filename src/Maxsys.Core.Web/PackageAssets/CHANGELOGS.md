@@ -1,5 +1,9 @@
 # Maxsys.Core.Web
 
+### 14.0.0
+* :warning: Atualização de dependências;
+
+---
 ### 13.0.0
 * :warning: Atualização de framework (`.NET 9`);
 * :warning: Atualização de dependências;

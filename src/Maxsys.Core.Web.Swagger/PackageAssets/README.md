@@ -13,7 +13,7 @@ Complementa o pacote **Maxsys.Core**, porém voltado à documentação swagger e
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web.Swagger)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Web" Version="13.0.0" />
+    <PackageReference Include="Maxsys.Core.Web" Version="14.0.0" />
 ```
 
 ## :link: Dependências
