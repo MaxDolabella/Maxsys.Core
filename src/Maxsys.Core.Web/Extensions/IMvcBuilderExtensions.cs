@@ -18,7 +18,7 @@ public static class IMvcBuilderExtensions
 
         builder.AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.DefaultIgnoreCondition = .DefaultIgnoreCondition;
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JSON_DEFAULT_OPTIONS.DefaultIgnoreCondition;
             options.JsonSerializerOptions.ReferenceHandler = JSON_DEFAULT_OPTIONS.ReferenceHandler;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = JSON_DEFAULT_OPTIONS.PropertyNameCaseInsensitive;
             options.JsonSerializerOptions.PropertyNamingPolicy = JSON_DEFAULT_OPTIONS.PropertyNamingPolicy;
