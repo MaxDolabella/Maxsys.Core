@@ -39,11 +39,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     {
         var query = await GetQueryable(predicate: null, @readonly: true, cancellation);
 
-        filters.SetExpressions();
-        foreach (var expression in filters.Expressions)
-        {
-            query = query.Where(expression);
-        }
+        filters.ApplyFilter(query);
 
         return query;
     }

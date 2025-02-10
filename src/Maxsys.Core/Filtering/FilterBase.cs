@@ -29,9 +29,28 @@ public abstract class FilterBase<TKey> : FilterBase, IKeyFilter<TKey>
 public abstract class FilterBase<TKey, TEntity> : FilterBase<TKey>, IFilter<TEntity>
     where TEntity : class
 {
+    private bool isApplied = false;
     public List<Expression<Func<TEntity, bool>>> Expressions { get; } = [];
 
+    public void ApplyFilter(IQueryable<TEntity> queryable)
+    {
+        if (!isApplied)
+        {
+            ConfigureExpressions();
+         
+            foreach (var expression in Expressions)
+            {
+                queryable = queryable.Where(expression);
+            }
+
+            isApplied = true;
+        }
+    }
+
+    [Obsolete("Use ConfigureExpressions() method.", true)]
     public abstract void SetExpressions();
+    public abstract void ConfigureExpressions();
+
 
     public virtual void AddExpression(Expression<Func<TEntity, bool>> expression)
     {

@@ -25,8 +25,5 @@ public interface IFilter<TEntity> : IFilter
 {
     List<Expression<Func<TEntity, bool>>> Expressions { get; }
 
-    void SetExpressions();
-
-    void AddExpression(Expression<Func<TEntity, bool>> expression);
-    //public void AddExpression(Expression<Func<TEntity, bool>> expression) => Expressions.Add(expression);
+    void ApplyFilter(IQueryable<TEntity> queryable);
 }
