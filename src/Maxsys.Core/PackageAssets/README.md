@@ -16,7 +16,7 @@ Essa biblioteca auxilia no desenvolvimento de minhas aplicações pessoais `Wind
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core)
 
 ```xml
-    <PackageReference Include="Maxsys.Core" Version="14.1.0" />
+    <PackageReference Include="Maxsys.Core" Version="15.0.0" />
 ```
 
 ## :link: Dependências

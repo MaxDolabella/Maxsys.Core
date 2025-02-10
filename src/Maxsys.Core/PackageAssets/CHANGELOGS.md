@@ -2,21 +2,28 @@
 
 ## :mortar_board: Cada lançamento é um novo aprendizado!!
 
-### 14.0.0
+## 15.0.0
+* :warning: Método `FilterBase.SetExpressions()` subtituído por `.ApplyFilter()`;
+* :warning: Rem ValidationResultHelper;
+* Add DomainException, NotLoggedException, ClaimsPrincipalExtensions, ApiResultExtensions; 
+
+
+---
+## 14.0.0
 * :warning: Atualização de dependências;
 
 ---
-### 13.0.0
+## 13.0.0
 * :warning: Atualização de framework (`.NET 9`);
 * :warning: Atualização de dependências;
 
 ---
-### 12.0.0
+## 12.0.0
 * `IRepository`: Métodos com `object id` em parametros removidos. Somente `object[] keys` mantidos.
 * `IEntityService`/`EntityService`: Parâmetros genéricos em Eventos `AddedAsync` e `UpdatedAsync` alterados de `<TEntity, TDTO>` para `<TEntity, object>`
 
 ---
-### 11.0.0
+## 11.0.0
 * :warning: Atualização de dependências;
 * :warning: `IService`s totalmente refatorados para utilizar `Entity` como genérico;
 * :warning: `AddedEventArgs` removido. Adicionados `AddedEntityEventArgs` e `UpdatedEntityEventArgs`;
@@ -32,11 +39,11 @@
 * Outras pequenas refatorações;
 
 ---
-### 10.1.0
+## 10.1.0
 + :warning: Projeto totalmente refatorado;
 
 ---
-### [7.3.0](https://www.nuget.org/packages/Maxsys.Core/7.3.0)
+## [7.3.0](https://www.nuget.org/packages/Maxsys.Core/7.3.0)
 - Estrutura do projeto alterada (pastas físicas).
 - Namespaces de todas classes de extensão (exceto FluentValidation) movidos para Maxsys.Core.Extensions.
 - Refatoração de `IUnitOfWork, IService, IRepository, ServiceBase, InfoDTO` (Id para Key).
@@ -49,13 +56,13 @@
 - Atualização de pacotes NUGET (AutoMapper e FluentValidation).
 
 ---
-### [7.2.0](https://www.nuget.org/packages/Maxsys.Core/7.2.0)
+## [7.2.0](https://www.nuget.org/packages/Maxsys.Core/7.2.0)
 - Adicionado método de extensão `ApplyCriteria` em `IQueryableExtensions`. É um atalho para `queryable.ApplySort(...).ApplyCriteria(...)`.
 - Ordem dos genéricos em `IRepository` alterada. Agora `TKey` vem antes de todos.
 - `IRepository` de TKey=object removido.
 
 ---
-### [7.1.2](https://www.nuget.org/packages/Maxsys.Core/7.1.2)
+## [7.1.2](https://www.nuget.org/packages/Maxsys.Core/7.1.2)
 - Refatoração e alteração de nome de `IRepositoryBase` para `IRepository`.
 - Alteração de namespaces:
     - `IRepositoryBase`: `Maxsys.ModelCore.Interfaces.Repositories` para `Maxsys.DataCore.Interfaces` (`IRepository`).
@@ -79,7 +86,7 @@
     - `IService` e `ServiceBase`.
 
 ---
-### [7.0.0](https://www.nuget.org/packages/Maxsys.Core/7.0.0)
+## [7.0.0](https://www.nuget.org/packages/Maxsys.Core/7.0.0)
 - TargetFramework alterado para `.net7.0`.
 - Pacotes Nuget atualizados:
     - FluentValidation: 11.5.1
@@ -94,7 +101,7 @@
 - Adicionado `JsonExtensions`.
 
 ---
-### [6.2.1](https://www.nuget.org/packages/Maxsys.Core/6.2.1)
+## [6.2.1](https://www.nuget.org/packages/Maxsys.Core/6.2.1)
 - `ApplicationServiceBase` removido.
 - `IUnitOfWork` reescrito.
 - Adicionado `CountAsync()` e `ContextId` em `IRepositoryBase`.
@@ -102,7 +109,7 @@
 - `IServiceCollectionExtensions` adicionado.
 
 ---
-### [6.1.0](https://www.nuget.org/packages/Maxsys.Core/6.1.0)
+## [6.1.0](https://www.nuget.org/packages/Maxsys.Core/6.1.0)
 - `IServiceBase` e `ServiceBase` removidos.
 - Classe `IReadonlyRepositoryBase` removida.
 - `IRepositoryBase` remodelado tendo métodos synchronous em excluídos.
@@ -111,24 +118,24 @@
 - Outras correções menores.
 
 ---
-### [6.0.2](https://www.nuget.org/packages/Maxsys.Core/6.0.2)
+## [6.0.2](https://www.nuget.org/packages/Maxsys.Core/6.0.2)
 - Correções menores.
 
 ---
-### [6.0.1](https://www.nuget.org/packages/Maxsys.Core/6.0.1)
+## [6.0.1](https://www.nuget.org/packages/Maxsys.Core/6.0.1)
 - `ViewModelBase` agora reescrita para implementar `MVVMObject` que por sua vez, implementa `NotifiableObject`. `NotifiableObject` é a implementação de `INotifyPropertyChanged`.
 - TargetFramework alterado para `.net6.0`.
 - Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
 - Métodos obsoletos removidos.
 
 ---
-### [1.2.0](https://www.nuget.org/packages/Maxsys.Core/1.2.0)
+## [1.2.0](https://www.nuget.org/packages/Maxsys.Core/1.2.0)
 - Interface `IDialogService` totalmente reescrita.
 - Refatoração da interface `IServiceBase` e da classe `ServiceBase`:
     - Os métodos `Add()`/`AddAsync()` e `Update()`/`UpdateAsync()` agora permitem a passagem de um `IValidator` como parâmetro. Nos métodos sem `IValidator`, nenhuma validação será realizada.
 
 ---
-### [1.1.4](https://www.nuget.org/packages/Maxsys.Core/1.1.4)
+## [1.1.4](https://www.nuget.org/packages/Maxsys.Core/1.1.4)
 - Adicionada referência para `System.Threading.Tasks.Extensions`.
 - Alterações em `IOHelper`:
     - Documentação xml adicionada.
@@ -138,7 +145,7 @@
 - Adicionado método `DateTimeToUID_64Bits()` em `GuidGen`.
 
 ---
-### [1.1.3](https://www.nuget.org/packages/Maxsys.Core/1.1.3)
+## [1.1.3](https://www.nuget.org/packages/Maxsys.Core/1.1.3)
 - Alterações em `ValidationResultExtensions`:
     - `ErrorsToString()` foi descontinuado.
     - Adicionado método `ErrorMessagesAsEnumerable()` para substituir `ErrorsAsEnumerable()` que foi descontinuado.
@@ -150,11 +157,11 @@
     - Adicionados métodos `SaveByteArrayImageIntoJpgFile()`, `SaveImageIntoJpgFile()`, bem como suas versões `async` para `.net5.0` ou maior.
 
 ---
-### [1.1.2](https://www.nuget.org/packages/Maxsys.Core/1.1.2)
+## [1.1.2](https://www.nuget.org/packages/Maxsys.Core/1.1.2)
 - Ajuste em `IEnumerableExtensions` para compatibilidade com `.net5.0`.
 
 ---
-### [1.1.1](https://www.nuget.org/packages/Maxsys.Core/1.1.1)
+## [1.1.1](https://www.nuget.org/packages/Maxsys.Core/1.1.1)
 - `IReadonlyRepositoryBase` adicionado ao projeto.
 - Ajustes em `.csproj`:
      - Mudança de TargetFramework para `.net5.0`.
@@ -162,5 +169,5 @@
 - `ViewModelBase` alterada para permitir comparação de valores nulos.
 
 ---
-### [1.0.0](https://www.nuget.org/packages/Maxsys.Core/1.0.0)
+## [1.0.0](https://www.nuget.org/packages/Maxsys.Core/1.0.0)
 - Primeiro lançamento.
