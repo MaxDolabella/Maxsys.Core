@@ -37,11 +37,11 @@ public abstract class ServiceBase : IService
     ///
     /// if (disposing)
     /// {
-    ///     // TODO: dispose managed state (managed objects).
+    ///     // dispose managed state (managed objects).
     /// }
     ///
-    /// // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-    /// // TODO: set large fields to null.
+    /// // free unmanaged resources (unmanaged objects) and override a finalizer below.
+    /// // set large fields to null.
     ///
     /// _disposed = true;
     /// </code>
@@ -56,11 +56,11 @@ public abstract class ServiceBase : IService
 
         if (disposing)
         {
-            // TODO: dispose managed state (managed objects).
+            // NOTE: dispose managed state (managed objects).
         }
 
-        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        // TODO: set large fields to null.
+        // NOTE: free unmanaged resources (unmanaged objects) and override a finalizer below.
+        // NOTE: set large fields to null.
 
         _disposed = true;
     }

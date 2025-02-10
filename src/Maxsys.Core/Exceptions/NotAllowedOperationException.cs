@@ -3,18 +3,14 @@
 /// <summary>
 /// Representa um erro que ocorre ao se tentar realizar uma operação não permitida.
 /// </summary>
-public sealed class NotAllowedOperationException : Exception
+public sealed class NotAllowedOperationException : DomainException
 {
+    private const string BASE_MESSAGE = "Not Allowed Operation.";
     public NotAllowedOperationException(string message)
-      : base($"Not Allowed Operation. {message}")
-    {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
-    }
+      : base($"{BASE_MESSAGE} {message}")
+    { }
 
     public NotAllowedOperationException(string message, Exception innerException)
-      : base($"Not Allowed Operation. {message}", innerException)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(message, nameof(message));
-        ArgumentNullException.ThrowIfNull(innerException, nameof(innerException));
-    }
+      : base($"{BASE_MESSAGE} {message}", innerException)
+    { }
 }
