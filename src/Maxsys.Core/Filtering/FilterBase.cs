@@ -48,7 +48,7 @@ public abstract class FilterBase<TKey, TEntity> : FilterBase<TKey>, IFilter<TEnt
     }
 
     [Obsolete("Use ConfigureExpressions() method.", true)]
-    public abstract void SetExpressions();
+    public virtual void SetExpressions() { }
     public abstract void ConfigureExpressions();
 
 
