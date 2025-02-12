@@ -2,11 +2,14 @@
 
 ## :mortar_board: Cada lançamento é um novo aprendizado!!
 
+## 15.0.1
+* :warning: Rem obrigatoriedade de implementar `FilterBase.SetExpressions()`;
+
+---
 ## 15.0.0
 * :warning: Método `FilterBase.SetExpressions()` subtituído por `.ApplyFilter()`;
 * :warning: Rem ValidationResultHelper;
 * Add DomainException, NotLoggedException, ClaimsPrincipalExtensions, ApiResultExtensions; 
-
 
 ---
 ## 14.0.0

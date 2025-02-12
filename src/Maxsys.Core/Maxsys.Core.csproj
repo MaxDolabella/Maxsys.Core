@@ -9,7 +9,7 @@
 
 	<!-- Package -->
 	<PropertyGroup>
-		<Version>15.0.0</Version>
+		<Version>15.0.1</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Core para aplicações Maxsys</Description>
