@@ -2,8 +2,14 @@
 
 ## :mortar_board: Cada lançamento é um novo aprendizado!!
 
+## 15.1.0
+* :warning: Atualização de dependências;
+* Adicionada sobrecarga para `IRepository.UpdateAsync`;
+
+---
+
 ## 15.0.1
-* :warning: Rem obrigatoriedade de implementar `FilterBase.SetExpressions()`;
+* :warning: Removida obrigatoriedade de implementar `FilterBase.SetExpressions()`;
 
 ---
 ## 15.0.0

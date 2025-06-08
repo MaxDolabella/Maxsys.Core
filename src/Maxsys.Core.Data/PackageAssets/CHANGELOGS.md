@@ -1,5 +1,11 @@
 # Maxsys.Core.Data
 
+## 15.1.0
+* :warning: Atualização de dependências;
+* Adicionada sobrecarga para `RepositoryBase.UpdateAsync`;
+* 
+---
+
 ## 15.0.0
 * :warning: Atualização de dependências;
 * :warning: Método `FilterBase.SetExpressions()` subtituído por `.ApplyFilter()`;
