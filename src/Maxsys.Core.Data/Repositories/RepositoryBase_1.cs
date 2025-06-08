@@ -91,6 +91,22 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
 
         return entity is null || await RemoveAsync(entity, cancellationToken);
     }
+    public virtual async ValueTask<bool> UpdateAsync<TUpdateModel>(object[]? keyValues, TUpdateModel model, CancellationToken cancellationToken = default)
+        where TUpdateModel : notnull
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var entity = await DbSet.FindAsync(keyValues: keyValues, cancellationToken: cancellationToken);
+        if (entity is null)
+        {
+            return false;
+        }
+
+        var entry = DbSet.Entry(entity);
+        entry.CurrentValues.SetValues(model);
+
+        return await ValueTask.FromResult(entry.State == EntityState.Modified);
+    }
 
     public virtual async ValueTask<bool> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {

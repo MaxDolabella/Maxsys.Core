@@ -43,6 +43,17 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <summary>
     /// Update an object of type <typeparamref name="TEntity"/> in the repository asynchronously.
     /// </summary>
+    /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
+    /// <param name="model">The model containing the properties to update.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns><see langword="true"/> is <typeparamref name="TEntity"/> is updated,
+    /// otherwise, <see langword="false"/></returns>
+    ValueTask<bool> UpdateAsync<TUpdateModel>(object[]? keyValues, TUpdateModel model, CancellationToken cancellationToken = default)
+        where TUpdateModel : notnull;
+
+    /// <summary>
+    /// Update an object of type <typeparamref name="TEntity"/> in the repository asynchronously.
+    /// </summary>
     /// <param name="entity">Is the <typeparamref name="TEntity"/> to update.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns><see langword="true"/> is <typeparamref name="TEntity"/> is updated,
