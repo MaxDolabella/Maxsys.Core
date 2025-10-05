@@ -3,11 +3,6 @@
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/dotnet-nuget.yml" />
   </Folder>
-  <Folder Name="/Solution Items/">
-    <File Path="Directory.Packages.props" />
-    <File Path="LICENSE" />
-    <File Path="README.md" />
-  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Maxsys.Archive/Maxsys.Archive.csproj" Id="09d6713e-f5d0-4323-968a-bd1e0eba962e" />
     <Project Path="src/Maxsys.Bootstrap/Maxsys.Bootstrap.csproj" />
@@ -16,5 +11,10 @@
     <Project Path="src/Maxsys.Core.Web.Swagger/Maxsys.Core.Web.Swagger.csproj" />
     <Project Path="src/Maxsys.Core.Web/Maxsys.Core.Web.csproj" />
     <Project Path="src/Maxsys.Core/Maxsys.Core.csproj" />
+  </Folder>
+  <Folder Name="/_root/">
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
   </Folder>
 </Solution>
