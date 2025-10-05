@@ -2,55 +2,22 @@ name: .NET + NuGet
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+      - 'publish-v*'
     
 jobs:
   pack-push:
-    env:
-      PATH_PROJ_0: ./src/Maxsys.Core/Maxsys.Core.csproj
-      PATH_PROJ_1: ./src/Maxsys.Core.Data/Maxsys.Core.Data.csproj
-      PATH_PROJ_2: ./src/Maxsys.Core.Excel/Maxsys.Core.Excel.csproj
-      PATH_PROJ_3: ./src/Maxsys.Core.Web/Maxsys.Core.Web.csproj
-      PATH_PROJ_4: ./src/Maxsys.Core.Web.Swagger/Maxsys.Core.Web.Swagger.csproj
-      PATH_PROJ_5: ./src/Maxsys.Bootstrap/Maxsys.Bootstrap.csproj
-      NAME_PROJ_0: CORE
-      NAME_PROJ_1: CORE.DATA
-      NAME_PROJ_2: CORE.EXCEL
-      NAME_PROJ_3: CORE.WEB
-      NAME_PROJ_4: CORE.WEB.SWAGGER
-      NAME_PROJ_5: BOOTSTRAP
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
+    
     - name: Setup .NET 9
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x' # SDK Version to use; x will use the latest version of the 9.0 channel
-        include-prerelease: false
-
-    - name: Geração do package ${{ env.NAME_PROJ_0 }}
-      run: dotnet pack ${{ env.PATH_PROJ_0 }} -c Release -o out
-
-    - name: Geração do package ${{ env.NAME_PROJ_1 }}
-      run: dotnet pack ${{ env.PATH_PROJ_1 }} -c Release -o out
-
-    - name: Geração do package ${{ env.NAME_PROJ_2 }}
-      run: dotnet pack ${{ env.PATH_PROJ_2 }} -c Release -o out
-
-    - name: Geração do package ${{ env.NAME_PROJ_3 }}
-      run: dotnet pack ${{ env.PATH_PROJ_3 }} -c Release -o out
-      
-    - name: Geração do package ${{ env.NAME_PROJ_4 }}
-      run: dotnet pack ${{ env.PATH_PROJ_4 }} -c Release -o out
-      
-    - name: Geração do package ${{ env.NAME_PROJ_5 }}
-      run: dotnet pack ${{ env.PATH_PROJ_5 }} -c Release -o out
-
-    - name: Publicação de pacote NUGET
-      run: |
-        cd out
-        dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_SERVER }} --skip-duplicate
+        dotnet-version: '9.0.x'
+    
+    - name: Geração dos packages
+      run: dotnet pack src/**/*.csproj -c Release -o out
+    
+    - name: Publicação no NuGet
+      run: dotnet nuget push out/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ secrets.NUGET_SERVER }} --skip-duplicate
