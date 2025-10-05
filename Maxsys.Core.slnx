@@ -9,6 +9,7 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/Maxsys.Archive/Maxsys.Archive.csproj" Id="09d6713e-f5d0-4323-968a-bd1e0eba962e" />
     <Project Path="src/Maxsys.Bootstrap/Maxsys.Bootstrap.csproj" />
     <Project Path="src/Maxsys.Core.Data/Maxsys.Core.Data.csproj" />
     <Project Path="src/Maxsys.Core.Excel/Maxsys.Core.Excel.csproj" />
