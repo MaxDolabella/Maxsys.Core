@@ -15,6 +15,7 @@ Essas bibliotecas auxiliam no desenvolvimento de aplicações pessoais em `Windo
 | [Maxsys.Core.Excel](https://www.nuget.org/packages/Maxsys.Core.Excel)             | ![Nuget Maxsys.Core.Excel](https://img.shields.io/nuget/v/Maxsys.Core.Excel)              |
 | [Maxsys.Core.Web](https://www.nuget.org/packages/Maxsys.Core.Web)                 | ![Nuget Maxsys.Core.Web](https://img.shields.io/nuget/v/Maxsys.Core.Web)                  |
 | [Maxsys.Core.Web.Swagger](https://www.nuget.org/packages/Maxsys.Core.Web.Swagger) | ![Nuget Maxsys.Core.Web.Swagger](https://img.shields.io/nuget/v/Maxsys.Core.Web.Swagger)  |
+| [Maxsys.Archive](https://www.nuget.org/packages/Maxsys.Archive)                   | ![Nuget Maxsys.Archive](https://img.shields.io/nuget/v/Maxsys.Archive)                |
 | [Maxsys.Bootstrap](https://www.nuget.org/packages/Maxsys.Bootstrap)               | ![Nuget Maxsys.Bootstrap](https://img.shields.io/nuget/v/Maxsys.Bootstrap)                |
 
 
