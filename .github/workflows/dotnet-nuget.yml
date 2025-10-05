@@ -3,7 +3,7 @@ name: .NET + NuGet
 on:
   push:
     tags:
-      - 'publish-v*'
+      - 'publish-*'
     
 jobs:
   pack-push:
