@@ -2,5 +2,5 @@
 
 ## :mortar_board: Cada lançamento é um novo aprendizado!!
 
-## 15.1.0
+## 1.0.0
 - Lançamento.
