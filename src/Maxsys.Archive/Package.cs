@@ -14,4 +14,9 @@ public class Package
     public T GetMeta<T>() => JsonSerializer.Deserialize<T>(JsonSerializer.Serialize(Meta))!;
 
     public PackageFile? GetFile(string name) => Files.FirstOrDefault(f => f.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+    public void AttachFile(PackageFile file) => Files.Add(file);
+    public void AttachFile(string name, string filePath) => AttachFile(new PackageFile(name, File.ReadAllBytes(filePath)));
+    public void AttachFile(string name, byte[] data) => AttachFile(new PackageFile(name, data));
+
 }
