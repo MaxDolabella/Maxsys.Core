@@ -33,7 +33,7 @@ public static class PackageWriter
         // FILES
         foreach (var file in package.Files)
         {
-            var entry = archive.CreateEntry($"{PackageConsts.FILES_FOLDER}{file.Name}", CompressionLevel.Optimal);
+            var entry = archive.CreateEntry($"{PackageConsts.FILES_FOLDER}{file.Name}", CompressionLevel.SmallestSize);
             using var entryStream = entry.Open();
             entryStream.Write(file.Data, 0, file.Data.Length);
         }
