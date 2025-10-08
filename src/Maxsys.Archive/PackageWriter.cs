@@ -15,6 +15,7 @@ public static class PackageWriter
         using var archive = new ZipArchive(fs, ZipArchiveMode.Create, leaveOpen: false);
 
         // VERSION
+        package.UpdateVersion();
         var versionEntry = archive.CreateEntry(PackageConsts.ENTRY_VERSION);
         using (var writer = new StreamWriter(versionEntry.Open(), Encoding.UTF8))
             writer.Write(package.Version);
