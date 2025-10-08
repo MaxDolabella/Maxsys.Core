@@ -13,6 +13,8 @@
     <Project Path="src/Maxsys.Core/Maxsys.Core.csproj" />
   </Folder>
   <Folder Name="/_root/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
     <File Path="Directory.Packages.props" />
     <File Path="LICENSE" />
     <File Path="README.md" />
