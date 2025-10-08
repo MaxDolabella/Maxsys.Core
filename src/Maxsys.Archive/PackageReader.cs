@@ -8,9 +8,25 @@ public static class PackageReader
 {
     public static Package Read(string filePath)
     {
-        var pkg = new Package();
+        using var archive = GetArchive(filePath);
 
-        using var archive = ZipFile.OpenRead(filePath);
+        return ReadToPackage(archive);
+    }
+
+    public static Package Read(Stream stream)
+    {
+        using var archive = GetArchive(stream);
+
+        return ReadToPackage(archive);
+    }
+
+    private static ZipArchive GetArchive(string filePath) => ZipFile.OpenRead(filePath);
+
+    private static ZipArchive GetArchive(Stream stream) => new(stream);
+
+    private static Package ReadToPackage(ZipArchive archive)
+    {
+        var pkg = new Package();
 
         // VERSION
         var versionEntry = archive.GetEntry(PackageConsts.ENTRY_VERSION);
