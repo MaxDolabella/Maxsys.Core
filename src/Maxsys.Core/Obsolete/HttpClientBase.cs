@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Maxsys.Core.Services.Http;
 
+[Obsolete("This service war discontinued and will be removed. Use HttpServiceBase (or MaxsysHttpServiceBase for Maxsys APIs).", true)]
 public abstract class HttpClientBase : ServiceBase
 {
     protected readonly ILogger _logger;
