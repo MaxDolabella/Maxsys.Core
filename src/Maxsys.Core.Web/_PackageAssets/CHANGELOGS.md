@@ -1,6 +1,6 @@
 # Maxsys.Core.Web
 
-## 16.0.0-beta
+## 16.0.0
 * :warning: Atualização de pacotes;
 * :recycle: Adicionada configuração padrão para Encoder em .ConfigureJsonOptions;
 * :recycle: `ActionIdentifierAttribute` para substituir `TitledActionAttribute`;
