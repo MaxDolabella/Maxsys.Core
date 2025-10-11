@@ -58,7 +58,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey>
             }
         }
 
-        return await ValueTask.FromResult(OperationResult.Empty);
+        return await ValueTask.FromResult(new OperationResult());
     }
 
     protected async ValueTask<OperationResult> OnUpdatingAsync(TEntity e, CancellationToken cancellationToken)
@@ -78,7 +78,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey>
             }
         }
 
-        return await ValueTask.FromResult(OperationResult.Empty);
+        return await ValueTask.FromResult(new OperationResult());
     }
 
     protected async ValueTask<OperationResult> OnDeletingAsync(TKey e, CancellationToken cancellationToken)
@@ -98,7 +98,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey>
             }
         }
 
-        return await ValueTask.FromResult(OperationResult.Empty);
+        return await ValueTask.FromResult(new OperationResult());
     }
 
     protected ValueTask OnAddedAsync(AddedEntityEventArgs<TEntity, object> e, CancellationToken cancellationToken)
@@ -394,6 +394,7 @@ public abstract class ServiceBase<TEntity, TRepository, TKey>
     #region GET
 
     public virtual async Task<TDestination?> GetAsync<TDestination>(TKey id, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var item = await _repository.GetAsync<TDestination>(IdSelector(id), cancellationToken);
 
@@ -427,7 +428,46 @@ public abstract class ServiceBase<TEntity, TRepository, TKey>
 
     public Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        return base.ToListAsync<InfoDTO<TKey>>(predicate, ListCriteria.Empty, cancellationToken);
+        return base.ToListAsync<InfoDTO<TKey>>(predicate, new ListCriteria(), cancellationToken);
+    }
+
+    public async Task<ListDTO<InfoDTO<TKey>>> GetInfoListAsync(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default)
+    {
+        var list = new ListDTO<InfoDTO<TKey>>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<InfoDTO<TKey>>(predicate, criteria, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public async Task<ListDTO<InfoDTO<TKey>>> GetInfoListAsync(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<InfoDTO<TKey>, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+    {
+        var list = new ListDTO<InfoDTO<TKey>>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<InfoDTO<TKey>>(predicate, pagination, sortSelector, sortDirection, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public async Task<ListDTO<InfoDTO<TKey>>> GetInfoListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        var list = new ListDTO<InfoDTO<TKey>>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<InfoDTO<TKey>>(predicate, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
     }
 
     #endregion LIST
