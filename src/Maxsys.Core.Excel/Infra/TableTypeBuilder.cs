@@ -67,7 +67,7 @@ public sealed class TableTypeBuilder<T>
             type = type.GenericTypeArguments[0];
         }
 
-        Func<object?, dynamic?>? customConversion = value => value?.ToString()?.ToEnum<TValue>();
+        Func<object?, dynamic?>? customConversion = value => EnumExtensions.ToEnum<TValue>(value?.ToString());
         AddConfig(ExcelTableCellConfig<T>.Create(property, GetNextColumnNumber(), ExcelCellDataType.Text, customConversion));
     }
 
