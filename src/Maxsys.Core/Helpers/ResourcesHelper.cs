@@ -2,7 +2,7 @@
 using System.Xml.Schema;
 using Maxsys.Core.Exceptions;
 
-namespace Maxsys.Core.Utils;
+namespace Maxsys.Core.Helpers;
 
 /// <summary>
 /// Reference documentation <see href="https://code-maze.com/dotnet-embedded-resources/">here</see>.
