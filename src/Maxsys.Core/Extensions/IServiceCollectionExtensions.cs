@@ -142,12 +142,31 @@ public static class IServiceCollectionExtensions
          where TService : class
          where TReplaceImplementation : class, TService
     {
-        var oldServiceDescriptor = services.Where(sd => sd.ServiceType == typeof(TService) && sd.Lifetime == serviceLifetime).FirstOrDefault();
-        if (oldServiceDescriptor is not null)
-        {
-            services.Remove(oldServiceDescriptor);
+        return ReplaceServiceImplementation<TService, TReplaceImplementation>(services, null, serviceLifetime);
+    }
 
-            services.Add<TService, TReplaceImplementation>(serviceLifetime);
+    public static IServiceCollection ReplaceServiceImplementation<TService, TReplaceImplementation>(
+        this IServiceCollection services,
+        Func<IServiceProvider, object>? implementationFactory,
+        ServiceLifetime? serviceLifetime = null)
+        where TService : class where TReplaceImplementation : class, TService
+    {
+        var serviceDescriptor = services.FirstOrDefault(descriptor => descriptor.ServiceType == typeof(TService));
+        if (serviceDescriptor is not null)
+        {
+            services.Remove(serviceDescriptor);
+
+            var newDescriptor = implementationFactory is not null
+                ? new ServiceDescriptor(
+                    serviceType: serviceDescriptor.ServiceType,
+                    factory: implementationFactory,
+                    lifetime: serviceLifetime ?? serviceDescriptor.Lifetime)
+                : new ServiceDescriptor(
+                    serviceType: serviceDescriptor.ServiceType,
+                    implementationType: typeof(TReplaceImplementation),
+                    lifetime: serviceLifetime ?? serviceDescriptor.Lifetime);
+
+            services.Add(newDescriptor);
         }
 
         return services;
