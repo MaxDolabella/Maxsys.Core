@@ -6,7 +6,5 @@ public sealed class ListCriteria
 {
     public Pagination? Pagination { get; set; } = null;
 
-    public List<SortFilter> Sorts { get; set; } = new();
-
-    public static readonly ListCriteria Empty = new();
+    public List<SortFilter> Sorts { get; set; } = [];
 }
