@@ -60,6 +60,7 @@ public abstract class ServiceBase<TEntity, TRepository>
     #region GET
 
     public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var item = await _repository.GetAsync<TDestination>(predicate, cancellationToken);
 
@@ -78,6 +79,7 @@ public abstract class ServiceBase<TEntity, TRepository>
     }
 
     public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] ids, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var item = await _repository.GetByIdAsync<TDestination>(ids, cancellationToken);
 
@@ -87,6 +89,7 @@ public abstract class ServiceBase<TEntity, TRepository>
     }
 
     public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var item = await _repository.GetSingleOrDefaultAsync<TDestination>(predicate, cancellationToken);
 
@@ -96,6 +99,7 @@ public abstract class ServiceBase<TEntity, TRepository>
     }
 
     public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var item = await _repository.GetSingleOrThrowsAsync<TDestination>(predicate, cancellationToken);
 
@@ -108,7 +112,10 @@ public abstract class ServiceBase<TEntity, TRepository>
 
     #region LIST
 
+    // List
+
     public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var items = await _repository.ToListAsync<TDestination>(predicate, cancellationToken);
 
@@ -117,7 +124,8 @@ public abstract class ServiceBase<TEntity, TRepository>
         return items;
     }
 
-    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var items = await _repository.ToListAsync<TDestination>(predicate, criteria, cancellationToken);
 
@@ -127,6 +135,7 @@ public abstract class ServiceBase<TEntity, TRepository>
     }
 
     public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var items = await _repository.ToListAsync(predicate, pagination, sortSelector, sortDirection, cancellationToken);
 
@@ -163,12 +172,68 @@ public abstract class ServiceBase<TEntity, TRepository>
         return items;
     }
 
-    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
+    // ListDTO
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        where TDestination : class
+    {
+        var list = new ListDTO<TDestination>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<TDestination>(predicate, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var list = new ListDTO<TDestination>()
         {
             Count = await _repository.CountAsync(predicate, cancellationToken),
             Items = await _repository.ToListAsync<TDestination>(predicate, criteria, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+        where TDestination : class
+    {
+        var list = new ListDTO<TDestination>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<TDestination>(predicate, pagination, sortSelector, sortDirection, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default)
+    {
+        var list = new ListDTO<TDestination>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<TDestination>(projection, predicate, cancellationToken)
+        };
+
+        await OnGetListCompletedAsync(list, cancellationToken);
+
+        return list;
+    }
+
+    public virtual async Task<ListDTO<TDestination>> GetListAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TDestination>> projection, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default)
+    {
+        var list = new ListDTO<TDestination>()
+        {
+            Count = await _repository.CountAsync(predicate, cancellationToken),
+            Items = await _repository.ToListAsync<TDestination>(projection, predicate, pagination, sortSelector, sortDirection, cancellationToken)
         };
 
         await OnGetListCompletedAsync(list, cancellationToken);
@@ -182,7 +247,7 @@ public abstract class ServiceBase<TEntity, TRepository>
         var list = new ListDTO<TDestination>()
         {
             Count = await _repository.CountAsync(predicate, cancellationToken),
-            Items = await _repository.ToListAsync(projection, predicate, criteria, cancellationToken)
+            Items = await _repository.ToListAsync<TDestination>(projection, predicate, criteria, cancellationToken)
         };
 
         await OnGetListCompletedAsync(list, cancellationToken);

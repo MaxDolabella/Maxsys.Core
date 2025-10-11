@@ -212,8 +212,9 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>.
@@ -237,6 +238,7 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
     Task<TDestination?> GetAsync<TDestination>(TFilter filters, Expression<Func<TEntity, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
@@ -295,8 +297,12 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o único item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
-    /// <remarks>Esse método não lança exception.</remarks>
-    Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
+    /// <remarks>
+    ///     Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/>
+    ///     <br/>
+    ///     Esse método não lança exception.
+    /// </remarks>
+    Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém o único item <typeparamref name="TDestination"/> a partir de um filtro <typeparamref name="TFilter"/>.
@@ -308,9 +314,10 @@ public interface IRepository<TEntity, TFilter> : IRepository<TEntity>
     ///
     /// <param name="filters">contém as condições para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>o único item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
     /// <exception cref="InvalidOperationException"/>
-    Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default) where TDestination : class;
 
     #endregion GET
 }

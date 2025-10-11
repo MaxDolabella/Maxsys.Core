@@ -5,7 +5,7 @@ using Maxsys.Core.Sorting;
 namespace Maxsys.Core.Interfaces.Services;
 
 /// <summary>
-/// Fornece uma interface básica para obtenção de dados.<br/>
+/// Fornece uma interface básica para obtenção e manipulação de dados.<br/>
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
 /// <typeparam name="TKey"></typeparam>
@@ -60,34 +60,35 @@ public interface IService<TEntity, TKey> : IService<TEntity>
     #region ADD
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TCreateDTO"/> → <typeparamref name="TEntity"/></remarks>
-    Task<OperationResult<TCreateDTO>> AddAsync<TCreateDTO>(TCreateDTO itemToCreate, CancellationToken cancellation = default) where TCreateDTO : class;
+    Task<OperationResult<TCreateDTO>> AddAsync<TCreateDTO>(TCreateDTO createModel, CancellationToken cancellationToken = default) where TCreateDTO : class;
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TCreateDTO"/> → <typeparamref name="TEntity"/></remarks>
-    Task<OperationResultCollection<TCreateDTO>> AddAsync<TCreateDTO>(IEnumerable<TCreateDTO> items, bool stopOnFirstFail = true, CancellationToken cancellation = default) where TCreateDTO : class;
+    Task<OperationResultCollection<TCreateDTO>> AddAsync<TCreateDTO>(IEnumerable<TCreateDTO> createModels, bool stopOnFirstFail = true, CancellationToken cancellationToken = default) where TCreateDTO : class;
 
     #endregion ADD
 
     #region UPDATE
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TUpdateDTO"/> → <typeparamref name="TEntity"/></remarks>
-    Task<OperationResult> UpdateAsync<TUpdateDTO>(TUpdateDTO itemToUpdate, CancellationToken cancellation = default) where TUpdateDTO : class, IKey<TKey>;
+    Task<OperationResult> UpdateAsync<TUpdateDTO>(TUpdateDTO updateModel, CancellationToken cancellationToken = default) where TUpdateDTO : class, IKey<TKey>;
 
     /// <remarks>Mapeamento necessário: <typeparamref name="TUpdateDTO"/> → <typeparamref name="TEntity"/></remarks>
-    Task<OperationResultCollection<TKey?>> UpdateAsync<TUpdateDTO>(IEnumerable<TUpdateDTO> itemsToUpdate, bool stopOnFirstFail = true, CancellationToken cancellation = default) where TUpdateDTO : class, IKey<TKey>;
+    Task<OperationResultCollection<TKey?>> UpdateAsync<TUpdateDTO>(IEnumerable<TUpdateDTO> updateModels, bool stopOnFirstFail = true, CancellationToken cancellationToken = default) where TUpdateDTO : class, IKey<TKey>;
 
     #endregion UPDATE
 
     #region DELETE
 
-    Task<OperationResult> DeleteAsync(TKey id, CancellationToken cancellation = default);
+    Task<OperationResult> DeleteAsync(TKey id, CancellationToken cancellationToken = default);
 
-    Task<OperationResultCollection<TKey?>> DeleteAsync(IEnumerable<TKey> ids, bool stopOnFirstFail = true, CancellationToken cancellation = default);
+    Task<OperationResultCollection<TKey?>> DeleteAsync(IEnumerable<TKey> ids, bool stopOnFirstFail = true, CancellationToken cancellationToken = default);
 
     #endregion DELETE
 
     #region GET
 
-    Task<TDestination?> GetAsync<TDestination>(TKey id, CancellationToken cancellationToken = default);
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
+    Task<TDestination?> GetAsync<TDestination>(TKey id, CancellationToken cancellationToken = default) where TDestination : class;
 
     Task<TDestination?> GetAsync<TDestination>(TKey id, Expression<Func<TEntity, TDestination>> projection, CancellationToken cancellationToken = default);
 
@@ -95,11 +96,23 @@ public interface IService<TEntity, TKey> : IService<TEntity>
 
     #region LIST
 
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <see cref="InfoDTO{TKey}"/> </remarks>
     Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default);
 
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <see cref="InfoDTO{TKey}"/> </remarks>
     Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<InfoDTO<TKey>, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
 
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <see cref="InfoDTO{TKey}"/> </remarks>
     Task<List<InfoDTO<TKey>>> ToInfoListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <see cref="InfoDTO{TKey}"/> </remarks>
+    Task<ListDTO<InfoDTO<TKey>>> GetInfoListAsync(Expression<Func<TEntity, bool>> predicate, ListCriteria criteria, CancellationToken cancellationToken = default);
+
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <see cref="InfoDTO{TKey}"/> </remarks>
+    Task<ListDTO<InfoDTO<TKey>>> GetInfoListAsync(Expression<Func<TEntity, bool>> predicate, Pagination? pagination, Expression<Func<InfoDTO<TKey>, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
+
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <see cref="InfoDTO{TKey}"/> </remarks>
+    Task<ListDTO<InfoDTO<TKey>>> GetInfoListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     #endregion LIST
 }

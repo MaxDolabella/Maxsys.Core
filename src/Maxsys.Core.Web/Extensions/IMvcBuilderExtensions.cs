@@ -9,8 +9,7 @@ public static class IMvcBuilderExtensions
 {
     /// <summary>
     /// Atalho para IMvcBuilder.AddJsonOptions(options).<br/>
-    /// Configuração para evitar <see cref="JsonException"/> (object cycle), ignorar case e não escrever properties nulas.
-    /// Adicionar <see cref="JsonStringEnumConverter"/> a <see cref="JSON_DEFAULT_OPTIONS"/>.
+    /// Configuração para evitar <see cref="JsonException"/> (object cycle), ignorar case e não escrever properties nulas
     /// </summary>
     public static IMvcBuilder ConfigureJsonOptions(this IMvcBuilder builder)
     {
@@ -19,9 +18,10 @@ public static class IMvcBuilderExtensions
         builder.AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.DefaultIgnoreCondition = JSON_DEFAULT_OPTIONS.DefaultIgnoreCondition;
-            options.JsonSerializerOptions.ReferenceHandler = JSON_DEFAULT_OPTIONS.ReferenceHandler;
+            options.JsonSerializerOptions.Encoder = JSON_DEFAULT_OPTIONS.Encoder;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = JSON_DEFAULT_OPTIONS.PropertyNameCaseInsensitive;
             options.JsonSerializerOptions.PropertyNamingPolicy = JSON_DEFAULT_OPTIONS.PropertyNamingPolicy;
+            options.JsonSerializerOptions.ReferenceHandler = JSON_DEFAULT_OPTIONS.ReferenceHandler;
 
             // Exibir Enum literal no swagger: https://stackoverflow.com/a/65318486
             foreach (var converter in JSON_DEFAULT_OPTIONS.Converters)

@@ -10,8 +10,6 @@ namespace Maxsys.Core;
 /// </summary>
 public class OperationResult : IOperationResult
 {
-    public static readonly OperationResult Empty = new();
-
     [JsonIgnore, MemberNotNullWhen(false, nameof(Notifications))]
     public virtual bool IsValid => !(Notifications?.Where(n => n.ResultType <= ResultTypes.Warning).Any() == true);
 
@@ -51,7 +49,7 @@ public class OperationResult : IOperationResult
     }
 
     public OperationResult(Notification notification)
-        : this(new List<Notification> { notification })
+        : this([notification])
     { }
 
     public OperationResult(string notificationMessage)
@@ -88,6 +86,28 @@ public class OperationResult : IOperationResult
 
         Notifications.AddRange(notifications);
     }
+
+    public void AddNotification(string message, string? details = null, ResultTypes resultType = ResultTypes.Error)
+    {
+        AddNotification(new Notification(message, details, resultType));
+    }
+
+    public void AddException(Exception exception, string? customMessage = null)
+    {
+        Notification notification = string.IsNullOrWhiteSpace(customMessage)
+            ? new(exception)
+            : new(exception, customMessage);
+
+        AddNotification(notification);
+    }
+
+    public void AddError(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Error));
+
+    public void AddWarning(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Warning));
+
+    public void AddInfo(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Info));
+
+    public void AddSuccess(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Success));
 
     public override string? ToString()
     {
@@ -209,7 +229,7 @@ public class OperationResult<T> : OperationResult
 
     public OperationResult<TDestination> Cast<TDestination>(Func<T?, TDestination?> cast)
     {
-        ArgumentNullException.ThrowIfNull(nameof(cast));
+        ArgumentNullException.ThrowIfNull(cast, nameof(cast));
 
         return new OperationResult<TDestination>()
         {

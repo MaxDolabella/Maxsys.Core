@@ -25,5 +25,5 @@ public interface IFilter<TEntity> : IFilter
 {
     List<Expression<Func<TEntity, bool>>> Expressions { get; }
 
-    void ApplyFilter(IQueryable<TEntity> queryable);
+    void ApplyFilter(ref IQueryable<TEntity> queryable);
 }

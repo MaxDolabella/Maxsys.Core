@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO;
 using FluentValidation.Results;
 
 namespace Maxsys.Core.Helpers;
@@ -11,7 +8,7 @@ namespace Maxsys.Core.Helpers;
 /// </summary>
 public static class IOHelper
 {
-    #region Attibutes
+    #region Attributes
 
     public static void InsertAttribute(ref FileAttributes attributesFlags, FileAttributes insert)
     {
@@ -49,121 +46,7 @@ public static class IOHelper
         File.SetAttributes(filePath, attributes);
     }
 
-    #endregion Attibutes
-
-    #region File Operations
-
-    /// <summary>
-    /// Moves an existing file to a new file and sets <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>.
-    /// Overwritting a file of the same name is not allowed.<para/>
-    /// Creates the directory of the destination file name if it doesn't exists.
-    /// </summary>
-    /// <param name="sourceFileName">The file to move.</param>
-    /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
-    /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
-    /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
-    /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
-    public static ValidationResult MoveFile(string sourceFileName, string destFileName, bool setAsReadOnly = true)
-    {
-        var validationResult = new ValidationResult();
-
-        try
-        {
-            RemoveReadOnlyAttribute(sourceFileName);
-
-            var copyResult = CopyFile(sourceFileName, destFileName, setAsReadOnly);
-            if (copyResult.IsValid)
-                _ = DeleteFile(sourceFileName);
-            else
-                validationResult.AddError($"Error moving file: {copyResult.Errors[0].ErrorMessage}");
-        }
-        catch (Exception ex)
-        {
-            validationResult.AddException(ex, ex.Message);
-        }
-
-        return validationResult;
-    }
-
-    /// <summary>
-    /// Moves or overwrite an existing file to a new file and sets <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>.
-    /// If destination file exists, will be deleted.<para/>
-    /// Creates the directory of the destination file name if it doesn't exists.
-    /// </summary>
-    /// <param name="sourceFileName">The file to move.</param>
-    /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
-    /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
-    /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
-    /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
-    public static ValidationResult MoveOrOverwriteFile(string sourceFileName, string destFileName, bool setAsReadOnly = true)
-    {
-        var deleteResult = DeleteFile(destFileName);
-
-        return deleteResult.IsValid
-            ? MoveFile(sourceFileName, destFileName, setAsReadOnly)
-            : deleteResult;
-    }
-
-    /// <summary>
-    /// Deletes the specified file if exists. Ignores <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>
-    /// </summary>
-    /// <param name="fileName">The name of the file to be deleted. Wildcard characters are not supported.</param>
-    /// <returns></returns>
-    public static ValidationResult DeleteFile(string fileName)
-    {
-        var validationResult = new ValidationResult();
-        try
-        {
-            if (File.Exists(fileName))
-            {
-                RemoveReadOnlyAttribute(fileName);
-                File.Delete(fileName);
-            }
-        }
-        catch (Exception ex)
-        {
-            validationResult.AddException(ex, ex.Message);
-        }
-
-        return validationResult;
-    }
-
-    /// <summary>
-    /// Copies an existing file to a new file and sets <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>.
-    /// Overwritting a file of the same name is not allowed.<para/>
-    /// Creates the directory of the destination file name if it doesn't exists.
-    /// </summary>
-    /// <param name="sourceFileName">The file to copy.</param>
-    /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
-    /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
-    /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
-    /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
-    public static ValidationResult CopyFile(string sourceFileName, string destFileName, bool setAsReadOnly = true)
-    {
-        var validationResult = new ValidationResult();
-
-        if (!File.Exists(destFileName))
-        {
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(destFileName));
-                File.Copy(sourceFileName, destFileName);
-                if (setAsReadOnly) InsertReadOnlyAttribute(destFileName);
-            }
-            catch (Exception ex)
-            {
-                validationResult.AddException(ex, ex.Message);
-            }
-        }
-        else
-        {
-            validationResult.AddError("Destination file already exists.");
-        }
-
-        return validationResult;
-    }
-
-    #endregion File Operations
+    #endregion Attributes
 
     #region Async File Operations
 
@@ -176,10 +59,11 @@ public static class IOHelper
     /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
     /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
     /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
-    /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
-    public static async ValueTask<ValidationResult> MoveFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
+    /// <param name="cancellationToken"></param>
+    /// <returns>a <see cref="OperationResult"/> of the operation.</returns>
+    public static async ValueTask<OperationResult> MoveFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
     {
-        var validationResult = new ValidationResult();
+        var result = new OperationResult();
 
         try
         {
@@ -189,19 +73,19 @@ public static class IOHelper
 
             if (copyResult.IsValid)
             {
-                validationResult = await DeleteFileAsync(sourceFileName, cancellationToken);
+                result = await DeleteFileAsync(sourceFileName, cancellationToken);
             }
             else
             {
-                validationResult.AddError($"Error moving file: {copyResult}");
+                result.AddError($"Error moving file: {copyResult}");
             }
         }
         catch (Exception ex)
         {
-            validationResult.AddException(ex, ex.Message);
+            result.AddException(ex, ex.Message);
         }
 
-        return validationResult;
+        return result;
     }
 
     /// <summary>
@@ -213,13 +97,14 @@ public static class IOHelper
     /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
     /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
     /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
-    /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
-    public static async ValueTask<ValidationResult> MoveOrOverwriteFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true)
+    /// <param name="cancellationToken"></param>
+    /// <returns>a <see cref="OperationResult"/> of the operation.</returns>
+    public static async ValueTask<OperationResult> MoveOrOverwriteFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
     {
-        var deleteResult = await DeleteFileAsync(destFileName);
+        var deleteResult = await DeleteFileAsync(destFileName, cancellationToken);
 
         return deleteResult.IsValid
-            ? await MoveFileAsync(sourceFileName, destFileName, setAsReadOnly)
+            ? await MoveFileAsync(sourceFileName, destFileName, setAsReadOnly, cancellationToken)
             : deleteResult;
     }
 
@@ -232,16 +117,20 @@ public static class IOHelper
     /// <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
     /// <param name="setAsReadOnly">if true, sets destination file to ReadOnly Attribute.
     /// if false, then the ReadOnly Attribute will be not changed. Default is true.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>a <see cref="ValidationResult"/> of the operation.</returns>
-    public static async ValueTask<ValidationResult> CopyFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
+    public static async ValueTask<OperationResult> CopyFileAsync(string sourceFileName, string destFileName, bool setAsReadOnly = true, CancellationToken cancellationToken = default)
     {
-        var validationResult = new ValidationResult();
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceFileName, nameof(sourceFileName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(destFileName, nameof(destFileName));
+
+        var result = new OperationResult();
 
         if (!File.Exists(destFileName))
         {
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(destFileName));
+                Directory.CreateDirectory(Path.GetDirectoryName(destFileName)!);
 
                 await InternalCopyFileAsync(sourceFileName, destFileName, cancellationToken);
 
@@ -249,25 +138,26 @@ public static class IOHelper
             }
             catch (Exception ex)
             {
-                validationResult.AddException(ex, ex.Message);
+                result.AddException(ex, ex.Message);
             }
         }
         else
         {
-            validationResult.AddError("Destination file already exists.");
+            result.AddError("Destination file already exists and cannot be overriden.");
         }
 
-        return validationResult;
+        return result;
     }
 
     /// <summary>
     /// Asynchronously deletes the specified file if exists. Ignores <see cref="FileAttributes.ReadOnly">ReadOnly attribute</see>
     /// </summary>
     /// <param name="fileName">The name of the file to be deleted. Wildcard characters are not supported.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async ValueTask<ValidationResult> DeleteFileAsync(string fileName, CancellationToken cancellationToken = default)
+    public static async ValueTask<OperationResult> DeleteFileAsync(string fileName, CancellationToken cancellationToken = default)
     {
-        var validationResult = new ValidationResult();
+        var validationResult = new OperationResult();
         try
         {
             if (File.Exists(fileName))
@@ -291,7 +181,7 @@ public static class IOHelper
     {
         await Task.Factory.StartNew(() =>
         {
-            using (_ = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None, 1, FileOptions.DeleteOnClose | FileOptions.Asynchronous)) ;
+            using (_ = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None, 1, FileOptions.DeleteOnClose | FileOptions.Asynchronous)) { }
         }, cancellationToken);
     }
 
@@ -301,10 +191,12 @@ public static class IOHelper
         var bufferSize = 4096;
 
         using (var srcStream = new FileStream(sourceFileName, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, fileOptions))
-
-        using (var dstStream = new FileStream(destFileName, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize, fileOptions))
-
-            await srcStream.CopyToAsync(dstStream, bufferSize, cancellationToken);
+        {
+            using (var dstStream = new FileStream(destFileName, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize, fileOptions))
+            {
+                await srcStream.CopyToAsync(dstStream, bufferSize, cancellationToken);
+            }
+        }
     }
 
     #endregion Internal operations

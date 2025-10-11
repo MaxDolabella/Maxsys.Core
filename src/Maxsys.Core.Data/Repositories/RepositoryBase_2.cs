@@ -28,18 +28,16 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     /// <code>
     /// var query = await GetQueryable(predicate: null, @readonly: true, cancellation);
     ///
-    /// filters.SetExpressions();
-    /// foreach (var expression in filters.Expressions)
-    ///     query = query.Where(expression);
+    /// filters.ApplyFilter(ref query);
     ///
     /// return query;
     /// </code>
     /// </remarks>
-    protected virtual async ValueTask<IQueryable<TEntity>> GetQueryable(TFilter filters, bool @readonly = true, CancellationToken cancellation = default)
+    protected virtual async ValueTask<IQueryable<TEntity>> GetQueryable(TFilter filters, bool @readonly = true, CancellationToken cancellationToken = default)
     {
-        var query = await GetQueryable(predicate: null, @readonly: true, cancellation);
+        var query = await GetQueryable(predicate: null, @readonly: true, cancellationToken);
 
-        filters.ApplyFilter(query);
+        filters.ApplyFilter(ref query);
 
         return query;
     }
@@ -176,6 +174,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     #region GET
 
     public virtual async Task<TDestination?> GetAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
@@ -240,6 +239,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     }
 
     public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         try
         {
@@ -252,6 +252,7 @@ public abstract class RepositoryBase<TEntity, TFilter> : RepositoryBase<TEntity>
     }
 
     public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(TFilter filters, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(filters, true, cancellationToken))
            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);

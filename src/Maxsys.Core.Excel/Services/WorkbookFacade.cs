@@ -30,7 +30,7 @@ public class WorkbookFacade : ServiceBase, IWorkbookFacade
     #region Properties
 
     protected IReadOnlyCollection<IXLTable> Tables => _workbook?.Worksheets.SelectMany(x => x.Tables).ToList() ?? [];
-    protected XLWorkbook Workbook => _workbook ?? throw new NotInitializedWorkbookException();
+    protected XLWorkbook Workbook => _workbook ?? throw new WorkbookNotInitializedException();
 
     #endregion Properties
 

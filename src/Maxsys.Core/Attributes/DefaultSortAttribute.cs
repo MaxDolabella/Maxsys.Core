@@ -1,4 +1,5 @@
 ﻿using Maxsys.Core.Extensions;
+using Maxsys.Core.Sorting;
 
 namespace Maxsys.Core;
 
@@ -9,11 +10,13 @@ namespace Maxsys.Core;
 public class DefaultSortAttribute : Attribute
 {
     public string Property { get; }
+    public SortDirection SortDirection { get; }
 
-    public DefaultSortAttribute(string property)
+    public DefaultSortAttribute(string property, SortDirection sortDirection = SortDirection.Ascending)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(property, nameof(property));
 
         Property = property;
+        SortDirection = sortDirection;
     }
 }
