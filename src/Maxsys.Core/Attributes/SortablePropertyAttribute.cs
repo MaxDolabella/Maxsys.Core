@@ -1,4 +1,6 @@
-﻿namespace Maxsys.Core;
+﻿using Maxsys.Core.Sorting;
+
+namespace Maxsys.Core;
 
 /// <summary>
 /// Usado em um literal de enum "SortableColumns" para indicar que esse literal se refere a uma determinada coluna. 
@@ -8,11 +10,13 @@
 public class SortablePropertyAttribute : Attribute
 {
     public string Name { get; }
+    public SortDirection SortDirection { get; }
 
-    public SortablePropertyAttribute(string name)
+    public SortablePropertyAttribute(string name, SortDirection sortDirection = SortDirection.Ascending)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
 
         Name = name;
+        SortDirection = sortDirection;
     }
 }
