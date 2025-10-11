@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Xml.Schema;
+using Maxsys.Core.Exceptions;
 
 namespace Maxsys.Core.Utils;
 
