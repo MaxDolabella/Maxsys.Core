@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Text.Json.Serialization;
 using Maxsys.Core.Helpers;
 
 namespace Maxsys.Core.Filtering;
@@ -8,7 +9,10 @@ namespace Maxsys.Core.Filtering;
 /// </summary>
 public abstract class FilterBase : IFilter
 {
+    [JsonPropertyOrder(-2147483648)]
     public SearchTerm? Search { get; set; } = null;
+
+    [JsonPropertyOrder(-2147483647)]
     public ActiveTypes ActiveType { get; set; } = ActiveTypes.OnlyActives;
 }
 
@@ -18,6 +22,7 @@ public abstract class FilterBase : IFilter
 /// </summary>
 public abstract class FilterBase<TKey> : FilterBase, IKeyFilter<TKey>
 {
+    [JsonPropertyOrder(-2147483646)]
     public KeyList<TKey> IdList { get; set; } = [];
 }
 
@@ -29,28 +34,30 @@ public abstract class FilterBase<TKey> : FilterBase, IKeyFilter<TKey>
 public abstract class FilterBase<TKey, TEntity> : FilterBase<TKey>, IFilter<TEntity>
     where TEntity : class
 {
-    private bool isApplied = false;
+    [JsonIgnore]
     public List<Expression<Func<TEntity, bool>>> Expressions { get; } = [];
 
-    public void ApplyFilter(IQueryable<TEntity> queryable)
-    {
-        if (!isApplied)
-        {
-            ConfigureExpressions();
-         
-            foreach (var expression in Expressions)
-            {
-                queryable = queryable.Where(expression);
-            }
-
-            isApplied = true;
-        }
-    }
-
-    [Obsolete("Use ConfigureExpressions() method.", true)]
-    public virtual void SetExpressions() { }
+    /// <summary>
+    /// Método responsável por traduzir os filtros em expressions que serão
+    /// aplicadas na query no repositório através do método
+    /// <see cref="ApplyFilter(ref IQueryable{TEntity})"/>.
+    /// </summary>
     public abstract void ConfigureExpressions();
 
+    /// <summary>
+    /// Método responsável por chamar <see cref="ConfigureExpressions"/>
+    /// e aplicar os filtros ao queryable passado por referência como parâmetro.
+    /// </summary>
+    /// <param name="queryable">queryable ao qual serão aplicados os filtros.</param>
+    public void ApplyFilter(ref IQueryable<TEntity> queryable)
+    {
+        ConfigureExpressions();
+
+        foreach (var expression in Expressions)
+        {
+            queryable = queryable.Where(expression);
+        }
+    }
 
     public virtual void AddExpression(Expression<Func<TEntity, bool>> expression)
     {
@@ -67,4 +74,8 @@ public abstract class FilterBase<TKey, TEntity> : FilterBase<TKey>, IFilter<TEnt
 
         Expressions.Add(ExpressionHelper.SearchTermToExpression(Search, entityFieldArray));
     }
+
+    [Obsolete("Use ConfigureExpressions() method.", true)]
+    public virtual void SetExpressions()
+    { }
 }
