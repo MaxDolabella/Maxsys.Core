@@ -91,22 +91,6 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
 
         return entity is null || await RemoveAsync(entity, cancellationToken);
     }
-    public virtual async ValueTask<bool> UpdateAsync<TUpdateModel>(object[]? keyValues, TUpdateModel model, CancellationToken cancellationToken = default)
-        where TUpdateModel : notnull
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var entity = await DbSet.FindAsync(keyValues: keyValues, cancellationToken: cancellationToken);
-        if (entity is null)
-        {
-            return false;
-        }
-
-        var entry = DbSet.Entry(entity);
-        entry.CurrentValues.SetValues(model);
-
-        return await ValueTask.FromResult(entry.State == EntityState.Modified);
-    }
 
     public virtual async ValueTask<bool> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
@@ -128,7 +112,38 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
         return true;
     }
 
+    public async Task ExecuteDeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        var query = await GetQueryable(predicate, true, cancellationToken);
+
+        await query.ExecuteDeleteAsync(cancellationToken);
+    }
+
     #endregion MOD
+
+    #region DISCONNECTED
+
+    public virtual void Update(TEntity entity, object updatingData)
+    {
+        DbSet.Attach(entity);
+        DbSet.Entry(entity).CurrentValues.SetValues(updatingData);
+    }
+
+    public virtual void Delete(TEntity entity)
+    {
+        var entry = DbSet.Attach(entity);
+        entry.State = EntityState.Deleted;
+    }
+
+    public virtual void Delete(IEnumerable<TEntity> entities)
+    {
+        foreach (var entity in entities)
+        {
+            Delete(entity);
+        }
+    }
+
+    #endregion DISCONNECTED
 
     #region UTIL
 
@@ -197,7 +212,8 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
         return await query.Select(projection).ToListAsync(cancellationToken);
     }
 
-    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> projection, Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class
+    public virtual async Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, TDestination>> projection, Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = await GetQueryable(predicate, @readonly: true, cancellationToken);
 
@@ -216,10 +232,10 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
         return await orderedQuery.ApplyPagination(pagination).ToListAsync(cancellationToken);
     }
 
-    // TODO testar retorno com struct
     public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         Expression<Func<TEntity, bool>>? predicate,
-        CancellationToken cancellationToken = default) //where TDestination : class
+        CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(predicate, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
@@ -230,7 +246,8 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
     public virtual async Task<List<TDestination>> ToListAsync<TDestination>(
         Expression<Func<TEntity, bool>>? predicate,
         ListCriteria criteria,
-        CancellationToken cancellationToken = default) where TDestination : class
+        CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(predicate, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
@@ -245,6 +262,7 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
         Expression<Func<TDestination, dynamic>> sortSelector,
         SortDirection sortDirection = SortDirection.Ascending,
         CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(predicate, false, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
@@ -260,7 +278,8 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
 
     #region GET
 
-    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, CancellationToken cancellationToken = default) //where TDestination : class
+    public virtual async Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var predicate = DbSet.EntityType.GetIdExpression<TEntity>(keys);
         var query = await GetQueryable(predicate, true, cancellationToken);
@@ -336,6 +355,7 @@ public abstract class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEnt
     }
 
     public virtual async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        where TDestination : class
     {
         var query = (await GetQueryable(predicate, true, cancellationToken))
             .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
