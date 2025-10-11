@@ -1,5 +1,5 @@
 <div align="center">
-<img src="src/Maxsys.Core/PackageAssets/logo.png"alt="drawing" width="128" />
+<img src="src/Maxsys.Core/_PackageAssets/logo.png"alt="drawing" width="128" />
 <h1>MAXSYS CORE</h1>
 </div>
 
@@ -32,6 +32,14 @@ Este código possui licença MIT e está liberado para uso da maneira que se des
 Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsystech@outlook.com?subject=Github%20contact).
 
 <!-- 
-    hs43
+    hs50
     https://github.com/ikatyang/emoji-cheat-sheet)
 -->
+
+<style>
+  .warning { color: DarkGoldenRod; }
+  h1 { color: Snow; }
+  h2 { color: Crimson; }
+  h3 { color: SteelBlue; }
+  h4 { color: SeaGreen; }
+</style>
