@@ -43,17 +43,6 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <summary>
     /// Update an object of type <typeparamref name="TEntity"/> in the repository asynchronously.
     /// </summary>
-    /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
-    /// <param name="model">The model containing the properties to update.</param>
-    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
-    /// <returns><see langword="true"/> is <typeparamref name="TEntity"/> is updated,
-    /// otherwise, <see langword="false"/></returns>
-    ValueTask<bool> UpdateAsync<TUpdateModel>(object[]? keyValues, TUpdateModel model, CancellationToken cancellationToken = default)
-        where TUpdateModel : notnull;
-
-    /// <summary>
-    /// Update an object of type <typeparamref name="TEntity"/> in the repository asynchronously.
-    /// </summary>
     /// <param name="entity">Is the <typeparamref name="TEntity"/> to update.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns><see langword="true"/> is <typeparamref name="TEntity"/> is updated,
@@ -69,7 +58,49 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// otherwise, <see langword="false"/></returns>
     ValueTask<bool> UpdateAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
+    Task ExecuteDeleteAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
+
     #endregion MOD
+
+    #region DISCONNECTED
+
+    /// <summary>
+    /// Método para update totalmente desconectado.
+    /// <code>
+    /// var cliente = new Cliente
+    /// {
+    ///     Id = 1
+    /// };
+    /// var clienteUpdate = new
+    /// {
+    ///     Nome = "Novo nome",
+    ///     Telefone = "11988887766"
+    /// };
+    /// </code>
+    /// </summary>
+    /// <param name="entity">entidade (necessário somente Id)</param>
+    /// <param name="updatingData">objeto contendo as alterações (properties devem existir na entity)</param>
+    void Update(TEntity entity, object updatingData);
+
+    /// <summary>
+    /// Método para delete totalmente desconectado.
+    /// <code>
+    /// _repository.DisconnectedDelete(entity: new() { Id = dto.Id })
+    /// </code>
+    /// </summary>
+    /// <param name="entity">entidade (necessário somente Id)</param>
+    void Delete(TEntity entity);
+
+    /// <summary>
+    /// Método para delete totalmente desconectado.
+    /// <code>
+    /// _repository.DisconnectedDelete(dtos.Select(x => new() { Id = x.Id }));
+    /// </code>
+    /// </summary>
+    /// <param name="entities">array de entidades (necessário somente Id)</param>
+    void Delete(IEnumerable<TEntity> entities);
+
+    #endregion DISCONNECTED
 
     #region UTIL
 
@@ -169,7 +200,6 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression.
     /// </summary>
-    ///
     /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
@@ -180,7 +210,6 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
     /// aplicando-se paginação e ordenação.
     /// </summary>
-    ///
     /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="criteria">contém critérios para obtenção dos items como paginação e lista de ordenações.</param>
@@ -192,7 +221,6 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
     /// aplicando-se paginação e ordenação.
     /// </summary>
-    ///
     /// <param name="projection">uma função de projeção para aplicar a cada elemento.</param>
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="pagination">contém o índice e a númedo página utilizada na obtenção dos items.</param>
@@ -208,11 +236,11 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression.
     /// </summary>
-    ///
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default);
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate = null, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma expression
@@ -222,6 +250,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <param name="predicate">é a condição para obtenção dos items.</param>
     /// <param name="criteria">contém critérios para obtenção dos items como paginação e lista de ordenações.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
     Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, ListCriteria criteria, CancellationToken cancellationToken = default) where TDestination : class;
 
@@ -238,8 +267,9 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>uma <see cref="List{TDestination}"/> com os registros filtrados.</returns>
-    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default);
+    Task<List<TDestination>> ToListAsync<TDestination>(Expression<Func<TEntity, bool>>? predicate, Pagination? pagination, Expression<Func<TDestination, dynamic>> sortSelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
 
     #endregion LIST
 
@@ -280,8 +310,9 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// </summary>
     /// <param name="keys">são os ids para obtenção do item.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>um objeto <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetByIdAsync<TDestination>(object[] keys, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TEntity"/> a partir de uma expression.
@@ -417,8 +448,9 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     ///
     /// <param name="predicate">é a condição para obtenção do item.</param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
-    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default) where TDestination : class;
 
     /// <summary>
     /// Obtém o primeiro item <typeparamref name="TDestination"/> a partir de uma expression.
@@ -462,6 +494,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <para/>Padrão é <see cref="SortDirection.Ascending"/>.
     /// </param>
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>o primeiro item <typeparamref name="TDestination"/> ou <see langword="null"/> caso nenhum item corresponda aos critérios.</returns>
     Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, dynamic>> sortKeySelector, SortDirection sortDirection = SortDirection.Ascending, CancellationToken cancellationToken = default) where TDestination : class;
 
@@ -478,7 +511,11 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <para/>Padrão é <see langword="true"/> (somente leitura).
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
     /// <returns>o único item <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
-    /// <remarks>Esse método não lança exception.</remarks>
+    /// <remarks>
+    ///     Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/>
+    ///     <br/>
+    ///     Esse método não lança exception.
+    /// </remarks>
     Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -495,6 +532,7 @@ public interface IRepository<TEntity> : IRepository where TEntity : class
     /// <br/>
     /// <para/>Padrão é <see langword="true"/> (somente leitura).
     /// <param name="cancellationToken">Um <see cref="CancellationToken"/> para notificar que uma Task deve ser cancelada.</param>
+    /// <remarks>Mapeamento necessário: <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/> </remarks>
     /// <returns>o único item <typeparamref name="TEntity"/> ou <see langword="null"/> caso nenhum ou mais de um item corresponda aos critérios.</returns>
     /// <exception cref="InvalidOperationException"/>
     Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
