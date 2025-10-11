@@ -1,63 +1,91 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="SequentialGuidType.cs" company="Jeremy H. Todd">
-//     Copyright © Jeremy H. Todd 2011
-// </copyright>
-//-----------------------------------------------------------------------
-// <copyright file="SequentialGuid.cs" company="Jeremy H. Todd">
-//     Copyright © Jeremy H. Todd 2011
-// </copyright>
-//-----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace System;
-
-/// <summary>
-/// Source:
-/// <see href="https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Enums/SequentialGuidType.cs">Github</see>
-/// <para/>
-/// Describes the type of a sequential GUID value.
-/// </summary>
-public enum SequentialGuidType
+namespace Maxsys.Core.Helpers;
+public static class UIDGen
 {
     /// <summary>
-    /// The GUID should be sequential when formatted using the
-    /// <see cref="Guid.ToString()" /> method.
+    /// Default is <see cref="SequentialGuidOptions.SequentialAsVersion7"/>
     /// </summary>
-    SequentialAsString,
+    public static SequentialGuidOptions DEFAULT_SEQUENTIAL_GUID_OPTION = SequentialGuidOptions.SequentialAsVersion7;
 
     /// <summary>
-    /// The GUID should be sequential when formatted using the
-    /// <see cref="Guid.ToByteArray" /> method.
+    /// Randomly creates a hexadecimal string representation of a n bits UID.<br/>
+    /// The result string is in lowecase.
     /// </summary>
-    SequentialAsBinary,
+    /// <returns>A string of hexadecimal 32 bits UID representation, for example: "7f2c4a00".</returns>
+    public static string GenerateUID(UIDBits bits, UIDGenerationOptions options = UIDGenerationOptions.None)
+        => GenerateUID((int)bits, options);
 
     /// <summary>
-    /// The sequential portion of the GUID should be located at the end
-    /// of the Data4 block.
+    /// Randomly creates a hexadecimal string representation of a n bytes UID (bits=n*8).<br/>
+    /// The result string is in lowecase.
     /// </summary>
-    SequentialAtEnd
-}
+    /// <returns>A string of hexadecimal 32 bits (4 bytes) UID representation, for example: "7f2c4a00".</returns>
+    public static string GenerateUID(int bytes, UIDGenerationOptions options = UIDGenerationOptions.None)
+    {
+        byte[] randomBytes = RandomNumberGenerator.GetBytes(bytes);
 
-/// <summary>
-/// Adapted from Source:
-/// <see href="https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Classes/SequentialGuid.cs">Github</see>
-/// <br/>
-/// Article: <seealso href="https://www.codeproject.com/Articles/388157/GUIDs-as-fast-primary-keys-under-multiple-database">Codeproject.com</seealso>
-/// <para/>
-/// Sequential Guid Generator by <see href="https://github.com/jhtodd/SequentialGuid">Jeremy H. Todd</see>.
-/// <br/>
-/// Contains methods for creating sequential GUID values.
-/// <para/>
-/// For MSSQL, <see cref="SequentialGuidType.SequentialAtEnd"/> is faster.
-/// </summary>
-public static class GuidGen
-{
+        var result = BitConverter.ToString(randomBytes);
+
+        #region Options
+
+        if (options.HasFlag(UIDGenerationOptions.LowerCase))
+        {
+            result = result.ToLower();
+        }
+        if (!options.HasFlag(UIDGenerationOptions.KeepDots))
+        {
+            result = result.Replace("-", string.Empty);
+        }
+
+        #endregion Options
+
+        return result;
+    }
+
+    #region Guid
+
+    /// <summary>
+    /// Generates a new GUID using the specified sequential GUID option.
+    /// When <paramref name="sequentialGuidOption"/> is not provided, <see cref="DEFAULT_SEQUENTIAL_GUID_OPTION"/> will be used.
+    /// By default, <see cref="DEFAULT_SEQUENTIAL_GUID_OPTION"/> is set to <see cref="SequentialGuidOptions.SequentialAsVersion7"/>.
+    /// </summary>
+    /// <param name="sequentialGuidOption">
+    /// The sequential GUID generation option to use. If null, the default option will be applied.
+    /// </param>
+    /// <param name="dateTimeOffset">
+    /// The date and time to use for time-based GUID generation. If null, the current date and time will be used.
+    /// Only applicable when using <see cref="SequentialGuidOptions.SequentialAsVersion7"/>.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="Guid"/> generated according to the specified options.
+    /// </returns>
+    public static Guid NewGuid(SequentialGuidOptions? sequentialGuidOption = null, DateTimeOffset? dateTimeOffset = null)
+    {
+        var switchOption = sequentialGuidOption ?? DEFAULT_SEQUENTIAL_GUID_OPTION;
+        return switchOption switch
+        {
+            SequentialGuidOptions.SequentialAsVersion7 => dateTimeOffset is null ? Guid.CreateVersion7() : Guid.CreateVersion7(dateTimeOffset.Value),
+            SequentialGuidOptions.SequentialAsString or
+                SequentialGuidOptions.SequentialAsBinary or
+                SequentialGuidOptions.SequentialAtEnd => JeremyHToddSequentialGuid(switchOption),
+            _ => Guid.NewGuid(),
+        };
+    }
+
+    public static Guid NewGuid(string guid) => Guid.Parse(guid);
+
     /// <summary>
     /// Returns a new GUID value which is sequentially ordered when formatted as
     /// a string, a byte array, or ordered by the least significant six bytes of the
-    /// Data4 block, as specified by <paramref name="guidType" />.
+    /// Data4 block, as specified by <paramref name="sequentialGuidOption" />.
     /// </summary>
-    /// <param name="guidType">
+    /// <param name="sequentialGuidOption">
     /// Specifies the type of sequential GUID (i.e. whether sequential as a string,
     /// as a byte array, or according to the Data4 block.  This can affect
     /// performance under various database types; see below.
@@ -88,9 +116,9 @@ public static class GuidGen
     /// <para>
     /// According to experiments, Microsoft SQL Server sorts GUID values using
     /// the least significant six bytes of the Data4 block; therefore, GUIDs being
-    /// generated for use with SQL Server should pass a <paramref name="guidType" />
+    /// generated for use with SQL Server should pass a <paramref name="sequentialGuidOption" />
     /// value of <c>SequentialAtEnd</c>.  GUIDs generated for most other database
-    /// types should be passed a <paramref name="guidType" /> value of
+    /// types should be passed a <paramref name="sequentialGuidOption" /> value of
     /// <c>SequentialAsString</c> or <c>SequentialAsByteArray</c>.
     /// </para>
     /// <para>
@@ -101,7 +129,7 @@ public static class GuidGen
     /// with the GUID ordering on Microsoft SQL Server.
     /// </para>
     /// </remarks>
-    public static Guid NewSequentialGuid(SequentialGuidType guidType = SequentialGuidType.SequentialAtEnd)
+    private static Guid JeremyHToddSequentialGuid(SequentialGuidOptions sequentialGuidOption)
     {
         // We start with 16 bytes of cryptographically strong random data.
         byte[] randomBytes = RandomNumberGenerator.GetBytes(10);
@@ -139,10 +167,10 @@ public static class GuidGen
 
         byte[] guidBytes = new byte[16];
 
-        switch (guidType)
+        switch (sequentialGuidOption)
         {
-            case SequentialGuidType.SequentialAsString:
-            case SequentialGuidType.SequentialAsBinary:
+            case SequentialGuidOptions.SequentialAsString:
+            case SequentialGuidOptions.SequentialAsBinary:
 
                 // For string and byte-array version, we copy the timestamp first, followed
                 // by the random data.
@@ -153,7 +181,7 @@ public static class GuidGen
                 // that .NET regards the Data1 and Data2 block as an Int32 and an Int16,
                 // respectively.  That means that it switches the order on little-endian
                 // systems.  So again, we have to reverse.
-                if (guidType == SequentialGuidType.SequentialAsString && BitConverter.IsLittleEndian)
+                if (sequentialGuidOption is SequentialGuidOptions.SequentialAsString && BitConverter.IsLittleEndian)
                 {
                     Array.Reverse(guidBytes, 0, 4);
                     Array.Reverse(guidBytes, 4, 2);
@@ -161,7 +189,7 @@ public static class GuidGen
 
                 break;
 
-            case SequentialGuidType.SequentialAtEnd:
+            case SequentialGuidOptions.SequentialAtEnd:
 
                 // For sequential-at-the-end versions, we copy the random data first,
                 // followed by the timestamp.
@@ -173,17 +201,7 @@ public static class GuidGen
         return new Guid(guidBytes);
     }
 
-    /// <summary>
-    /// Randomly creates a hexadecimal string representation of a 32 bits UID.<br/>
-    /// The result string is in lowecase.
-    /// </summary>
-    /// <returns>A string of hexadecimal 32 bits UID representation; for example, "7f2c4a00".</returns>
-    public static string NewUID_32Bits()
-    {
-        byte[] randomBytes = RandomNumberGenerator.GetBytes(4);
-
-        return BitConverter.ToString(randomBytes).Replace("-", "").ToLower();
-    }
+    #endregion Guid
 
     /// <summary>
     /// Creates a hexadecimal string representation of a 64 bits UID based on a <see cref="DateTime"/> value.<br/>
@@ -193,7 +211,7 @@ public static class GuidGen
     /// </summary>
     /// <param name="dateTime">Is the <see cref="DateTime"/> to be converted into a 64 bits UID.</param>
     /// <returns>A string of hexadecimal 64 bits UID representation; for example, "7c30b180d0f07b43".</returns>
-    public static string DateTimeToUID_64Bits(DateTime dateTime = default)
+    public static string GenerateUID(DateTime dateTime = default)
     {
         if (dateTime == default) dateTime = DateTime.Now;
 
@@ -201,4 +219,70 @@ public static class GuidGen
 
         return $"{dateTime.Year:x3}{dateTime.Month:x2}{dateTime.Day:x2}{dateTime.Hour:x2}{dateTime.Second:x2}{dateTime.Millisecond:x3}{randomByte:x2}";
     }
+}
+
+[Flags]
+public enum UIDGenerationOptions : byte
+{
+    None = 0,
+    LowerCase = 1,
+    KeepDots = 2
+}
+
+public enum UIDBits
+{
+    B8 = 1,
+    B16 = 2,
+    B24 = 3,
+    B32 = 4,
+    B64 = 8,
+    B128 = 16,
+    B192 = 24,
+    B256 = 32,
+    B512 = 64,
+    B1024 = 128
+}
+
+/// <summary>
+/// Source:
+/// <see href="https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Enums/SequentialGuidType.cs">Github</see>
+/// <para/>
+/// Describes the type of a sequential GUID value.
+/// <list type="bullet">
+/// <item><see cref="None"/></item>
+/// <item><see cref="SequentialAsVersion7"/></item>
+/// <item><see cref="SequentialAsString"/></item>
+/// <item><see cref="SequentialAsBinary"/></item>
+/// <item><see cref="SequentialAtEnd"/></item>
+/// </list>
+/// </summary>
+public enum SequentialGuidOptions
+{
+    /// <summary>
+    /// Uses default v4
+    /// </summary>
+    None = 0,
+
+    /// <summary>
+    /// Uses default v7
+    /// </summary>
+    SequentialAsVersion7,
+
+    /// <summary>
+    /// The GUID should be sequential when formatted using the
+    /// <see cref="Guid.ToString()" /> method.
+    /// </summary>
+    SequentialAsString,
+
+    /// <summary>
+    /// The GUID should be sequential when formatted using the
+    /// <see cref="Guid.ToByteArray(bool)" /> method.
+    /// </summary>
+    SequentialAsBinary,
+
+    /// <summary>
+    /// The sequential portion of the GUID should be located at the end
+    /// of the Data4 block.
+    /// </summary>
+    SequentialAtEnd
 }
