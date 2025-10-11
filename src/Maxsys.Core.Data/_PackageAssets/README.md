@@ -14,12 +14,12 @@ Complementa o pacote **Maxsys.Core**, porém voltado ao acesso à dados e se uti
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Data)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Data" Version="15.1.0" />
+    <PackageReference Include="Maxsys.Core.Data" Version="16.0.0" />
 ```
 
 ## :link: Dependências
-![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-15.1.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
-![Microsoft.EntityFrameworkCore](https://img.shields.io/badge/Microsoft.EntityFrameworkCore-9.0.5-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.EntityFrameworkCore)
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-16.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)  
+![Microsoft.EntityFrameworkCore](https://img.shields.io/badge/Microsoft.EntityFrameworkCore-9.0.9-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.EntityFrameworkCore)
 
 
 ## :star2: Features
@@ -39,3 +39,12 @@ Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsyste
 
 ## :new: Release Notes
 Os *changelogs* do projeto podem ser vistos [aqui](CHANGELOGS.md)
+
+
+<style>
+  .warning { color: DarkGoldenRod; }
+  h1 { color: Snow; }
+  h2 { color: Crimson; }
+  h3 { color: SteelBlue; }
+  h4 { color: SeaGreen; }
+</style>

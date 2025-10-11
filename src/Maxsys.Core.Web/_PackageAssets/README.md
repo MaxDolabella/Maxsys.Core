@@ -5,20 +5,20 @@
 
 ![License](https://img.shields.io/github/license/maxdolabella/maxsys.core)
 
-**Maxsys.Core.Web.Swagger** é uma biblioteca em C# para dar suporte à criação de aplicações Maxsys.
-Complementa o pacote **Maxsys.Core**, porém voltado à documentação swagger em projetos web.
+**Maxsys.Core.Web** é uma biblioteca em C# para dar suporte à criação de aplicações Maxsys.
+Complementa o pacote **Maxsys.Core**, porém voltado à projetos web.
 
 
 ## :package: Nuget
-![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web.Swagger)
+![Nuget](https://img.shields.io/nuget/v/Maxsys.Core.Web)
 
 ```xml
-    <PackageReference Include="Maxsys.Core.Web" Version="14.1.0" />
+    <PackageReference Include="Maxsys.Core.Web" Version="16.0.0" />
 ```
 
 ## :link: Dependências
-![Maxsys.Core.Web](https://img.shields.io/badge/Maxsys.Core-14.1.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
-![Swashbuckle.AspNetCore.Annotations](https://img.shields.io/badge/Swashbuckle.AspNetCore.Annotations-7.2.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSwashbuckle.AspNetCore.Annotations)
+![Microsoft.AspNetCore.App](https://img.shields.io/badge/Microsoft.AspNetCore.App-Framework-red?style=for-the-badge)  
+![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-16.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)
 
 ## :star2: Features
 As principais *features* do projeto podem ser vistas [aqui](FEATURES.md).
@@ -37,3 +37,12 @@ Quaisquer sugestões ou outro contato, escreva-me nesse [e-mail](mailto:maxsyste
 
 ## :new: Release Notes
 Os *changelogs* do projeto podem ser vistos [aqui](CHANGELOGS.md)
+
+
+<style>
+  .warning { color: DarkGoldenRod; }
+  h1 { color: Snow; }
+  h2 { color: Crimson; }
+  h3 { color: SteelBlue; }
+  h4 { color: SeaGreen; }
+</style>

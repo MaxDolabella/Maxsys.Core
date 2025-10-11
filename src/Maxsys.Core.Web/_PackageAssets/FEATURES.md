@@ -2,13 +2,13 @@
 Biblioteca Maxsys Core para utilização de recursos Web.
 
 ## Attributes
-- `TitledActionAttribute`
+- `ActionIdentifierAttribute`
     - Utilizado para definir um Título para uma Action
     <details>
         <summary>Exemplo de uso</summary>
 
     ```cs
-    [TitledAction("Titled_Action")]
+    [ActionIdentifierAttribute("Titled_Action")]
     public IActionResult Get() { ... }
     ```
     </details>

@@ -1,14 +1,34 @@
 # Maxsys.Core
 
- :mortar_board: Cada lançamento é um novo aprendizado!!
+:mortar_board: Cada lançamento é um novo aprendizado!!
 
-## 16.0.0-beta
+## 16.0.0
 * :package: Atualização de pacotes;
 * :warning: Refatoração de `IService`/`Service` e `IRepository`: Add novos métodos e ajuste de constraints.
+* :sparkles: Adicionado método para limpar Tracker em `IUnitfWork`;
 * :warning: Add `NotLoggedException` renomeado para `NotAuthenticatedUserException`;
-* :warning: `BooleanFilter` marcado como obsoleto;
-* :warning: Adicionado `FilterItem<T>`;
-* :warning: Adicionados *overloads* `AddNotification()` e novos métodos em `OperationResult`;
+* Filtros:
+    * Refatoração de `Filter`;
+    * :triangular_flag_on_post: `BooleanFilter` marcado como obsoleto;
+    * :sparkles: Adicionado `FilterItem<T>`;
+* :warning: `OperationResult`
+	* :triangular_flag_on_post: removido Empty;
+    * :sparkles: Adicionados *overloads* `AddNotification()` e novos métodos em `OperationResult`;
+* :sparkles: Adicionado `InvalidEnumArgumentException`;
+* :warning: `UIDGen`: Métodos de `UIDHelper` e `GuidGen` refatorados e movidos para `UIDGen`. Ambos agora obsoletos;
+* :warning: `EnumExtensions` refatorado: adicionados/removidos métodos, alteração de namespace;
+* :sparkles: Adicionado DateTimeOffsetFilter - mesmo que PeriodFilter utilizando DateTimeOffset;
+* :triangular_flag_on_post: Removidas e adicionadas novas mensagens de erro genéricas;
+* :sparkles: Adicionadas classes `ResourcesHelper` e `StringWriterWithEncoding`;
+* :hammer_and_wrench: Novos métodos em StringHelper e XMLHelper
+* :triangular_flag_on_post: Removido ListCriteria Empty
+* :triangular_flag_on_post: Removida classe Headers
+* :hammer_and_wrench: `IServiceCollectionExtensions.ReplaceServiceImplementation` refatorado
+* :hammer_and_wrench: Adicionada *property* `SortDirection` em `DefaultSortAttribute` e `SortablePropertyAttribute` e aplicada direção em `QueryableExtensions`;
+* `IOHelper`:
+    * :triangular_flag_on_post: Removidos métodos síncronos de manipulação de arquivos;
+    * :warning: Retorno de métodos de manipulação de arquivos alterados;
+
 
 ---
 ## 15.1.0
@@ -126,7 +146,7 @@
 - `IServiceCollectionExtensions` adicionado.
 
 ---
-## [6.1.0
+## 6.1.0
 - `IServiceBase` e `ServiceBase` removidos.
 - Classe `IReadonlyRepositoryBase` removida.
 - `IRepositoryBase` remodelado tendo métodos synchronous em excluídos.
@@ -135,24 +155,24 @@
 - Outras correções menores.
 
 ---
-## [6.0.2
+## 6.0.2
 - Correções menores.
 
 ---
-## [6.0.1
+## 6.0.1
 - `ViewModelBase` agora reescrita para implementar `MVVMObject` que por sua vez, implementa `NotifiableObject`. `NotifiableObject` é a implementação de `INotifyPropertyChanged`.
 - TargetFramework alterado para `.net6.0`.
 - Versionamento alterado para coincidir com o a versão do .net para o TargetFramework.
 - Métodos obsoletos removidos.
 
 ---
-## [1.2.0
+## 1.2.0
 - Interface `IDialogService` totalmente reescrita.
 - Refatoração da interface `IServiceBase` e da classe `ServiceBase`:
     - Os métodos `Add()`/`AddAsync()` e `Update()`/`UpdateAsync()` agora permitem a passagem de um `IValidator` como parâmetro. Nos métodos sem `IValidator`, nenhuma validação será realizada.
 
 ---
-## [1.1.4
+## 1.1.4
 - Adicionada referência para `System.Threading.Tasks.Extensions`.
 - Alterações em `IOHelper`:
     - Documentação xml adicionada.
@@ -162,7 +182,7 @@
 - Adicionado método `DateTimeToUID_64Bits()` em `GuidGen`.
 
 ---
-## [1.1.3
+## 1.1.3
 - Alterações em `ValidationResultExtensions`:
     - `ErrorsToString()` foi descontinuado.
     - Adicionado método `ErrorMessagesAsEnumerable()` para substituir `ErrorsAsEnumerable()` que foi descontinuado.
@@ -174,11 +194,11 @@
     - Adicionados métodos `SaveByteArrayImageIntoJpgFile()`, `SaveImageIntoJpgFile()`, bem como suas versões `async` para `.net5.0` ou maior.
 
 ---
-## [1.1.2
+## 1.1.2
 - Ajuste em `IEnumerableExtensions` para compatibilidade com `.net5.0`.
 
 ---
-## [1.1.1
+## 1.1.1
 - `IReadonlyRepositoryBase` adicionado ao projeto.
 - Ajustes em `.csproj`:
      - Mudança de TargetFramework para `.net5.0`.
@@ -186,14 +206,14 @@
 - `ViewModelBase` alterada para permitir comparação de valores nulos.
 
 ---
-## [1.0.0
+## 1.0.0
 - Primeiro lançamento.
 
 
 <style>
   .warning { color: DarkGoldenRod; }
-  h1 { color: SeaGreen; }
+  h1 { color: Snow; }
   h2 { color: Crimson; }
   h3 { color: SteelBlue; }
-  h4 { color: CadetBlue; }
+  h4 { color: SeaGreen; }
 </style>
