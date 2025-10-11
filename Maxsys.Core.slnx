@@ -12,6 +12,9 @@
     <Project Path="src/Maxsys.Core.Web/Maxsys.Core.Web.csproj" />
     <Project Path="src/Maxsys.Core/Maxsys.Core.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Tests.Api/Tests.Api.csproj" />
+  </Folder>
   <Folder Name="/_root/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
