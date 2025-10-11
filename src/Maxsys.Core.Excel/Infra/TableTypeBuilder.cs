@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Maxsys.Core.Extensions;
 
 namespace Maxsys.Core.Excel.Infra;
 

@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace System;
+namespace Maxsys.Core.Extensions;
 
 /// <summary>
 /// Provides extension methods to Enums.
@@ -57,7 +57,7 @@ public static class EnumExtensions
         if (fieldInfo is null)
             return defaultValue;
 
-        var attDescription = fieldInfo.GetCustomAttribute<EnumMemberAttribute>()?.Value 
+        var attDescription = fieldInfo.GetCustomAttribute<EnumMemberAttribute>()?.Value
             ?? fieldInfo.GetCustomAttribute<DescriptionAttribute>()?.Description;
 
         return attDescription ?? value.ToString();
@@ -84,7 +84,7 @@ public static class EnumExtensions
             if (!string.IsNullOrWhiteSpace(text))
             {
                 result = Enum.GetValues<TEnum>()
-                    .Single(x 
+                    .Single(x
                         => x.ToFriendlyName(defaultValue: x.ToString())!.Equals(text, StringComparison.CurrentCultureIgnoreCase)
                         || x.ToString().Equals(text, StringComparison.CurrentCultureIgnoreCase));
             }
@@ -103,7 +103,7 @@ public static class EnumExtensions
     /// <param name="value"></param>
     /// <param name="defaultEnum">é o enum caso a conversão falhe.</param>
     /// <returns></returns>
-    public static TEnum ToByteEnum<TEnum>(this byte? value, TEnum defaultEnum) where TEnum : Enum
+    public static TEnum ToEnum<TEnum>(this byte? value, TEnum defaultEnum) where TEnum : Enum
     {
         value ??= 0;
         object sort = Enum.IsDefined(typeof(TEnum), value!)
@@ -114,35 +114,117 @@ public static class EnumExtensions
     }
 
     /// <summary>
-    /// Obtém SortablePropertyAttribute.Name ou o nome do literal de um Enum.
-    /// <br/>
-    /// Um replace é aplicado antes do valor final ser retornado substituindo
-    /// <c>"__"</c> por <c>"."</c>.
-    /// <br/>
-    /// Logo um literal <c>SomeEnum.Foo__Bar__Xpto_Cuca</c> retornará <c>"Foo.Bar.Xpto_Cuca"</c>.
+    /// Converte um enum em outro a partir do literal.
+    /// <para/>
+    /// Caso <paramref name="source"/> seja nulo ou os enums não tenham correspondência,
+    /// uma exception será lançada.
     /// </summary>
-    /// <param name="enumValue"></param>
-    /// <returns></returns>
-    public static string ToSortablePropertyName(this Enum enumValue)
+    /// <typeparam name="TTarget">Enum de destino (não nulo)</typeparam>
+    /// <param name="source">Enum de origem</param>
+    /// <returns>Retorna um <typeparamref name="TTarget"/> não nulo.</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static TTarget Convert<TTarget>(this Enum? source) where TTarget : struct, Enum
+        => Convert<TTarget>(source?.ToString());
+
+    /// <summary>
+    /// Converte um enum em outro a partir do literal.
+    /// <para/>
+    /// Caso <paramref name="source"/> seja nulo, será retornado <see langword="null"/>.<br/>
+    /// Caso os enums não tenham correspondência, uma exception será lançada.
+    /// </summary>
+    /// <typeparam name="TTarget">Enum de destino (nulável)</typeparam>
+    /// <param name="source">Enum de origem</param>
+    /// <returns>Retorna um <typeparamref name="TTarget"/> nulável.</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static TTarget? ConvertNull<TTarget>(this Enum? source) where TTarget : struct, Enum
+        => ConvertNull<TTarget>(source?.ToString());
+
+    public static TTarget Convert<TTarget>(string? name) where TTarget : struct, Enum
     {
-        var literal = enumValue.ToString();
-
-        var attDescription = enumValue
-            .GetType()
-            .GetField(literal)?
-            .GetCustomAttribute<SortablePropertyAttribute>()?
-            .Name;
-
-        return (attDescription ?? literal).Replace("__", ".");
+        return Enum.TryParse<TTarget>(name, ignoreCase: true, out var result)
+            ? result
+            : throw new ArgumentException($"Valor '{name}' não encontrado no enum {typeof(TTarget).Name}");
     }
 
-    public static T Min<T>(Type type)
+    public static TTarget? ConvertNull<TTarget>(string? name) where TTarget : struct, Enum
     {
-        return (T)Enum.ToObject(type, Enum.GetValues(type).Cast<T>().Min()!);
+        return string.IsNullOrEmpty(name)
+            ? default :
+            (TTarget?)Convert<TTarget>(name);
     }
 
-    public static T Max<T>(Type type)
+    /// <summary>
+    /// Obtém o literal do enum com o menor valor numérico
+    /// </summary>
+    /// <param name="enumType">O tipo do enum</param>
+    /// <returns>O literal do enum com menor valor, ou null se o tipo não for um enum ou estiver vazio</returns>
+    /// <exception cref="ArgumentNullException">Lançada quando enumType é null</exception>
+    /// <exception cref="ArgumentException">Lançada quando o tipo fornecido não é um enum</exception>
+    /// <remarks>
+    /// Este método:
+    /// - Verifica se o tipo fornecido é realmente um enum
+    /// - Obtém todos os valores do enum
+    /// - Converte os valores para long para comparação numérica
+    /// - Retorna o literal com o menor valor numérico
+    /// - Funciona com enums de qualquer tipo base (byte, int, long, etc.)
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// public enum Priority { Low = 1, Medium = 2, High = 3 }
+    ///
+    /// var minValue = EnumHelper.GetMinValue(typeof(Priority));
+    /// // minValue será Priority.Low (valor 1)
+    ///
+    /// public enum Status { Active = 10, Inactive = 5, Pending = 20 }
+    /// var minStatus = EnumHelper.GetMinValue(typeof(Status));
+    /// // minStatus será Status.Inactive (valor 5)
+    /// </code>
+    /// </example>
+    public static object? GetMinValue(Type enumType)
     {
-        return (T)Enum.ToObject(type, Enum.GetValues(type).Cast<T>().Max()!);
+        if (enumType == null)
+            throw new ArgumentNullException(nameof(enumType));
+
+        if (!enumType.IsEnum)
+            throw new ArgumentException($"O tipo '{enumType.Name}' não é um enum.", nameof(enumType));
+
+        var values = Enum.GetValues(enumType);
+
+        if (values.Length == 0)
+            return null;
+
+        // Converte todos os valores para long para comparação
+        var enumValues = values.Cast<object>()
+            .Select(value => new { Value = value, NumericValue = System.Convert.ToInt64(value) })
+            .OrderBy(x => x.NumericValue)
+            .FirstOrDefault();
+
+        return enumValues?.Value;
+    }
+
+    /// <summary>
+    /// Obtém o literal do enum com o menor valor numérico (versão genérica)
+    /// </summary>
+    /// <typeparam name="TEnum">O tipo do enum</typeparam>
+    /// <returns>O literal do enum com menor valor</returns>
+    /// <exception cref="ArgumentException">Lançada quando TEnum não é um enum</exception>
+    /// <remarks>
+    /// Versão genérica do método GetMinValue que oferece type safety em tempo de compilação
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// public enum Priority { Low = 1, Medium = 2, High = 3 }
+    ///
+    /// var minValue = EnumHelper.GetMinValue&lt;Priority&gt;();
+    /// // minValue será Priority.Low (valor 1) com tipo Priority
+    /// </code>
+    /// </example>
+    public static TEnum GetMinValue<TEnum>() where TEnum : struct, Enum
+    {
+        var values = Enum.GetValues<TEnum>();
+
+        return values
+            .OrderBy(value => System.Convert.ToInt64(value))
+            .FirstOrDefault();
     }
 }
