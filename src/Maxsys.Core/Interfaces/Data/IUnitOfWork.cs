@@ -22,4 +22,9 @@ public interface IUnitOfWork : IDisposable
     /// ATENÇÃO: Uma vez usando o EF Core, também limpa o ChangeTracker.
     /// </summary>
     Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Limpa o ChangeTracker quando se utiliza EF
+    /// </summary>
+    void ClearTracker();
 }

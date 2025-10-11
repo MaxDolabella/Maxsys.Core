@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Maxsys.Core.Helpers;
 using Maxsys.Core.Interfaces.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -9,12 +10,13 @@ namespace Maxsys.Core.Data;
 /// <inheritdoc cref="IUnitOfWork"/>
 public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : DbContext
 {
+    private const string TRANSACTION_DEFAULT_NAME = "TRANSACTION";
     protected readonly ILogger _logger;
     protected readonly TContext _context;
     protected int _semaphore = 0;
     private IDbContextTransaction? Transaction { get; set; }
 
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; } = UIDGen.NewGuid(SequentialGuidOptions.None);
     public Guid ContextId { get; }
 
     protected UnitOfWorkBase(ILogger<UnitOfWorkBase<TContext>> logger, TContext context)
@@ -24,23 +26,22 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
         ContextId = context.ContextId.InstanceId;
     }
 
-    /// <inheritdoc cref="IUnitOfWork"/>
     public virtual async ValueTask BeginTransactionAsync(string? name = null, CancellationToken cancellationToken = default)
     {
-        var transactionName = string.IsNullOrWhiteSpace(name) ? Guid.NewGuid().ToString() : name;
+        var normalizedName = string.IsNullOrWhiteSpace(name) ? TRANSACTION_DEFAULT_NAME : name.Trim();
+        var transactionName = $"{normalizedName}-{Guid.NewGuid():N}";
 
         if (_semaphore == 0)
         {
-            _logger.LogInformation("Beginning a new transaction...");
+            _logger.LogDebug("Beginning a new transaction[{tname}]...", transactionName);
 
             Transaction = /*_context.Database.CurrentTransaction ??*/ await _context.Database.BeginTransactionAsync(cancellationToken);
         }
 
         _semaphore++;
-        _logger.LogInformation("Transaction[{name}] | Semaphore[{semaphore}]", transactionName, _semaphore);
+        _logger.LogDebug("Transaction[{name}] | Semaphore[{semaphore}].", transactionName, _semaphore);
     }
 
-    /// <inheritdoc cref="IUnitOfWork"/>
     public virtual async ValueTask CommitTransactionAsync(CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
@@ -48,22 +49,21 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
 
         _semaphore--;
 
-        _logger.LogInformation("Commiting Transaction | Semaphore[{semaphore}].", _semaphore);
+        _logger.LogDebug("Commiting Transaction | Semaphore[{semaphore}].", _semaphore);
 
         if (_semaphore == 0 && Transaction is not null)
         {
-            _logger.LogInformation("Commiting Transaction");
+            _logger.LogDebug("Commiting Transaction.");
             await Transaction.CommitAsync(cancellationToken);
         }
     }
 
-    /// <inheritdoc cref="IUnitOfWork"/>
     public virtual async ValueTask RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
             return;
 
-        _logger.LogInformation("Rolling back Transaction | Semaphore[{semaphore}].", _semaphore);
+        _logger.LogDebug("Rolling back Transaction | Semaphore[{semaphore}].", _semaphore);
 
         if (Transaction is not null && _semaphore != 0)
         {
@@ -74,31 +74,31 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
         _semaphore = 0;
     }
 
-    /// <inheritdoc cref="IUnitOfWork"/>
-    public async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public virtual async Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Saving Changes...");
+        _logger.LogDebug("Saving Changes...");
 
         var result = new OperationResult();
 
         try
         {
-            _ = await _context.SaveChangesAsync(cancellationToken);
+            var count = await _context.SaveChangesAsync(cancellationToken);
+
+            _logger.LogDebug("<{count}> Changes Saved.\nSemaphore[{semaphore}]", count, _semaphore);
 
             if (_semaphore == 0)
             {
-                _logger.LogInformation("Cleaning Tracker...");
-                _context.ChangeTracker.Clear();
+                ClearTracker();
             }
 
-            _logger.LogInformation("Changes Saved.");
+
         }
         catch (Exception ex)
         {
             RollBackDBContext();
 
             _logger.LogError(ex, "{message}", GenericMessages.ERROR_SAVE);
-            result.AddNotification(new Notification(ex, GenericMessages.ERROR_SAVE));
+            result.AddException(ex, GenericMessages.ERROR_SAVE);
         }
 
         return result;
@@ -131,7 +131,6 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
 
     protected bool _disposed = false;
 
-    /// <summary/>
     protected virtual void Dispose(bool disposing)
     {
         if (!_disposed)
@@ -152,4 +151,10 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
     }
 
     #endregion DIPOSABLE IMPLEMENTATION
+
+    public virtual void ClearTracker()
+    {
+        _logger.LogDebug("Cleaning Tracker...");
+        _context.ChangeTracker.Clear();
+    }
 }
