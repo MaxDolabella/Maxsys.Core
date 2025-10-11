@@ -3,17 +3,11 @@
 /// <summary>
 /// Utilizado para definir um Título para uma Action.
 /// </summary>
+[Obsolete("Utilizar ActionIdentifierAttribute", true)]
 [AttributeUsage(AttributeTargets.Method)]
-public class TitledActionAttribute : Attribute
+public class TitledActionAttribute : ActionIdentifierAttribute
 {
-    public string Title { get; }
-
     /// <param name="title">é o título, um identificador do endpoint. Ex.: 'CONTACT.LIST'</param>
     /// <exception cref="ArgumentException"/>
-    public TitledActionAttribute(string title)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(title, nameof(title));
-
-        Title = title;
-    }
+    public TitledActionAttribute(string title) : base(title) { }
 }
