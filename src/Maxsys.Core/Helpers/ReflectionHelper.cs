@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Maxsys.Core.Helpers;
@@ -10,7 +10,7 @@ public static class ReflectionHelper
 {
     /// <summary>
     /// Obtém um dicionário com as interfaces públicas que herdam da interface <typeparamref name="TInterface"/> como Key,
-    /// sua implementação como Value, a partir dos <paramref name="assemblies"/> referenciados
+    /// sua implementação (pública ou internal) como Value, a partir dos <paramref name="assemblies"/> referenciados
     /// e, caso <paramref name="suffix"/> diferente de nulo, que terminam com o sufixo passado como parâmetro (interface e implementação).<br/>
     /// ATENÇÃO: Interfaces sem implementações serão ignoradas.
     /// </summary>
@@ -25,7 +25,7 @@ public static class ReflectionHelper
     }
 
     /// <summary>
-    /// Obtém um dicionário com as interfaces públicas que herdam da interface <typeparamref name="TInterface"/> como Key, suas implementações como Value.<br/>
+    /// Obtém um dicionário com as interfaces públicas que herdam da interface <typeparamref name="TInterface"/> como Key, suas implementações (públicas ou internal) como Value.<br/>
     /// As interfaces herdadas de <typeparamref name="TInterface"/> são buscados nos assemblies <paramref name="interfaceAssemblies"/>.<br/>
     /// As implementações dessas interfaces são buscadas nos assemblies <paramref name="implementationAssemblies"/>.<br/>
     /// Caso <paramref name="suffix"/> diferente de nulo, somente interfaces e implementações terminadas com esse sufixo serão buscadas.
@@ -80,7 +80,7 @@ public static class ReflectionHelper
     }
 
     /// <summary>
-    /// Obtém as classes públicas não obsoletas e não abtratas que implementam a interface <typeparamref name="TInterface"/>
+    /// Obtém as classes (públicas ou internal) não obsoletas e não abstratas que implementam a interface <typeparamref name="TInterface"/>
     /// a partir dos <paramref name="assemblies"/> referenciados
     /// e, caso <paramref name="suffix"/> diferente de nulo, que terminam com o sufixo passado como parâmetro.
     /// </summary>
@@ -91,7 +91,7 @@ public static class ReflectionHelper
     /// <returns></returns>
     public static IReadOnlyList<Type> GetImplementation<TInterface>(Assembly[] assemblies, string? suffix = null, Func<Type, bool>? predicate = null) where TInterface : class
     {
-        return assemblies.SelectMany((a) => a.ExportedTypes)
+        return assemblies.SelectMany((a) => a.GetTypes())
             .Where(t => !t.GetCustomAttributes<DependencyInjectionIgnoreAttribute>().Any())
             .Where(t => t.IsClass && !t.IsAbstract)
             .Where(t => t.IsAssignableTo(typeof(TInterface)))

@@ -1,4 +1,6 @@
-﻿namespace Maxsys.Core;
+using System.Text.Json.Serialization;
+
+namespace Maxsys.Core;
 
 /// <summary>
 /// Usado para retornar uma lista paginada contendo a quantidade total de registros
@@ -25,4 +27,8 @@ public class ListDTO<T>
 
     public int Count { get; set; }
     public List<T> Items { get; set; }
+
+    [JsonIgnore]
+    [Obsolete("Property será removida. Utilizar 'Items' ao invés.")]
+    public IReadOnlyList<T> List => Items;
 }

@@ -12,7 +12,7 @@ public class ArchiveController : ControllerBase
     [HttpPost("create")]
     public IActionResult CreateFile([FromForm] string data, IFormFileCollection files)
     {
-        // Converter arquivos do formul·rio
+        // Converter arquivos do formul√°rio
         var attachments = files.Select(FormFileToAttachmentFile).ToList();
 
         // Deserializar dados
@@ -35,7 +35,7 @@ public class ArchiveController : ControllerBase
         }
         finally
         {
-            // Limpar arquivo tempor·rio
+            // Limpar arquivo tempor√°rio
             if (System.IO.File.Exists(tmpFilePath))
                 System.IO.File.Delete(tmpFilePath);
         }
@@ -75,7 +75,7 @@ public static class ArchiveTestHelper
     {
         var outputFile = Path.GetTempFileName();
 
-        // Criar pacote em memÛria
+        // Criar pacote em mem√≥ria
         var pkg = new Package
         {
             Meta = new { Author = "Max", CreatedAt = DateTime.UtcNow },

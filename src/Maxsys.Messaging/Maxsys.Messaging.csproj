@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Biblioteca Maxsys para mensageria CQRS. Mediador próprio, sem dependências externas. (.NET 10)</Description>
+		<PackageDescription>Biblioteca Maxsys para mensageria CQRS. Mediador próprio, sem dependências externas. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Messaging</PackageId>
+		<PackageTags>maxsys;cqrs;mediator;messaging</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+	</ItemGroup>
+
+</Project>

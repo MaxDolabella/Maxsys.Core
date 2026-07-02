@@ -77,7 +77,7 @@ public static class IOHelper
             }
             else
             {
-                result.AddError($"Error moving file: {copyResult}");
+                result.AddErrorNotification($"Error moving file: {copyResult}");
             }
         }
         catch (Exception ex)
@@ -143,7 +143,7 @@ public static class IOHelper
         }
         else
         {
-            result.AddError("Destination file already exists and cannot be overriden.");
+            result.AddErrorNotification("Destination file already exists and cannot be overriden.");
         }
 
         return result;

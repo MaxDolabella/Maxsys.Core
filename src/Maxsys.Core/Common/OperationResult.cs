@@ -1,6 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using FluentValidation.Results;
 
 namespace Maxsys.Core;
 
@@ -8,7 +7,7 @@ namespace Maxsys.Core;
 /// Representa o resultado de uma operação podendo conter
 /// Notificações referentes ao resultado da operação.
 /// </summary>
-public class OperationResult : IOperationResult
+public partial class OperationResult : IOperationResult
 {
     [JsonIgnore, MemberNotNullWhen(false, nameof(Notifications))]
     public virtual bool IsValid => !(Notifications?.Where(n => n.ResultType <= ResultTypes.Warning).Any() == true);
@@ -52,44 +51,55 @@ public class OperationResult : IOperationResult
         : this([notification])
     { }
 
-    public OperationResult(string notificationMessage)
-        : this(new Notification(notificationMessage))
-    { }
-
-    public OperationResult(string notificationMessage, string notificationDetails)
-        : this(new Notification(notificationMessage, notificationDetails))
-    { }
-
-    public OperationResult(ValidationResult validationResult)
-    {
-        Notifications = validationResult.ToNotifications();
-    }
-
-    public OperationResult(Exception exception, ResultTypes resultType = ResultTypes.Error)
-        : this(new Notification(exception, resultType))
-    { }
-
     #endregion CTOR
 
     #region METHODS
 
+    // Método privado para evitar repetição de código ao adicionar notificações. (Notifications ??= [];)
+    private void InternalAddNotification(Notification notification)
+    {
+        if (!ContainsNotification(x => x == notification))
+        {
+            Notifications!.Add(notification);
+        }
+    }
+
+    /// <summary>
+    /// Adiciona uma notificação ao resultado da operação caso ela ainda não exista.
+    /// </summary>
+    /// <param name="notification">A notificação a ser adicionada.</param>
     public void AddNotification(Notification notification)
     {
         Notifications ??= [];
 
-        Notifications.Add(notification);
+        InternalAddNotification(notification);
     }
 
+    /// <summary>
+    /// Adiciona uma coleção de notificações ao resultado da operação caso elas ainda não existam.
+    /// </summary>
+    /// <param name="notifications">A coleção de notificações a ser adicionada.</param>
     public void AddNotifications(IEnumerable<Notification> notifications)
     {
         Notifications ??= [];
 
-        Notifications.AddRange(notifications);
+        foreach (var notification in notifications)
+        {
+            InternalAddNotification(notification);
+        }
     }
 
     public void AddNotification(string message, string? details = null, ResultTypes resultType = ResultTypes.Error)
     {
-        AddNotification(new Notification(message, details, resultType));
+        AddNotification(message, details, tag: null, resultType);
+    }
+
+    public void AddNotification(string message, string? details, object? tag, ResultTypes resultType = ResultTypes.Error)
+    {
+        AddNotification(new Notification(message, details, resultType)
+        {
+            Tag = tag
+        });
     }
 
     public void AddException(Exception exception, string? customMessage = null)
@@ -101,13 +111,15 @@ public class OperationResult : IOperationResult
         AddNotification(notification);
     }
 
-    public void AddError(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Error));
+    public void AddWarningNotification(string message, string? details = null, object? tag = null)
+    {
+        AddNotification(message, details, tag, ResultTypes.Warning);
+    }
 
-    public void AddWarning(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Warning));
-
-    public void AddInfo(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Info));
-
-    public void AddSuccess(string message, string? details = null) => AddNotification(new Notification(message, details, ResultTypes.Success));
+    public void AddErrorNotification(string message, string? details = null, object? tag = null)
+    {
+        AddNotification(message, details, tag, ResultTypes.Error);
+    }
 
     public override string? ToString()
     {
@@ -145,7 +157,7 @@ public class OperationResult : IOperationResult
 /// referentes ao resultado da operação.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class OperationResult<T> : OperationResult
+public partial class OperationResult<T> : OperationResult
 {
     #region PROPS
 
@@ -167,56 +179,26 @@ public class OperationResult<T> : OperationResult
     /// <summary>
     /// CTOR vazio necessário para conversão de Json
     /// </summary>
-    public OperationResult()
+    public OperationResult() : base()
     { }
 
     public OperationResult(T? data, List<Notification>? notifications)
-       : base()
+       : this()
     {
         Data = data;
         Notifications = notifications;
     }
 
     public OperationResult(List<Notification> notifications)
-       : this(default, notifications)
-    { }
-
-    public OperationResult(T? data, ValidationResult validationResult)
-       : this(data, validationResult.ToNotifications())
-    { }
-
-    public OperationResult(ValidationResult validationResult)
-        : this(default, validationResult.ToNotifications())
-    { }
-
-    public OperationResult(T data)
-        : this(data, default(List<Notification>?))
-    { }
-
-    public OperationResult(Exception exception, ResultTypes resultType = ResultTypes.Error)
-        : this(default, exception, resultType)
-    { }
-
-    public OperationResult(T? data, Exception exception, ResultTypes resultType = ResultTypes.Error)
-        : base(exception, resultType)
-    {
-        Data = data;
-    }
-
-    public OperationResult(T? data, Notification notification)
-       : this(data, [notification])
+        : this(default, notifications)
     { }
 
     public OperationResult(Notification notification)
-       : this(default, notification)
+        : this(default, [notification])
     { }
 
-    public OperationResult(string notificationMessage, ResultTypes resultType = ResultTypes.Error)
-       : this(default, notificationMessage, resultType)
-    { }
-
-    public OperationResult(T? data, string notificationMessage, ResultTypes resultType = ResultTypes.Error)
-       : this(data, [new(notificationMessage, null, resultType)])
+    public OperationResult(T? data, Notification notification)
+       : this(data, [notification])
     { }
 
     #endregion CTOR
@@ -239,4 +221,21 @@ public class OperationResult<T> : OperationResult
     }
 
     #endregion METHODS
+}
+
+public static class OperationResultExtensions
+{
+    extension(OperationResult result)
+    {
+        public OperationResult<T> WithData<T>(T? data) => result.Cast(data);
+    }
+
+    extension<T>(OperationResult<T> result)
+    {
+        public OperationResult<T> WithData(T? data)
+        {
+            result.Data = data;
+            return result;
+        }
+    }
 }

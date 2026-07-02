@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Audit;
+namespace Maxsys.Core.Audit;
 
 public class AuditLogField
 {

@@ -1,7 +1,7 @@
-﻿namespace Maxsys.Core.Exceptions;
+namespace Maxsys.Core.Exceptions;
 
 /// <summary>
-/// Representa um erro que ocorre quando o usuário não está autenticado.
+/// Representa um erro que ocorre quando o usuário não está logado.
 /// </summary>
 public class NotAuthenticatedUserException : DomainException
 {

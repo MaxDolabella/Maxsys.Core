@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Web;
+namespace Maxsys.Core.Web;
 
 /// <summary>
 /// Extensões para conversão de ApiResult para OperationResult

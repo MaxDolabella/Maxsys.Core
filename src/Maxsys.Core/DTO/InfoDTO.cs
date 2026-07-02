@@ -1,9 +1,7 @@
-﻿using Maxsys.Core.DTO;
-using Maxsys.Core.Sorting.Columns;
+using Maxsys.Core.DTO;
 
 namespace Maxsys.Core;
 
-[Sortable<InfoSortableColumns>]
 public class InfoDTO<T> : IDTO, IKey<T> where T : notnull
 {
     public InfoDTO()

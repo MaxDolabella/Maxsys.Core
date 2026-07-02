@@ -1,10 +1,6 @@
-﻿namespace Maxsys.Core.Events;
+namespace Maxsys.Core.Events;
 
-/// <summary>
-/// Represents the method that will handle an event that has a value.
-/// </summary>
-/// <param name="sender">The source of the event.</param>
-/// <param name="e">An object that contains the event value.</param>
+[Obsolete]
 public delegate void ValueEventHandler(object? sender, ValueEventArgs e);
 
 /// <summary>
@@ -20,4 +16,5 @@ public delegate ValueTask AsyncEventHandler<TEventArgs>(object? sender, TEventAr
 
 public delegate ValueTask<OperationResult> OperationResultAsyncEventHandler<TEventArgs>(object? sender, TEventArgs e, CancellationToken cancellationToken);
 
+[Obsolete]
 public delegate OperationResult OperationResultEventHandler<TEventArgs>(object? sender, TEventArgs e);

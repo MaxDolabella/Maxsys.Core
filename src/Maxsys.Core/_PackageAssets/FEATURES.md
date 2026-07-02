@@ -1,792 +1,943 @@
 # Maxsys.Core
 
+Biblioteca base para aplicações Maxsys (.NET 10 / C# 14): resultado de operação padronizado (`OperationResult`), contratos de Repository/Unit of Work, serviços de modelo (`ModelServiceBase`), filtragem dinâmica via `ColumnFilter`, listagem/ordenação/paginação genéricas, cache, auditoria e utilitários diversos.
+
 ## Attributes
 
 ### DefaultSortAttribute
-+ Atributo utilizado para indicar a property que será o sort padrão em `QueryableExtensions.ApplySort`
+Indica a *property* que será a ordenação padrão de um tipo quando nenhum `SortFilter` for informado em `QueryableExtensions.ApplySort`.
++ `Property` (string): caminho da propriedade (aceita *dot notation*).
++ `SortDirection`: direção padrão (`Ascending` se omitida).
+
+```csharp
+[DefaultSort(nameof(Name))]
+public class CityDTO
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+}
+
+// sem Sorts no ListCriteria → ordena por Name Ascending
+var list = cityQueryable.ApplySort(null);
+```
+
+### SearchableAttribute
+Marca uma propriedade como participante da busca global (`ListCriteria.Search`, aplicada por `QueryableExtensions.ApplySearch`).
++ Sem parâmetros: para propriedades `string` diretas.
++ Com `path`: para propriedades aninhadas (objetos complexos). Permite múltiplos atributos na mesma propriedade.
+
+```csharp
+public class PersonDTO
+{
+    [Searchable]
+    public string Name { get; set; }
+
+    // gera os full paths "Location.Country.Name" e "Location.City"
+    [Searchable("Country.Name")]
+    [Searchable("City")]
+    public LocationDTO Location { get; set; }
+}
+
+var criteria = new ListCriteria { Search = "maria" };
+var result = personQueryable.ApplyCriteria(criteria); // OR entre todas as props searchable
+```
 
 ### DependencyInjectionIgnoreAttribute
-+ Indica que o objeto não será registrado no ServiceProvider pelos métodos de extensão em `IServiceCollectionExtensions`.
+Indica que a classe não será registrada no `ServiceProvider` pelos métodos de extensão de `ServiceCollectionExtensions` (ex.: `AddImplementations`).
 
 ### NotDefaultAttribute
-+ Especifica que um campo não pode possuir valor `default` para seu tipo. Lembrando que `null` não é `default`.
-
-### SortableAttribute&lt;T&gt; | SortableAttribute(string)
-+ Especifica que um objeto é ordenável através de um enum contendo as colunas ordenáveis.
-
-### SortablePropertyAttribute
-+ Usado em um literal de enum *"SortableColumns"* para indicar que esse literal se refere a uma determinada coluna. Dessa maneira, o literal pode ter um nome diferente da propriedade ordenável, esta sendo informada através de `SortablePropertyAttribute.Name`.
-
-### TextAttribute
-+ Atributo utilizado para indicar que uma *property* é do tipo `TEXT` no banco, e assim auxiliando na obtenção do *selector* de ordenação.
-
----
-## Exceptions
-- `ExternalAPIException`
-	- Representa um erro que ocorre ao tentar chamar uma API externa (Workspace por exemplo).
-- `InvalidServiceProviderException`
-	- Representa um erro que ocorre ao tentar validar um ServiceProvider.
-- `NotAllowedOperationException`
-	- Representa um erro que ocorre ao se tentar realizar uma operação não permitida.
-
----
-## ListCriteria (Sorts)
-
-Um `SortFilter` contém a informação de qual *property* do DTO será ordenada, bem como sua orientação (`Ascending`, `Descending`).
-A *property* a ser ordenada pode ser informada através de `SortFilter.Column` (*byte/enum*) ou `SortFilter.ColumnName` (*string/nome da property a ordenar*).
-
-<hr style="border: 1px dashed lightgray;"/>
-
-### Usando `SortFilter.Column` (*byte*)
-
-Ao se usar `Column`, o método de ordenação (`.ApplySort<T>()`) precisa saber que o *byte* informado se refere a determinada *property*.
-Por exemplo, para um objeto `CityDTO`, quando `Column == 2`, deve-se ordenar por `City.Abbreviation`. 
-Para `.ApplySort()` saber que 2 refere-se a `Abbreviation`, deverá-se informar um *enum* onde cada literal tem seu valor (*byte*) e o nome da *"property ordenável"*.
-Esse enum é informado através de um atributo `[Sortable<TEnum>]` no objeto `T` que está sendo ordenado.
-
-#### Exemplo prático
-
-Ao se utilizar `.ApplySort<CityDTO>()`, um enum `CityColumns : byte` é informado em `CityDTO`:
+`ValidationAttribute` (DataAnnotations) que especifica que um campo não pode possuir o valor `default` do seu tipo. Lembrando: `null` não é `default` — valor nulo é considerado válido (não implica *required*).
 
 ```csharp
-public enum CityColumns : byte
+public class CreateOrderRequest
 {
-	None = 0,
-	Name, 
-	Abbreviation,
-	// demais literais...
+    [NotDefault] // Guid.Empty é inválido
+    public Guid CustomerId { get; set; }
 }
 ```
 
-```csharp
-[Sortable<CityColumns>] // Atributo indicando que CityDTO utiliza o enum CityColumns
-public class CityDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-}
+### TextColumnAttribute / XmlColumnAttribute
+Atributos de *marker* usados para indicar que uma *property* é do tipo `TEXT`/`XML` no banco, auxiliando na obtenção do *selector* de ordenação em implementações de dados.
 
+```csharp
+public class Document
+{
+    [TextColumn]
+    public string Body { get; set; }
+
+    [XmlColumn]
+    public string Payload { get; set; }
+}
 ```
 
-```csharp
-var sortByAbbreviation = new SortFilter(2, Direction.Ascending);
-// ou
-// var sortByAbbreviation = new SortFilter((byte)CityColumns.Abbreviation, Direction.Ascending);
+---
+## Resultado de Operação
 
-ListCriteria criteria = new ()
+### OperationResult / OperationResult&lt;T&gt;
+Tipo de retorno padrão de operações. Carrega uma lista de `Notification` e, na versão genérica, um `Data` do tipo `T`. Serviços retornam `OperationResult` em vez de lançar exceção para erros de regra de negócio.
++ `IsValid`: `false` se houver notificação com severidade ≤ `Warning` (ou seja, `Error` ou `Warning`).
++ `ResultType`: o `ResultTypes` mais severo entre as notificações (`Success` se não houver nenhuma).
++ `AddNotification` / `AddNotifications` / `AddException` / `AddWarningNotification` / `AddErrorNotification`: adicionam notificações (ignorando duplicadas).
++ `ContainsNotification` / `ContainsAnyNotification`: verificam presença de notificações por mensagem ou predicado.
++ `Cast<TDestination>(data)`: converte um `OperationResult` em `OperationResult<TDestination>` preservando as notificações.
++ `WithData` (extension): atalho para preencher `Data` de forma fluente.
++ Os construtores com `string`/`Exception`/`ValidationResult` estão `[Obsolete]` — use a factory `Result`.
+
+```csharp
+public async Task<OperationResult<Guid>> ApproveAsync(Guid id, CancellationToken ct)
 {
-    Sorts = new [sortByAbbreviation]
+    var order = await _repository.GetAsync([new ColumnFilter("Id", id)], cancellationToken: ct);
+    if (order is null)
+        return Result.Error<Guid>(GenericMessages.ITEM_NOT_FOUND);
+
+    if (order.Status != OrderStatus.Pending)
+        return Result.Warning<Guid>("ORDER_NOT_PENDING", details: $"Status atual: {order.Status}");
+
+    order.Approve();
+    await _uow.SaveChangesAsync(ct);
+
+    return Result.Success(order.Id);
+}
+
+// consumo
+var result = await service.ApproveAsync(id, ct);
+if (!result.IsValid)
+{
+    // result.Notifications garantidamente não-nulo aqui (MemberNotNullWhen)
+    logger.LogWarning("{Errors}", string.Join("; ", result.Notifications));
+}
+```
+
+### Result (factory estática)
+Ponto de criação padronizado de `OperationResult`/`OperationResult<T>`. Resultados não-Success nunca carregam `Data` (a versão tipada retorna `Data = default`).
++ `Result.Success()` / `Result.Success<T>(data)`
++ `Result.Info(message, details?, tag?)` / `Result.Info<T>(...)`
++ `Result.Warning(...)` / `Result.Warning<T>(...)`
++ `Result.Error(...)` / `Result.Error<T>(...)`
++ `Result.FromException(exception, resultType?)` / `Result.FromException<T>(...)` — com *overload* para mensagem customizada.
++ `Result.FromNotifications(notifications)` / `Result.FromNotifications<T>(data?, notifications)`
+
+```csharp
+return Result.Success(dto);
+return Result.Error("ITEM_DUPLICATE", details: $"Código {code} já existe");
+return Result.FromException<CustomerDTO>(ex);
+return Result.FromNotifications(validationResult.ConvertToNotifications());
+```
+
+### Notification
+Representa uma notificação em um `OperationResult`. Implementa `IEquatable<Notification>` (duplicadas não são adicionadas duas vezes).
++ `Message`: código do erro (ex.: `ITEM_NOT_FOUND`).
++ `Details`: mensagem complementar ou detalhes da exception.
++ `ResultType`: severidade (`Error` por padrão).
++ `Tag`: objeto livre para transportar dado adicional.
++ Construtores a partir de `string` ou `Exception` (agrega `InnerException.Message` em `Details`).
+
+```csharp
+var notification = new Notification("EXTERNAL_SERVICE_UNAVAILABLE", details: responseContent, ResultTypes.Warning)
+{
+    Tag = payload
+};
+result.AddNotification(notification);
+```
+
+### ResultTypes
+Enum de severidade de resultado, ordenado do mais severo para o menos: `Error = 0`, `Warning = 1`, `Info = 2`, `Success = 3`. Serializado como string em JSON (`JsonStringEnumConverter`).
+
+### OperationResultCollection / OperationResultCollection&lt;T&gt;
+Coleção de `OperationResult`(`<T>`) que também implementa `IOperationResult`: `IsValid` só é `true` se todos os itens forem válidos; `Notifications` agrega as notificações de todos os itens. Usada como retorno de operações em lote (`AddAsync`/`UpdateAsync`/`DeleteAsync` de coleções).
+
+```csharp
+OperationResultCollection<Guid?> results = await service.DeleteAsync(ids, stopOnFirstFail: false, ct);
+if (!results.IsValid)
+{
+    var failed = results.Where(r => !r.IsValid).ToList();
+}
+```
+
+### IOperationResult
+Interface comum de `OperationResult` e `OperationResultCollection`: `ResultType`, `IsValid`, `Notifications`, `ContainsNotification`, `SetDataToNull()`.
+
+### GenericMessages
+Constantes com as mensagens/códigos mais comuns da aplicação, no formato `warnings.common.*`: severidades base (`SUCCESS`, `ERROR`, `WARNING`, `INFORMATION`), acesso (`UNAUTHORIZED`), CRUD (`ITEM_NOT_FOUND`, `ERROR_ADDING`, `ERROR_UPDATING`, `ERROR_DELETING`, `ERROR_SAVE`), operações (`INVALID_OPERATION`, `INVALID_OBJECT`, `INVALID_XML`, `INVALID_SCHEMA`, `SCHEMA_READING_ERROR`) e validação (`FIELD_REQUIRED`, `FIELD_INVALID`, `FIELD_UNIQUE`, `FIELD_LENGTH`, `FIELD_FORMAT`, `FIELD_RANGE`, `FIELDS_CONFLICT`, `ITEM_REQUIRED`, `ITEM_DUPLICATE`).
+
+```csharp
+return Result.Error(GenericMessages.ITEM_NOT_FOUND);
+```
+
+---
+## DTOs
+
+### IDTO
+Interface *marker* para tipificar um objeto como DTO de entidade (List, Form, etc.).
+
+### InfoDTO&lt;T&gt;
+DTO mínimo de referência (id + descrição), usado nas listagens `ToInfoListAsync`/`GetInfoListAsync` de `ModelServiceBase`.
++ `Id` (required), `Description` (required), `Abbreviation`, `CustomState`.
+
+```csharp
+List<InfoDTO<Guid>> combo = await service.ToInfoListAsync(x => x.IsActive, ct);
+```
+
+### ListDTO&lt;T&gt;
+Retorno de lista paginada: `Items` (a página) + `Count` (total de registros na fonte de dados).
+
+```csharp
+ListDTO<ProductListDTO> page = await service.GetListAsync<ProductListDTO>(criteria, ct);
+// page.Items.Count → itens da página; page.Count → total geral
+```
+
+### MonitorableDTO / UpdateStatus
+`MonitorableDTO` é um DTO abstrato com a property `UpdateStatus`, útil para sincronizar coleções cliente-servidor. `UpdateStatus` (enum byte) indica a ação a tomar com o objeto:
++ `Loaded = 0` (veio do banco), `Insert`, `Update`, `Delete`, `None`.
+
+```csharp
+public class OrderItemDTO : MonitorableDTO
+{
+    public Guid Id { get; set; }
+    public int Quantity { get; set; }
+}
+
+foreach (var item in dto.Items.Where(i => i.UpdateStatus == UpdateStatus.Insert))
+{
+    // inserir...
+}
+```
+
+### ObjectLink&lt;TNav, TItem&gt; / ObjectLinkItem&lt;T&gt;
+Estrutura para vincular um item de navegação a uma lista de itens monitoráveis (cada `ObjectLinkItem<T>` herda de `MonitorableDTO`). Útil para manutenção de relações N:N.
+
+```csharp
+var link = new ObjectLink<CategoryDTO, ProductDTO>
+{
+    NavigationItem = category,
+    Items = products.Select(p => new ObjectLinkItem<ProductDTO> { Item = p }).ToList()
+};
+```
+
+---
+## Entidades
+
+### Entity / Entity&lt;TKey&gt;
+Classes base para entidades de domínio.
++ `Entity`: base sem chave — use para entidades com chave composta (configure `HasKey(x => new { x.PropA, x.PropB })` no EF).
++ `Entity<TKey>`: entidade com chave única tipada (`Id`), implementa `IKey<TKey>`. `TKey` deve ser um tipo escalar simples (`int`, `Guid`, `string`...) — não use tuplas/records como chave.
+
+```csharp
+public class Product : Entity<Guid>
+{
+    public string Name { get; set; }
+}
+```
+
+### IKey&lt;TKey&gt;
+Interface para um objeto que contenha uma chave `Id` de tipo não nulo. Implementada por `Entity<TKey>`, `InfoDTO<T>` e exigida nos DTOs de update de `IModelService<TEntity, TKey>`.
+
+---
+## Filtragem
+
+### ColumnFilter
+Filtro dinâmico de coluna (estilo *matchModes* do PrimeNG). É o mecanismo único de filtragem da biblioteca — aplicado por `QueryableExtensions.ApplyFilters` e aceito em métodos de `IRepository<TEntity>`/`IModelService`.
++ `Field`: caminho da propriedade (aceita *dot notation* para propriedades aninhadas).
++ `Value`: valor de comparação (filtros com `Value == null` são ignorados).
++ `MatchMode`: modo de comparação (`Contains` por padrão).
+
+```csharp
+var filters = new List<ColumnFilter>
+{
+    new("Name", "Silva"),                                        // Contains (default)
+    new("Status", OrderStatus.Active, FilterMatchModes.Equals),
+    new("Customer.Address.City", "São", FilterMatchModes.StartsWith),
+    new("Total", new object[] { 100, 500 }, FilterMatchModes.Between),
 };
 
-// ordenação é realizada
-cityQueryable.ApplySort();
+var query = orderQueryable.ApplyFilters(filters); // AND entre os filtros
+var dto = await _repository.GetAsync<OrderDTO>(filters, ct);
 ```
 
-#### Considerações
+### FilterMatchModes
+Modos de comparação suportados por `ColumnFilter`, serializados como string em JSON:
++ Texto: `Contains`, `StartsWith`, `EndsWith`.
++ Igualdade: `Equals`, `NotEquals`.
++ Coleção: `In`, `NotIn`.
++ Numérico: `Gt`, `Gte`, `Lt`, `Lte`, `Between` (`[min, max]`).
++ Data: `DateIs`, `DateIsNot`, `DateBefore`, `DateAfter`.
 
-+ Se o objeto `T` não tiver um atributo `[Sortable<TEnum>]`, então nenhuma ordenação será feita.
-+ :warning: Se nenhuma *property* do objeto `T` for igual ao nome do literal de `TEnum`, então uma *exception* será lançada.
-
-No entanto, é possível informar o *"caminho da property"* através de um atributo `[SortableProperty("PropertyName")]` no literal.
-Considerando o exemplo anterior com a utilização do enum abaixo, o resultado será o mesmo:
-
-```csharp
-public enum CityColumns : byte
-{
-    None = 0,
-    Name,
-	
-    [SortableProperty("Abbreviation")]
-    CucaBeludo,
-    // demais literais...
-}
-```
-
-#### Propriedades aninhadas
-
-Supondo que `CityDTO` contém uma property `StateDTO State` e `StateDTO` contém uma property *Name*, 
-é possível ordernar `CityDTO` por `State.Name`. Considere os objetos abaixo:
+### ColumnFilterExtensions
+Composição de listas de `ColumnFilter` com *expressions* fortemente tipadas em vez de strings literais.
++ `AddFilter<TModel>(property, value, matchMode = Equals)`: o caminho do campo é extraído da expression (suporta propriedades aninhadas).
 
 ```csharp
-[Sortable<CityColumns>]
-public class CityDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-	
-    public StateDTO State { get; set; }
-}
-
-public class StateDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-	
-    public CountryDTO Country { get; set; }	
-}
-
-public class CountryDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-}
-```
-
-A definição das propriedades aninhadas no enum poderá ser feita de duas formas:
-+ Utilizando o atributo `[SortableProperty]`;
-+ Utilizando a convenção de literal com `__` para cada property aninhada;
-
-##### Exemplo utilizando o atributo `SortableProperty`:
-
-```csharp
-public enum CityColumns : byte
-{
-    None = 0,
-    Name,
-    Abbreviation,
-	
-    [SortableProperty("State.Name")]
-    State,
-	
-    [SortableProperty("State.Country.Name")]
-    Country,
-    // demais literais...
-}
-```
-
-##### Exemplo utilizando convenção `__`:
-
-```csharp
-public enum CityColumns : byte
-{
-    None = 0,
-    Name,
-    Abbreviation,
-	
-    State__Name,
-    State__Country__Name,
-	
-    // demais literais...
-}
-```
-
-O resultado da ordenação dos dois *enumns* será o mesmo.
-
-<hr style="border: 1px dashed lightgray;"/>
-
-### Usando `SortFilter.ColumnName` (*string*)
-
-Ao se usar `ColumnName`, o método de ordenação (`.ApplySort<T>()`) irá procurar uma property em `T` com o nome informado.
-Não é necessário criar enum para o DTO, o que por conseguinte isenta uso de atributo [Sortable<TEnum>] no DTO.
-
-Por exemplo, para um objeto `CityDTO`, quando `ColumnName == "Abbreviation"`, a ordenação será por `City.Abbreviation`.
-
-#### Exemplo prático
-
-```csharp
-public class CityDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-}
-
-```
-
-```csharp
-var sortByAbbreviation = new SortFilter("Abbreviation", Direction.Ascending);
-
-ListCriteria criteria = new ()
-{
-    Sorts = new [sortByAbbreviation]
-}
-
-// ordenação é realizada
-cityQueryable.ApplySort();
-```
-
-#### Considerações
-
-:warning: Se o objeto `T` não tiver uma *property* igual ao nome do informado em `ColumnName`, então uma *exception* será lançada.
-
-#### Propriedades aninhadas
-
-Supondo que `CityDTO` contém uma property `StateDTO State` e `StateDTO` contém uma property *Name*, 
-é possível ordernar `CityDTO` por `State.Name`. Considere os objetos abaixo:
-
-```csharp
-public class CityDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-	
-    public StateDTO State { get; set; }
-}
-
-public class StateDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-	
-    public CountryDTO Country { get; set; }	
-}
-
-public class CountryDTO
-{
-    // Properties Id, Name, Abbreviation e demais...
-}
-```
-
-A definição de ordenação das propriedades aninhadas poderá ser feita passando o *"caminho das properties"* separados por `.`(ponto) em `ColumnName`;
-
-##### Exemplo 
-
-```csharp
-var sortByCountry = new SortFilter("State.Country.Name", Direction.Ascending);
-var sortByState = new SortFilter("State.Name", Direction.Ascending);
-var sortByAbbreviation = new SortFilter("Abbreviation", Direction.Ascending);
-
-ListCriteria criteria = new ()
-{
-    Sorts = new [sortByCountry, sortByState, sortByAbbreviation]
-};
-
-// ordenação é realizada
-cityQueryable.ApplySort();
+var filters = new List<ColumnFilter>();
+filters.AddFilter<Order>(x => x.Status, OrderStatus.Active);
+filters.AddFilter<Order>(x => x.Customer.Name, "Silva", FilterMatchModes.Contains);
+filters.AddFilter<Order>(x => x.Total, 1000, FilterMatchModes.Gte);
 ```
 
 ---
-## Algumas Outras Features
+## Listagem e Ordenação
 
-### SearchTerm
+### ListCriteria
+Vocabulário comum de consulta paginada, agregando paginação, ordenações, filtros de coluna e busca global.
++ `Pagination`: página/tamanho (opcional).
++ `Sorts`: lista de `SortFilter`.
++ `Filters`: lista de `ColumnFilter`.
++ `Search`: termo da busca global (aplicado nas propriedades com `[Searchable]`).
 
-<details>
-	<summary>Exemplo de <code>SearchTerm.ToExpression()</code> usado em <code>Filter&lt;Person&gt;.SetExpression()</code></summary>
-
-```cs
-
-if (!string.IsNullOrWhiteSpace(Search?.Term))
+```csharp
+var criteria = new ListCriteria
 {
-    var expression = Search.ToExpression<Person>(entity => new[]
-        {
-            entity.SearchName,
-            entity.LogonName,
-            entity.PhoneNumber,
-            entity.FaxNumber,
-            entity.EmailAddress
-        });
+    Pagination = new Pagination(index: 0, size: 20),
+    Sorts = [new SortFilter("Customer.Name", SortDirection.Ascending)],
+    Filters = [new ColumnFilter("Status", OrderStatus.Active, FilterMatchModes.Equals)],
+    Search = "maria"
+};
 
-    AddExpression(expression);
-}
-
-	
+ListDTO<OrderListDTO> page = await service.GetListAsync<OrderListDTO>(criteria, ct);
 ```
-</details>
 
-### HttpClientBase
+### Pagination
+Configuração de paginação: `Index` (base 0) e `Size`. `IsNotEmpty()` indica se a paginação deve ser aplicada (`Size > 0`).
 
-<details>
-	<summary>Código</summary>
+### SortFilter / SortDirection
+`SortFilter` define a ordenação de uma coluna:
++ `Field` (string): nome/caminho da propriedade a ordenar — aceita *dot notation* (`"State.Country.Name"`). A ordenação por enum/byte foi removida na v17; `Field` é a única forma.
++ `Direction`: `SortDirection.Ascending` (1) ou `SortDirection.Descending` (2).
 
-```cs
-
-public abstract class HttpClientBase : ServiceBase
+```csharp
+var criteria = new ListCriteria
 {
-    protected readonly ILogger _logger;
-    protected readonly HttpClient _httpClient;
-    private readonly string _apiPrefix;
+    Sorts =
+    [
+        new SortFilter("State.Country.Name", SortDirection.Ascending),
+        new SortFilter("Abbreviation", SortDirection.Descending),
+    ]
+};
 
-    protected HttpClientBase(ILogger logger, IHttpClientFactory httpClientFactory)
-        : this(logger, string.Empty, httpClientFactory)
+var sorted = cityQueryable.ApplySort(criteria.Sorts);
+```
+
+### QueryableExtensions
+Extensões de `IQueryable<T>` que materializam `ListCriteria` (C# 14 *extension members*).
++ `ApplyCriteria(criteria)`: atalho para `ApplyFilters(...).ApplySearch(...).ApplySort(...).ApplyPagination(...)`.
++ `ApplyFilters(filters)`: aplica cada `ColumnFilter` como `Where` (AND sequencial), construindo as expressões dinamicamente via `ExpressionHelper.BuildColumnFilterExpression`.
++ `ApplySearch(search)`: busca textual global — OR entre as propriedades decoradas com `[Searchable]` (com cache de paths por tipo).
++ `ApplySort(sortFilters)`: ordena por `SortFilter.Field`; sem sorts, usa o `[DefaultSort]` do tipo, se existir. Lança `InvalidOperationException` se algum `SortFilter` não tiver `Field`.
++ `ApplyPagination(pagination)`: `Skip(Size * Index).Take(Size)` quando a paginação não é vazia.
++ `LeftOuterJoin` / `LeftOuterJoinList`: *left outer join* entre queryables, retornando `LeftOuterJoinResult<TSource, TInner>` / `LeftOuterJoinListResult<TSource, TInner>`.
+
+```csharp
+var page = await orderQueryable
+    .ApplyCriteria(criteria)
+    .ToListAsync(ct);
+
+var joined = orders.LeftOuterJoin(
+    customers,
+    o => o.CustomerId,
+    c => c.Id,
+    (o, c) => new { Order = o, Customer = c });
+```
+
+---
+## Serviços
+
+### IService / ServiceBase
+Contrato/base mínimos para tipificar um objeto como Service.
++ `IService`: `Guid Id` + `IDisposable`.
++ `ServiceBase`: implementa `IService` com `Id` gerado por `UIDGen.NewGuid()` e o padrão `Dispose(bool)`.
+
+```csharp
+public sealed class ReportService : ServiceBase, IReportService
+{
+    // ...
+}
+```
+
+### IModelService&lt;TEntity&gt; / ModelServiceBase&lt;TEntity, TRepository&gt;
+Serviço de leitura sobre uma entidade, delegando ao repositório e projetando para DTOs (AutoMapper ou *projection* explícita).
++ Consulta pontual: `GetAsync<TDestination>` (por predicate, projection ou `ColumnFilter`), `GetByIdAsync<TDestination>`, `GetSingleOrDefaultAsync`, `GetSingleOrThrowsAsync`.
++ Listagens: `ToListAsync<TDestination>` (lista simples) e `GetListAsync<TDestination>` (retorna `ListDTO<T>` com `Count`), com *overloads* por predicate/`ColumnFilter`/`ListCriteria`/paginação + `sortSelector`.
++ Utilitários: `CountAsync`, `AnyAsync`, `IdExistsAsync`.
++ Eventos async pós-consulta: `GetCompletedAsync`, `ToListCompletedAsync`, `GetListCompletedAsync` (delegate `AsyncEventHandler<ValueEventArgs>`), com *hooks* protegidos `OnAfterGetAsync`/`OnAfterToListAsync`/`OnAfterGetListAsync`.
++ Constraints: `TEntity : class`, `TRepository : IRepository<TEntity>`.
+
+### IModelService&lt;TEntity, TKey&gt; / ModelServiceBase&lt;TEntity, TRepository, TKey&gt;
+Extensão CRUD completa do serviço de modelo. Recebe `TRepository`, `IUnitOfWork` e `IMapper` no construtor; exige implementar `IdSelector(TKey id)`.
++ Escrita: `AddAsync<TCreateDTO>` (item ou coleção), `UpdateAsync<TUpdateDTO>` (`TUpdateDTO : class, IKey<TKey>`; item ou coleção), `DeleteAsync(TKey)` (item ou coleção) — versões de coleção retornam `OperationResultCollection` e aceitam `stopOnFirstFail`.
++ Leitura por chave: `GetAsync<TDestination>(TKey id[, projection])`.
++ Listagens de referência: `ToInfoListAsync` / `GetInfoListAsync` retornando `InfoDTO<TKey>`.
++ Eventos async de ciclo de vida:
+  + Pré-operação (podem vetar): `AddingAsync`, `UpdatingAsync`, `DeletingAsync` (`OperationResultAsyncEventHandler` — retorno inválido cancela a operação).
+  + Pós-operação: `AddedAsync`, `UpdatedAsync` (com `AddedEntityEventArgs`/`UpdatedEntityEventArgs`), `DeletedAsync` (`ValueEventArgs`).
+  + *Hooks* protegidos equivalentes: `OnBeforeAdd/Update/DeleteAsync`, `OnAfterAdd/Update/DeleteAsync`.
+
+```csharp
+public interface IProductService : IModelService<Product, Guid> { }
+
+public sealed class ProductService : ModelServiceBase<Product, IProductRepository, Guid>, IProductService
+{
+    public ProductService(IProductRepository repository, IUnitOfWork uow, IMapper mapper)
+        : base(repository, uow, mapper)
     { }
 
-    protected HttpClientBase(
-        ILogger logger,
-        string apiPrefix,
-        IHttpClientFactory httpClientFactory)
+    protected override Expression<Func<Product, bool>> IdSelector(Guid id) => x => x.Id == id;
+
+    // Veto de regra de negócio antes do delete
+    protected override async ValueTask<OperationResult> OnBeforeDeleteAsync(Guid id, CancellationToken ct)
     {
-        _logger = logger;
-        _apiPrefix = apiPrefix;
-        _httpClient = httpClientFactory.CreateClient();
+        return await _repository.AnyAsync(x => x.Id == id && x.HasOrders, ct)
+            ? Result.Error("PRODUCT_HAS_ORDERS")
+            : Result.Success();
     }
-
-    #region Protected Methods
-
-    #region RequestMessage
-
-    /// <remarks>
-    /// Se não houver autenticação:
-    /// <code>
-    /// return null;
-    /// </code>
-    /// <para/>
-    /// Se houver autenticação (token):
-    /// <code>
-    /// return new("Bearer", await _tokenProvider.GetTokenAsync(cancellationToken));
-    /// </code>
-    /// </remarks>
-    protected abstract ValueTask<AuthenticationHeaderValue?> AddAuthTokenAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Monta HttpRequestMessage, insere authentication (se tiver), insere headers (se tiver) e
-    /// retorna o HttpRequestMessage.
-    /// </summary>
-    protected virtual async ValueTask<HttpRequestMessage> GetHttpRequestMessageAsync(HttpMethod requestMethod, string requestUri, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
-    {
-        var requestMessage = new HttpRequestMessage(requestMethod, requestUri);
-
-        var authenticationHeaderValue = await AddAuthTokenAsync(cancellationToken);
-        if (authenticationHeaderValue is not null)
-        {
-            requestMessage.Headers.Authorization = authenticationHeaderValue;
-        }
-
-        if (requestHeaders?.Any() == true)
-        {
-            foreach (var header in requestHeaders)
-            {
-                requestMessage.Headers.Add(header.Key, header.Value);
-            }
-        }
-
-        return requestMessage;
-    }
-
-    /// <summary>
-    /// Monta HttpRequestMessage, insere authentication (se tiver), insere headers (se tiver), insere o body usando JsonContent e
-    /// retorna o HttpRequestMessage.
-    /// </summary>
-    protected virtual async ValueTask<HttpRequestMessage> GetHttpRequestMessageAsync<TContent>(HttpMethod requestMethod, string requestUri, TContent requestContent, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
-    {
-        var requestMessage = await GetHttpRequestMessageAsync(requestMethod, requestUri, requestHeaders, cancellationToken);
-        requestMessage.Content = JsonContent.Create(requestContent, options: JsonExtensions.JSON_DEFAULT_OPTIONS);
-
-        return requestMessage;
-    }
-
-    #endregion RequestMessage
-
-    #region ResponseMessage
-
-    /// <summary>
-    /// Monta a request, envia e retorna a response+content(string).
-    /// </summary>
-    protected virtual async Task<(HttpResponseMessage Message, string Content)> GetHttpResponseMessageAsync(HttpMethod requestMethod, string requestUri, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
-    {
-        var requestMessage = await GetHttpRequestMessageAsync(requestMethod, requestUri, requestHeaders, cancellationToken);
-        var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-
-        return (responseMessage, responseContent);
-    }
-
-    /// <summary>
-    /// Monta a request (com body), envia e retorna a response+content(string).
-    /// </summary>
-    protected virtual async Task<(HttpResponseMessage Message, string Content)> GetHttpResponseMessageAsync<TContent>(HttpMethod requestMethod, string requestUri, TContent requestContent, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
-    {
-        var requestMessage = await GetHttpRequestMessageAsync(requestMethod, requestUri, requestContent, requestHeaders, cancellationToken);
-        var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-
-        return (responseMessage, responseContent);
-    }
-
-    #endregion ResponseMessage
-
-    #region ApiResponse
-
-    /// <summary>
-    /// Monta a request, envia, verifica se a response contém uma prop 'title' iniciada com o ApiPrefix e retorna a response+content(string).
-    /// </summary>
-    /// <exception cref="ExternalAPIException" />
-    protected virtual async Task<(HttpResponseMessage Message, string Content)> GetApiResponseAsync(HttpMethod requestMethod, string requestUri, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
-    {
-        var response = await GetHttpResponseMessageAsync(requestMethod, requestUri, requestHeaders, cancellationToken);
-
-        ThrowExternalAPIExceptionIfResponseIsNoApiResultWithTitlePrefix(response);
-
-        return response;
-    }
-
-    /// <summary>
-    /// Monta a request com body, envia, verifica se a response contém uma prop 'title' iniciada com o ApiPrefix e retorna a response+content(string).
-    /// </summary>
-    /// <exception cref="ExternalAPIException" />
-    protected virtual async Task<(HttpResponseMessage Message, string Content)> GetApiResponseAsync<TContent>(HttpMethod requestMethod, string requestUri, TContent requestContent, IDictionary<string, string>? requestHeaders, CancellationToken cancellationToken = default)
-    {
-        var response = await GetHttpResponseMessageAsync(requestMethod, requestUri, requestContent, requestHeaders, cancellationToken);
-
-        ThrowExternalAPIExceptionIfResponseIsNoApiResultWithTitlePrefix(response);
-
-        return response;
-    }
-
-    /// <summary>
-    /// Primeiramente, verifica se há um erro de validation (ex, quando se espera um param não passado).<br/>
-    /// Em seguida, verifica se o json do resultado contém $.title iniciado com PREFIX.
-    /// </summary>
-    /// <exception cref="ExternalAPIException"></exception>
-    protected virtual void ThrowExternalAPIExceptionIfResponseIsNoApiResultWithTitlePrefix((HttpResponseMessage Message, string Content) response)
-    {
-        var jsonDoc = JsonDocument.Parse(response.Content);
-
-        if (!jsonDoc.RootElement.TryGetProperty("title", out var titleProperty))
-        {
-            _logger.LogError("ExternalAPIException: {reasonPhrase}", response.Content);
-            throw new ExternalAPIException(response.Message.StatusCode, response.Content);
-        }
-
-        // One or more validation errors occurred.
-        if (titleProperty.ValueEquals("One or more validation errors occurred."))
-        {
-            /* Se chegou aqui, provavelmente a response está nesse formato:
-            {
-              "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-              "title": "One or more validation errors occurred.",
-              "status": 400,
-              "traceId": "00-6883c0d3459086c9ec5389bf5eb154ee-cb27797253ef54cb-00",
-              "errors": {
-                "awb": [
-                  "The awb field is required."
-                ],
-                "$.masterConsignment.includedHouseConsignment.weightChargeAmount.currencyID": [
-                  "The JSON value could not be converted to System.String. Path: $.masterConsignment.includedHouseConsignment.weightChargeAmount.currencyID | LineNumber: 0 | BytePositionInLine: 1036."
-                ]
-              }
-            }
-            */
-
-            var errors = string.Join("\r\n", jsonDoc.RootElement.GetProperty("errors")
-                .EnumerateObject()
-                .Select(e => e.Value[0].ToString()));
-
-            _logger.LogError("ExternalAPIException: {reasonContent}", response.Content);
-            throw new ExternalAPIException(response.Message.StatusCode, errors);
-        }
-
-        // Esperado PREFIX
-        if (!titleProperty.GetString()?.StartsWith(_apiPrefix) == true)
-        {
-            _logger.LogError("ExternalAPIException: {reasonContent}", response.Content);
-            throw new ExternalAPIException(response.Message.StatusCode, response.Content);
-        }
-    }
-
-    #endregion ApiResponse
-
-    #endregion Protected Methods
 }
 
-```
-</details>
+// uso
+var created = await productService.AddAsync(createDTO, ct);       // OperationResult<ProductCreateDTO>
+var dto = await productService.GetAsync<ProductDetailsDTO>(id, ct);
+var page = await productService.GetListAsync<ProductListDTO>(criteria, ct);
 
-<details>
-	<summary>Exemplo de uso</summary>
-
-```cs
-
-// appsettings
-public class MovieSettings
+// assinatura de evento
+productService.AddedAsync += async (sender, e, ct) =>
 {
-    public required string ApiKey { get; set; }
-    public required string BaseURL { get; set; }
-}
+    logger.LogInformation("Produto {Id} criado", ((Product)e.Entity!).Id);
+};
+```
 
+### HttpClientBase
+Classe base (em `Maxsys.Core.Services.Http`) para serviços que consomem APIs HTTP externas via `IHttpClientFactory`.
++ `AddAuthTokenAsync` (abstrato): retorna o `AuthenticationHeaderValue` (ou `null` se não houver autenticação).
++ `GetHttpRequestMessageAsync` (com/sem *body* JSON, com `HttpContent` custom ou sem autenticação): monta a request com auth + headers.
++ `GetHttpResponseMessageAsync`: envia e retorna `(HttpResponseMessage Message, string Content)`.
++ `GetApiResponseAsync`: envia e valida se a response é uma API no padrão esperado (prop `title` com prefixo) — senão lança `ExternalAPIException`.
+
+```csharp
 public sealed class MovieService : HttpClientBase, IMovieService
 {
-    private readonly MovieSettings _settings;
     private readonly IMovieTokenProvider _tokenProvider;
 
-    public MovieService(ILogger<MovieService> logger, IConfiguration configuration, IHttpClientFactory httpClientFactory, IMovieTokenProvider tokenProvider, IOptions<MovieSettings> options)
-        : base(logger, httpClientFactory)
+    public MovieService(ILogger<MovieService> logger, IHttpClientFactory factory, IMovieTokenProvider tokenProvider)
+        : base(logger, factory)
     {
-        _settings = options.Value;
         _tokenProvider = tokenProvider;
     }
 
-    public async Task<OperationResult<MovieDTO>> GetExemplo01Async(Guid id, CancellationToken cancellationToken = default)
+    protected override async ValueTask<AuthenticationHeaderValue?> AddAuthTokenAsync(CancellationToken ct = default)
+        => new("Bearer", await _tokenProvider.GetTokenAsync(ct));
+
+    public async Task<OperationResult<MovieDTO>> GetMovieAsync(Guid id, CancellationToken ct = default)
     {
-        var requestUri = $"{_settings.BaseURL}/movies/{id}";
-        var requestHeaders = GetCommonHeaders();
+        var (message, content) = await GetHttpResponseMessageAsync(HttpMethod.Get, $"movies/{id}", requestHeaders: null, ct);
 
-        var requestMessage = await GetHttpRequestMessageAsync(HttpMethod.Get, requestUri, requestHeaders, cancellationToken);
-        var responseMessage = await _httpClient.SendAsync(requestMessage, cancellationToken);
-        var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            var result = responseContent.FromJson<MovieDTO>();
-            return new(result);
-        }
-        else if (responseMessage.StatusCode == HttpStatusCode.NotFound)
-        {
-            return new(GenericMessages.ITEM_NOT_FOUND);
-        }
-        /* Outro erro tratável
-        else if (responseMessage.StatusCode == OtherStatusCode)
-        {
-            var result = response.Content.FromJson<OtherExpectedObject>();
-            return new(result.SomeMessage);
-        }
-        */
-        else
-        {
-            return new(new Notification("SomeErrorMessage", details: responseContent ));
-
-            /* Ou throw new ExternalAPIException(responseMessage.StatusCode, responseContent); */
-        }
-    }
-
-    public async Task<OperationResult<MovieDTO>> GetExemplo02Async(Guid id, CancellationToken cancellationToken = default)
-    {
-        var requestUri = $"{_settings.BaseURL}/movies?id={id}";
-        var requestHeaders = new Dictionary<string, string>()
-        {
-            [Headers.SOME_HEADER_KEY] = "cuca-beludo",
-        };
-
-        var response = await GetHttpResponseMessageAsync(HttpMethod.Get, requestUri, requestHeaders, cancellationToken);
-        // ou var (responseMessage, responseContent) = await GetHttpResponseMessageAsync(HttpMethod.Get, requestUri, requestHeaders, cancellationToken);
-
-        try
-        {
-            response.Message.EnsureSuccessStatusCode();
-
-            // Response Ok
-            return new(response.Content.FromJson<MovieDTO>());
-        }
-
-        #region Status code 500
-
-        catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.InternalServerError)
-        {
-            _logger.LogError(ex, "Status Code: {StatusCode}", ex.StatusCode);
-
-            return new(new Notification("EXTERNAL_SERVICE_UNAVAILABLE") { Tag = response.Content });
-        }
-
-        #endregion Status code 500
-
-        #region Status Code 401 / 403
-
-        catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
-        {
-            _logger.LogError(ex, "Status Code: {StatusCode}", ex.StatusCode);
-
-            return new(new Notification("NOT_AUTHORIZED") { Tag = response.Content });
-        }
-
-        #endregion Status Code 401 / 403
-
-        #region Status Code 404
-
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
-            _logger.LogError(ex, "Status Code: {StatusCode}", ex.StatusCode);
-
-            return new(new Notification("NOT_FOUND") { Tag = response.Content });
-        }
-
-        #endregion Status Code 404
-
-        #region Outros status 4xx
-
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "Status Code: {StatusCode}", ex.StatusCode);
-
-            var error = response.Content.FromJson<SomeResponseErrorExpectedObject>(response.Content);
-
-            return new(new Notification("ANOTHER_ERROR_MESSAGE") { Tag = response.Content });
-        }
-
-        #endregion Outros status 4xx
-
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "UNEXPECTED_ERROR");
-            return new(new Notification(ex, "UNEXPECTED_ERROR"));
-            /* Ou throw new ExternalAPIException(response.Message.StatusCode, response.Content); */
-        }
-    }
-
-    public async Task<OperationResult<MovieDTO>> GetFromExpectedMaxsysApiResultAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var requestUri = $"{_settings.BaseURL}/movies/{id}";
-        
-        // Se o json do response content não tiver uma prop 'title' iniciada com um prefixo passado no CTOR.base 
-        // (ex, :base(logger, "MOVIES_API", httpClientFactory) e content json: $.title == "MOVIES_API-GET_MOVIE" ou $.title == "One or more validation errors occurred."),
-        // então uma ExternalAPIException será lançada com o StatusCode+Content(string)
-        var response = await GetApiResponseAsync(HttpMethod.Get, requestUri, requestHeaders: null, cancellationToken);
-
-        if (response.Message.IsSuccessStatusCode)
-        {
-            var apiResult = response.Content.FromJson<ApiDataResult<MovieDTO>>();
-            return new(apiResult.Result!.Data!);
-        }
-        else
-        {
-            var apiResult = response.Content.FromJson<ApiResult<OperationResult>>();
-            return new(apiResult.Result!.Notifications);
-        }
-    }
-
-    private static IDictionary<string, string> GetCommonHeaders()
-    {
-        var headers = new Dictionary<string, string>()
-        {
-            [Headers.API_HEADER_KEY] = ApiKey,
-        };
-
-        return headers;
-    }
-
-    // Caso não haja autenticação, usar a linha abaixo:
-    // protected override ValueTask<AuthenticationHeaderValue?> AddAuthTokenAsync(CancellationToken cancellationToken = default) => ValueTask.FromResult(default(AuthenticationHeaderValue?));
-
-    protected override async ValueTask<AuthenticationHeaderValue?> AddAuthTokenAsync(CancellationToken cancellationToken = default)
-    {
-        return new("Bearer", await _tokenProvider.GetTokenAsync(cancellationToken));
+        return message.IsSuccessStatusCode
+            ? Result.Success(content.FromJson<MovieDTO>())
+            : Result.Error<MovieDTO>(GenericMessages.ITEM_NOT_FOUND, details: content);
     }
 }
 ```
-</details>
 
+---
+## Repositórios (contratos)
 
+As implementações concretas (EF Core) vivem em `Maxsys.Data`. Aqui ficam apenas os contratos.
 
-## Extensions (Principais)
+### IRepository
+Interface básica para tipificar um objeto como Repositório: `Guid Id` (identificador do repositório), `Guid ContextId` (identificador do contexto em uso) e `IDisposable`.
+
+### IRepository&lt;TEntity&gt;
+Repositório CRUD completo da entidade, com filtragem por *expression* ou `ColumnFilter` e projeção via AutoMapper ou *projection* explícita.
++ Escrita: `AddAsync` (item/coleção), `UpdateAsync` (item/coleção), `DeleteAsync` (por chaves ou entidade), `ExecuteDeleteAsync(predicate)`.
++ Desconectado: `Update(entity, updatingData)` (update parcial com objeto anônimo), `Delete(entity)` / `Delete(entities)` — somente `Id` necessário.
++ Utilitários: `CountAsync` / `AnyAsync` (por predicate, `ColumnFilter` em entidade e/ou DTO, ou `ListCriteria`), `IdExistsAsync(object[])`, `HasChanges(entity, ...)`.
++ Listagem: dezenas de *overloads* de `ToListAsync` combinando origem do filtro (predicate ou `ColumnFilter`), projeção (`TDestination` via AutoMapper ou expression) e paginação/ordenação (`ListCriteria` ou `Pagination` + `sortSelector`).
++ Consulta pontual: `GetAsync` (por predicate ou `ColumnFilter`, com projeção e/ou ordenação), `GetByIdAsync` (por chaves, com/sem projeção), `GetWithIncludeAsync` (com `includeNavigation`), `GetSingleOrDefaultAsync` / `GetSingleOrThrowsAsync`.
+
+```csharp
+public interface IProductRepository : IRepository<Product> { }
+
+// exemplos de uso do contrato
+var exists = await _repository.IdExistsAsync(CompositeKeyHelper.Of(id), ct);
+var dtos = await _repository.ToListAsync<ProductListDTO>(x => x.IsActive, criteria, ct);
+_repository.Update(new Product { Id = id }, new { Name = "Novo nome" }); // update desconectado
+```
+
+### IUnitOfWork
+Contrato de Unit of Work para transação e persistência.
++ `BeginTransactionAsync(name?)` / `CommitTransactionAsync()` / `RollbackTransactionAsync()`.
++ `SaveChangesAsync()`: retorna `OperationResult` (no EF Core, também limpa o ChangeTracker).
++ `ClearTracker()`: limpa o ChangeTracker.
++ `Id` / `ContextId`: identificadores do UoW e do contexto.
+
+```csharp
+await _uow.BeginTransactionAsync(cancellationToken: ct);
+
+var saveResult = await _uow.SaveChangesAsync(ct);
+if (!saveResult.IsValid)
+{
+    await _uow.RollbackTransactionAsync(ct);
+    return saveResult;
+}
+
+await _uow.CommitTransactionAsync(ct);
+```
+
+---
+## Cache
+
+### ICacheManager / CacheManager
+Wrapper de `IMemoryCache` que mantém uma coleção *thread-safe* das chaves cacheadas, permitindo enumeração e limpeza seletiva (coisa que `IMemoryCache` puro não oferece).
++ `Set<T>(key, value, options)`: adiciona entrada e rastreia a chave.
++ `TryGetValue<T>(key, out value)`: tenta obter (remove do rastreio chaves expiradas).
++ `Remove(key)`, `GetAllKeys()`.
++ `Clear(predicate?)`: remove todas as entradas ou apenas as com chave que satisfaça o predicado.
+
+```csharp
+public class CatalogService(ICacheManager cache, IProductRepository repository)
+{
+    public async Task<List<ProductListDTO>> GetCatalogAsync(CancellationToken ct)
+    {
+        const string key = "catalog:all";
+
+        if (cache.TryGetValue<List<ProductListDTO>>(key, out var cached))
+            return cached!;
+
+        var items = await repository.ToListAsync<ProductListDTO>(cancellationToken: ct);
+        cache.Set(key, items, new MemoryCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10) });
+
+        return items;
+    }
+
+    public void InvalidateCatalog() => cache.Clear(k => k.StartsWith("catalog:"));
+}
+```
+
+### CacheManagerDependencyInjectionExtensions
+Registro do cache no container:
++ `services.AddCacheManager()`: registra `IMemoryCache` + `ICacheManager` (singleton).
++ `services.AddCacheManager<TService>()`: registra também um *keyed/typed* manager para o serviço.
+
+```csharp
+services.AddCacheManager();
+```
+
+---
+## Auditoria
+
+### AuditHelper / AuditLog / AuditLogField
+Comparação de dois estados de um objeto (ou dois JSONs) gerando um log de alterações campo a campo — incluindo propriedades aninhadas (achatadas com *dot notation*).
++ `AuditHelper.GetAuditLog(object obj1, object obj2)` / `GetAuditLog(string json1, string json2)`: retorna `AuditLog`.
++ `AuditLog.Fields`: array de `AuditLogField` com `Field`, `OldValue` e `NewValue` (`null` em `NewValue` = campo removido; `null` em `OldValue` = campo inserido).
+
+```csharp
+var before = new { Name = "Maria", Address = new { City = "Santos" } };
+var after  = new { Name = "Maria", Address = new { City = "São Paulo" } };
+
+AuditLog log = AuditHelper.GetAuditLog(before, after);
+// log.Fields => [ { Field = "Address.City", OldValue = "Santos", NewValue = "São Paulo" } ]
+```
+
+---
+## JSON
 
 ### JsonExtensions
-- `.FromJson()`
-	<details>
-		<summary>Exemplo de uso</summary>
+Serialização/desserialização padronizadas sobre `System.Text.Json`, com `JSON_DEFAULT_OPTIONS` públicas (camelCase, enums como string etc.) reutilizadas em toda a biblioteca (inclusive nos serviços HTTP).
++ `json.FromJson<T>()` / `json.FromJson<T>(defaultValue)` / `json.FromJson(Type)`.
++ `json.TryFromJson<T>(out obj, out notification, options?)`: variante que não lança — em falha, retorna uma `Notification` pronta.
++ `value.ToJson(options?)`: serializa (retorna `null` se o objeto for `null`).
 
-	```cs
+```csharp
+string json = """{"id":123,"name":"Giuseppe Kadura"}""";
 
-	string json = """"{"id":123,"name":"Giuseppe Kadura"}"""";
+Person person = json.FromJson<Person>();
+Person safe = json.FromJson(Person.Default); // retorna default se json nulo
 
-	Person person = json.FromJson<Person>();
-	Person person = json.FromJson<Person>(Person.Default); // caso json==null, retorna default
-	Person person = json.FromJson(typeof(Person));
-	```
-	</details>
+if (!json.TryFromJson<Person>(out var parsed, out var notification))
+    return Result.FromNotifications([notification]);
 
-- `.ToJson()`
-	<details>
-		<summary>Exemplo de uso</summary>
+string serialized = person.ToJson();
+```
 
-	```cs
-	Person person = new()
-	{
-		Id = 123,
-		Name = "Giuseppe Kadura"
-	};
+### DateTimeOffsetJsonConverter
+`JsonConverter<DateTimeOffset>` que força a serialização em ISO 8601 com timezone UTC e sufixo `Z` (`yyyy-MM-ddTHH:mm:ss.fffZ`) em vez do offset `+00:00`. Na leitura, string nula/vazia vira `DateTimeOffset.MinValue`.
 
-	string json = person.ToJson();
+### UnixTimestampJsonConverter
+`JsonConverter<DateTime>` que lê valores numéricos como Unix Timestamp em milissegundos (convertidos para UTC) e escreve datas como string ISO 8601 (formato `"o"`).
 
-	// json = {"id":123,"name":"Giuseppe Kadura"}
-	```
-	</details>
+```csharp
+public class EventDTO
+{
+    [JsonConverter(typeof(UnixTimestampJsonConverter))]
+    public DateTime OccurredAt { get; set; }
 
-### EnumExtensions
-- `.ToFriendlyName()`
-	<details>
-		<summary>Exemplo de uso</summary>
+    [JsonConverter(typeof(DateTimeOffsetJsonConverter))]
+    public DateTimeOffset CreatedAt { get; set; }
+}
+```
 
-	```cs
-	public enum SampleEnum : byte
-	{
-	    [Description("Este é o tipo A")]
-	    TipoA = 1,
+---
+## Exceções
 
-	    [Description("Este é o tipo B")]
-	    TipoB,
+### DomainException
+Representa um erro de domínio. Base das demais exceções de domínio da biblioteca.
 
-	    // Sem description
-	    TipoC = 99
-	}
+### ExternalAPIException
+Erro ao chamar uma API externa. Carrega o `HttpStatusCode` da chamada e compõe a mensagem com o status + *reason phrase*.
 
-	var enumA = SampleEnum.TipoA;
-	var enumC = SampleEnum.TipoC;
-	var enumNull = default(SampleEnum?);
-	var notEnum = (SampleEnum)77;
+### InvalidEnumArgumentException&lt;TEnum&gt;
+Versão genérica de `InvalidEnumArgumentException` — captura automaticamente o nome do argumento via `CallerArgumentExpression`.
 
-	Console.WriteLine(enumA.ToFriendlyName());            // "Este é o tipo A"
-	Console.WriteLine(enumC.ToFriendlyName());            // "TipoC"
-	Console.WriteLine(enumNull.ToFriendlyName(""));       // ""
-	Console.WriteLine(enumNull.ToFriendlyName());         // null
-	Console.WriteLine(enumNull.ToFriendlyName("Nenhum")); // "Nenhum"
-	Console.WriteLine(notEnum.ToFriendlyName());          // "77"
-	```
-	</details>
+### InvalidServiceProviderException
+Erro ao validar um ServiceProvider; recebe a lista de erros encontrados.
 
-- `.ToEnum()`
-	<details>
-		<summary>Exemplo de uso</summary>
+### NotAllowedOperationException
+Erro ao tentar realizar uma operação não permitida.
 
-	```cs
-	var enumA = "TipoA".ToEnum<SampleEnum>();
-	var enumB = "Este é o tipo B".ToEnum<SampleEnum>();
-	var notEnum = "TipoD".ToEnum<SampleEnum>();
+### NotAuthenticatedUserException
+Erro quando o usuário não está autenticado.
 
-	Console.WriteLine((byte?)enumA);   // 1
-	Console.WriteLine((byte?)enumB);   // 2
-	Console.WriteLine((byte?)notEnum); // null
-	```
-	</details>
+```csharp
+if (invalidValue is not OrderStatus status)
+    throw new InvalidEnumArgumentException<OrderStatus>((OrderStatus)invalidValue);
+
+if (user is null)
+    throw new NotAuthenticatedUserException();
+
+throw new ExternalAPIException(response.StatusCode, responseContent);
+```
+
+---
+## Eventos
+
+### AsyncEventHandler&lt;TEventArgs&gt; / OperationResultAsyncEventHandler&lt;TEventArgs&gt;
+Delegates de evento assíncronos (retornam `ValueTask` / `ValueTask<OperationResult>`) com `CancellationToken`. São a base dos eventos de `ModelServiceBase` — a variante `OperationResult` permite que o *handler* vete a operação.
+
+```csharp
+service.AddingAsync += async (sender, entity, ct) =>
+{
+    return entity.Price < 0
+        ? Result.Error("INVALID_PRICE")
+        : Result.Success();
+};
+```
+
+### ValueEventArgs
+`EventArgs` genérico com um `Value` (`object?`) e auxiliares `GetValueAs<T>()` / `IsValue<T>()`.
+
+### AddedEntityEventArgs / UpdatedEntityEventArgs / ModifiedEntityEventArgs
+`EventArgs` dos eventos pós-escrita de `ModelServiceBase`: carregam a `Entity` persistida e o `DTO` de origem.
+
+```csharp
+service.UpdatedAsync += async (sender, e, ct) =>
+{
+    var entity = e.Entity; // TEntity
+    var dto = e.DTO;       // DTO usado no update
+};
+```
+
+---
+## HTTP
+
+### HttpServiceBase
+Classe base (em `Maxsys.Core.Http`) para consumir **APIs Maxsys** (que respondem no envelope `ApiResult`), convertendo a resposta diretamente em `OperationResult`. Diferente de `HttpClientBase` (genérico para qualquer API), valida a resposta como uma API Maxsys — identificador `MaxsysAPI` no JSON (com compatibilidade retroativa via `apiPrefix` para APIs antigas).
++ Atalhos por verbo: `GetResultAsync[<T>]`, `GetPostResultAsync[<T>]`, `GetPutResultAsync[<T>]`, `GetDeleteResultAsync[<T>]` — todos retornam `OperationResult`/`OperationResult<T>`.
++ Núcleo: `GetMaxsysApiAsync[<T>]` (valida resposta → converte `ApiResult` em `OperationResult`); `SendAsync` (envio cru com eventos).
++ Helpers: `CreateHttpRequestMessage`, `CreateJsonContent<T>` (usa `JSON_DEFAULT_OPTIONS`), `AddHeaders`, `AddContent`.
++ Eventos assíncronos: `Sending`, `Sent`, `MaxsysApiResponseInvalid`, `MaxsysApiResponseValid`.
+
+```csharp
+public sealed class BillingApiService : HttpServiceBase, IBillingApiService
+{
+    public BillingApiService(IHttpClientFactory factory) : base(factory)
+    {
+        Sending += async (s, e, ct) =>
+            e.HttpRequestMessage.Headers.Authorization = new("Bearer", await GetTokenAsync(ct));
+    }
+
+    public Task<OperationResult<InvoiceDTO>> GetInvoiceAsync(Guid id, CancellationToken ct = default)
+        => GetResultAsync<InvoiceDTO>($"invoices/{id}", requestHeaders: null, ct);
+
+    public Task<OperationResult> CancelInvoiceAsync(Guid id, CancellationToken ct = default)
+        => GetPostResultAsync($"invoices/{id}/cancel", null, CreateJsonContent(new { Reason = "user" }), ct);
+}
+```
+
+### MaxsysApiValidationResult
+Resultado da validação de uma resposta de API Maxsys em `HttpServiceBase`.
++ Factories: `CreateValidResult()` / `CreateInvalidResult(statusCode, errorMessage, content?, exception?)`.
++ `ToOperationResult()` / `ToOperationResult<T>()`: converte a falha em `OperationResult` com notificação detalhada.
+
+### Delegates e EventArgs de HTTP
+`SendingEventHandler`/`SendingEventArgs`, `SentEventHandler`/`SentEventArgs`, `MaxsysApiResponseInvalidEventHandler`/`MaxsysApiResponseInvalidEventArgs`, `MaxsysApiResponseValidEventHandler`/`MaxsysApiResponseValidEventArgs` — os tipos usados pelos eventos de `HttpServiceBase` (todos `record`s simples com a mensagem/resultado correspondente).
+
+---
+## Helpers
+
+### CompositeKeyHelper
+Açúcar sintático para montar chaves compostas (`object[]`) de forma legível.
+
+```csharp
+var keys = CompositeKeyHelper.Of(orderId, productId);
+await _repository.DeleteAsync(keys, ct);
+```
+
+### DateTimeHelper
+Conversões e limites de data:
++ `FromUnixTimestamp(long)` / `ToUnixTimestamp(DateTime)` (milissegundos).
++ `StartDate(date)` / `EndDate(date)`: início (00:00:00) e fim (23:59:59.9999999) do dia — *overloads* para `DateTime` e `DateTimeOffset`.
+
+```csharp
+var start = DateTimeHelper.StartDate(DateTime.Today);
+var end = DateTimeHelper.EndDate(DateTime.Today);
+```
+
+### EncryptHelper
+Criptografia simétrica AES com *salt*: `AESEncrypt(plainText, salt)` / `AESDecrypt(cipherText, salt)`.
+
+```csharp
+var cipher = EncryptHelper.AESEncrypt("segredo", salt);
+var plain = EncryptHelper.AESDecrypt(cipher, salt);
+```
+
+### ExpressionHelper
+Construção dinâmica de *expressions*:
++ `GetMemberAccessExpression<T>(propertyName)`: cria `x => x.Prop` a partir de string (aceita *dot notation*) — usado pelo `ApplySort`.
++ `GetMemberPath<T>(expression)`: caminho ("A.B.C") a partir de uma expression — usado por `ColumnFilterExtensions.AddFilter`.
++ `BuildColumnFilterExpression<T>(filter)`: converte um `ColumnFilter` no predicado `Expression<Func<T, bool>>` correspondente — o coração do `ApplyFilters`.
+
+```csharp
+var selector = ExpressionHelper.GetMemberAccessExpression<City>("State.Name");
+var predicate = ExpressionHelper.BuildColumnFilterExpression<City>(new("Name", "São", FilterMatchModes.StartsWith));
+```
+
+### HashHelper
+Hashes de bytes/strings/objetos:
++ `ToSHA512` / `ToSHA512HashString` (extensões de `byte[]`/`MemoryStream`).
++ `GetHexHash(value, hashType = HashTypes.MD5)`: hash hexadecimal de `object`/`string`/`byte[]` — enum `HashTypes` define o algoritmo.
+
+```csharp
+var md5 = HashHelper.GetHexHash("conteudo");
+var sha = fileBytes.ToSHA512HashString();
+```
+
+### IOHelper
+Operações de arquivos com retorno `OperationResult` (assíncronas) e saneamento de nomes:
++ `MoveFileAsync` / `MoveOrOverwriteFileAsync` / `CopyFileAsync` / `DeleteFileAsync` — todas `ValueTask<OperationResult>`, com opção `setAsReadOnly`.
++ `InsertReadOnlyAttribute` / `RemoveReadOnlyAttribute` e manipulação de `FileAttributes`.
++ `RemoveInvalidFileNameChars` / `ReplaceInvalidFileNameChars` / `ReplaceAndRemoveInvalidFileNameChars` (idem para *directory*).
+
+```csharp
+var result = await IOHelper.MoveOrOverwriteFileAsync(sourcePath, destPath, setAsReadOnly: false, ct);
+if (!result.IsValid) { /* tratar */ }
+```
+
+### ReflectionHelper
+Descoberta de tipos por reflexão (base do `AddImplementations`):
++ `GetImplementationDictionary<TInterface>(assemblies, suffix?, predicate?)`: dicionário interface → implementação.
++ `GetInterfaces<TInterface>` / `GetImplementation<TInterface>`: listas de tipos filtradas por sufixo/predicado.
+
+### RegexHelper
+Padrões de regex prontos via enum `Pattern` + `GetPattern(pattern)`, e constantes como `PATTERN_FOR_VALID_FILE_NAME` e `PATTERN_FOR_VALID_FILE_PATH`.
+
+### StringHelper
+Utilitários de string (a maioria como métodos de extensão): `RemoveInvalidFileNameChars`, `GetTextOrNullIfEmpty`, `GetDecimalOrNullIfEmpty`, `GetDateTimeOrNullIfEmpty`, `ToHexString`, `GetOnlyNumbers`, `RemoveDiacritics`, `FirstCharToUpper`, `ToCamelCase`, `ToPascalCase`, `SplitLines`, `SplitTextIntoChunks`, `NormalizeText`, `GetLoremIpsumPhrase` (+ constante `LOREM_IPSUM`).
+
+```csharp
+var digits = "(11) 98888-7766".GetOnlyNumbers();  // "11988887766"
+var ascii = "coração".RemoveDiacritics();          // "coracao"
+var chunks = longText.SplitTextIntoChunks(4000);
+```
+
+### UIDGen
+Geração de identificadores únicos:
++ `NewGuid(sequentialGuidOption?, dateTimeOffset?)`: Guid sequencial — padrão `SequentialAsVersion7` (UUID v7).
++ `GenerateUID(UIDBits bits | int bytes, UIDGenerationOptions options)`: UID string com tamanho configurável.
++ Enums: `SequentialGuidOptions`, `UIDBits`, `UIDGenerationOptions`.
+
+```csharp
+var id = UIDGen.NewGuid();                       // UUID v7 (sequencial)
+var uid = UIDGen.GenerateUID(UIDBits.Bits64);
+```
+
+### XMLHelper
+Serialização/validação XML:
++ `Serialize<T>(item)` / `Deserialize<T>(xml, defaultNamespace?)` / `Read(xml)` (→ `XElement`).
++ `ToXmlString<TXml>(root, encoding?, settings?)`: retorna `OperationResult<string?>`.
++ `ValidateSchema<TXml>(root, schemaResourceName | XmlSchema, ...)`: valida contra XSD retornando `OperationResult`.
++ `ReplaceElement(other, me, xName)` e `DEFAULT_XML_SETTINGS`.
+
+```csharp
+var xmlResult = XMLHelper.ToXmlString(invoice, Encoding.UTF8);
+var validation = XMLHelper.ValidateSchema(invoice, schema);
+```
+
+---
+## Extensions
+
+Todas reescritas com *extension members* do C# 14 (`extension(...)` blocks).
+
+### ClaimsPrincipalExtensions
++ `user.GetIdentifier(identifier = ClaimTypes.NameIdentifier)`: valor do claim (lança `NotAuthenticatedUserException` se ausente).
++ `user.GetIdentifierAsGuid(...)`: idem, convertido para `Guid`.
+
+```csharp
+Guid userId = User.GetIdentifierAsGuid();
+```
 
 ### DateTimeExtensions
-- IsBetween
-	<details>
-		<summary>Exemplo de uso</summary>
-	<p>
-	Checa se uma data está entre duas datas (modo inclusivo).
-	</p>
++ `dateTime.IsBetween(initialDate, endDate)`: checa se a data está entre duas datas (inclusivo).
 
-	```cs
-	// Natal de 2023
-	var dateToCheck = new DateTime(2023, 12, 25);
+```csharp
+var isChristmas2023 = new DateTime(2023, 12, 25).IsBetween(new(2023, 1, 1), new(2023, 12, 31)); // true
+```
 
-	var year2023 = new Period(
-		new DateTime(2023, 01, 01),
-		new DateTime(2023, 12, 31));
+### EnumExtensions
++ `value.ToFriendlyName(defaultValue?)`: nome amigável do literal (usa `DescriptionAttribute` quando presente; literal sem correspondência vira o valor numérico como string).
++ `text.ToEnum<TEnum>()`: converte string (nome ou *friendly name*) em enum — `null` se não casar.
++ `value.Convert<TTarget>()` / `ConvertNull<TTarget>()`: conversão entre enums.
++ `byteValue.ToByteEnum<TEnum>(defaultEnum)`.
++ Estáticos: `Min<T>`/`Max<T>`/`GetMinValue`.
 
-	var decade90 = new Period(
-		new DateTime(1990, 01, 01),
-		new DateTime(1999, 12, 31));
+```csharp
+public enum SampleEnum : byte
+{
+    [Description("Este é o tipo A")]
+    TipoA = 1,
+    TipoC = 99
+}
 
-	var after2000 = new Period(
-		new DateTime(2000, 01, 01),
-		null);
+SampleEnum.TipoA.ToFriendlyName();       // "Este é o tipo A"
+SampleEnum.TipoC.ToFriendlyName();       // "TipoC"
+"Este é o tipo A".ToEnum<SampleEnum>();  // SampleEnum.TipoA
+"TipoD".ToEnum<SampleEnum>();            // null
+```
 
-	var before2000 = new Period(
-		null,
-		new DateTime(1999, 12, 31));
+### FluentValidationExtensions
+Integração FluentValidation ↔ `Notification`:
++ `rule.WithNotification(message[, details[, tag]], resultType = Warning)`: anexa metadados de `Notification` à regra.
++ `validationResult.ConvertToNotifications()`: `ValidationResult` → `List<Notification>`.
++ `validationFailure.ConvertToNotification()`.
 
+```csharp
+public class CreateProductValidator : AbstractValidator<ProductCreateDTO>
+{
+    public CreateProductValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .WithNotification(GenericMessages.FIELD_REQUIRED, "Nome é obrigatório", ResultTypes.Error);
+    }
+}
 
-	var isYear2023 = dateToCheck.IsBetween(year2023);
-	var isDecade90 = dateToCheck.IsBetween(decade90);
-	var isAfter2000 = dateToCheck.IsBetween(after2000);
-	var isBefore2000 = dateToCheck.IsBetween(before2000);
-	
-	Console.WriteLine(isYear2023);    // true
-	Console.WriteLine(isDecade90);    // false
-	Console.WriteLine(isAfter2000);   // true
-	Console.WriteLine(isBefore2000);  // false
-	```
+var validation = await validator.ValidateAsync(dto, ct);
+if (!validation.IsValid)
+    return Result.FromNotifications(validation.ConvertToNotifications());
+```
 
-	Além desse método, existem mais overloads.
-	</details>
+### NotificationExtensions
++ `notifications.ToResultType(@default = Success)`: o `ResultTypes` mais severo de uma coleção de notificações.
 
-### IServiceCollectionExtensions
-- AddImplementations
-	<details>
-		<summary>Exemplo de uso</summary>
-	<p>
-	No exemplo abaixo, busca-se as interfaces do assembly de CoreEntry
-	cujo nome termina em "Provider" e que herdam de IService (ex.: IDataProvider : IService),
-	e então busca para cada uma, sua implementação no assembly de DataEntry.
-	Em seguida, adiciona os objetos ao ServiceCollection (interface x implementação).
-	</p>
+### ServiceCollectionExtensions
+Registro em massa por convenção (interface × implementação descobertas por reflexão):
++ `AddImplementations<TInterface>(interfaceAssemblies, implementationAssemblies, suffix?, predicate?)` e variantes com *entry types* (`<TInterface, TInterfaceEntry, TImplementationEntry>` / `<TInterface, TEntry>`). Classes com `[DependencyInjectionIgnore]` são puladas.
++ `Add<TService, TImplementation>(lifetime)` / `Add<TService>(lifetime)`: registro com `ServiceLifetime` parametrizado.
++ `RegisterImplementationDictionary(keyValues, lifetime = Scoped)`.
++ `ReplaceServiceImplementation<TService, TReplaceImplementation>(lifetime = Scoped)`: substitui a implementação registrada de um serviço.
 
-	```cs
-	services.AddImplementations<IService, CoreEntry, DataEntry>("Provider");
-	```
+```csharp
+// registra todas as interfaces *Service do assembly de ICoreEntry
+// com suas implementações no assembly de IDataEntry
+services.AddImplementations<IService, ICoreEntry, IDataEntry>("Service");
 
-	Além desse método, existem mais overloads.
-	</details>
-	
-#### [README](README.md)
+services.ReplaceServiceImplementation<IEmailSender, FakeEmailSender>();
+```
+
+### TypeExtensions
++ `type.IsAssignableToGenericType(genericType)`: checa atribuição a tipo genérico aberto (ex.: `typeof(IRepository<>)`).
++ `type.TryGetAttribute<T>(out value)`: obtém atributo do tipo, se existir.
+
+```csharp
+if (type.IsAssignableToGenericType(typeof(IModelService<,>))) { /* ... */ }
+```
+
+### JsonExtensions / QueryableExtensions / ColumnFilterExtensions
+Documentadas nas seções [JSON](#json), [Listagem e Ordenação](#listagem-e-ordenação) e [Filtragem](#filtragem), respectivamente.
+
+---
+## Utils
+
+### RandomUtils
+Geração aleatória baseada em `Random.Shared`:
++ Primitivos: `NextBool`, `NextChance(probability)`, `NextInt`, `NextLong`, `NextFloat`, `NextDouble`, `NextDecimal`, `NextBytes`.
++ Strings: `NextString(length[, chars])`, `NextHexString`, `NextDigits`.
++ Datas: `NextDateTime`, `NextDateTimeOffset`, `NextTimeSpan`.
++ Coleções: `GetRandomEnum<TEnum>(except?)`, `GetRandomItem`, `GetRandomItems`, `Shuffled`.
+
+```csharp
+var otp = RandomUtils.NextDigits(6);
+var status = RandomUtils.GetRandomEnum<OrderStatus>(except: [OrderStatus.None]);
+var sample = RandomUtils.GetRandomItems(products, 5);
+```
+
+### ResourcesUtils
+Acesso a recursos embutidos (*embedded resources*):
++ `GetEmbeddedResource<TAssemblyReference>(resourceName)`: `Stream?` do recurso.
++ `ListResourcesInAssembly<TAssemblyReference>()`.
++ `GetXmlSchema<TAssemblyReference>(resourceName)`: `OperationResult<XmlSchema?>` a partir de um XSD embutido.
+
+```csharp
+var schemaResult = ResourcesUtils.GetXmlSchema<ICoreEntry>("Maxsys.Core.Schemas.invoice.xsd");
+```
+
+### StringWriterWithEncoding
+`StringWriter` com `Encoding` configurável (o padrão do .NET é fixo em UTF-16) — usado, por exemplo, na serialização XML com UTF-8.
+
+### IgnoreNamespaceXmlTextReader
+`XmlTextReader` que ignora namespaces ao desserializar XML (`NamespaceURI` sempre vazio).
+
+```csharp
+using var reader = new IgnoreNamespaceXmlTextReader(new StringReader(xml));
+var obj = (Invoice?)new XmlSerializer(typeof(Invoice)).Deserialize(reader);
+```
+
+---
+## Web / ApiResult
+
+### ApiResultBase
+Base do envelope de resposta das APIs Maxsys. Propriedades ordenadas no JSON:
++ `MaxsysAPI`: identificador fixo (`"MaxsysAPI"`) que marca a resposta como API Maxsys — usado na validação de `HttpServiceBase`.
++ `Title`, `StatusCode`, `ResultType`, `Tag`.
+
+### ApiResult / ApiResult&lt;T&gt;
+Envelope de resposta com `Notifications` (e `Data` na versão genérica). Constrói-se diretamente de um `OperationResult`(`<T>`), herdando notificações, `ResultType` e `Data`.
+
+```csharp
+[HttpGet("{id}")]
+public async Task<IActionResult> Get(Guid id, CancellationToken ct)
+{
+    var result = await _service.GetOperationAsync(id, ct); // OperationResult<ProductDTO>
+
+    var apiResult = new ApiResult<ProductDTO>("PRODUCTS-GET", StatusCodes.Status200OK, result);
+    return Ok(apiResult);
+}
+```
+
+### ApiMultipleResults&lt;T&gt;
+Envelope para operações em lote: converte uma `OperationResultCollection<T>` em uma lista de `ResultItem<T?>` (um resultado por item processado).
+
+### ResultItem&lt;T&gt;
+Item individual de `ApiMultipleResults`: `Data`, `Notifications` e `ResultType` (o mais severo das notificações).
+
+### ApiResultExtensions
+Conversões `ApiResult` → `OperationResult` (o caminho inverso do envelope, usado ao consumir APIs Maxsys):
++ `apiResult.ToOperationResult()` / `apiResult.ToOperationResult<T>()`: copia `Data`/notificações; `StatusCode == 404` adiciona `ITEM_NOT_FOUND`.
+
+```csharp
+var apiResult = responseContent.FromJson<ApiResult<MovieDTO>>();
+OperationResult<MovieDTO> result = apiResult.ToOperationResult();
+```
+
+---
+## Entrada do assembly
+
+### ICoreEntry
+Interface *marker* para referenciar o assembly `Maxsys.Core` (ex.: em `AddImplementations<TInterface, TEntry>`).
+
+### [README](README.md)

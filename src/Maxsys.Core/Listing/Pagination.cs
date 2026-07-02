@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core;
+namespace Maxsys.Core;
 
 public sealed class Pagination
 {

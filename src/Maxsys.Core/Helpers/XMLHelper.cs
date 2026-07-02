@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -95,7 +95,7 @@ public static class XMLHelper
         var serializer = new XmlSerializer(typeof(TXml));
         var ns = new XmlSerializerNamespaces();
         ns.Add(string.Empty, string.Empty);
-
+         
         using (var stringWriter = encoding is null
             ? new StringWriter()
             : new StringWriterWithEncoding(encoding))
@@ -120,7 +120,7 @@ public static class XMLHelper
     public static OperationResult ValidateSchema<TXml>(TXml root, string schemaResourceName, XmlSerializerNamespaces? namespaces = null, Encoding? encoding = null)
         where TXml : class
     {
-        var schemaResult = ResourcesHelper.GetXmlSchema<TXml>(schemaResourceName);
+        var schemaResult = ResourcesUtils.GetXmlSchema<TXml>(schemaResourceName);
 
         return schemaResult.IsValid
             ? ValidateSchema(root, schema: schemaResult.Data, namespaces: namespaces, encoding: encoding)

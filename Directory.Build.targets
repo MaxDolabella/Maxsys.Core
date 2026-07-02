@@ -1,0 +1,41 @@
+<Project>
+
+	<!--
+		Por que .targets e não .props?
+		Directory.Build.props é importado ANTES do .csproj, então propriedades definidas
+		no .csproj (como IsMaxsysPackage) ainda não existem quando a Condition é avaliada.
+		Directory.Build.targets é importado DEPOIS, garantindo que IsMaxsysPackage já está definido.
+
+		Por que Remove + Include ao invés de Update?
+		Os arquivos em _PackageAssets/ são incluídos implicitamente pelo SDK como None items.
+		Um simples <None Update ... PackagePath=""> preserva o caminho relativo original dentro
+		do .nupkg (_PackageAssets/LICENSE), causando mismatch com PackageLicenseFile (LICENSE).
+		O Remove + Include com PackagePath="" força os arquivos para a raiz do pacote,
+		onde PackageLicenseFile, PackageReadmeFile e PackageIcon esperam encontrá-los.
+	-->
+
+	<!-- Metadados de pacote NuGet (opt-in via IsMaxsysPackage) -->
+	<PropertyGroup Condition="'$(IsMaxsysPackage)' == 'true'">
+		<Authors>Max Dolabella</Authors>
+		<Company>Maxsys Tech</Company>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
+		<RepositoryType>Public</RepositoryType>
+		<PackageReleaseNotes>https://github.com/MaxDolabella/Maxsys.Core/blob/master/src/$(MSBuildProjectName)/_PackageAssets/CHANGELOGS.md</PackageReleaseNotes>
+		<ApplicationIcon>_PackageAssets\logo.ico</ApplicationIcon>
+		<PackageIcon>logo.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<!-- Arquivos de asset do pacote (opt-in via IsMaxsysPackage) -->
+	<ItemGroup Condition="'$(IsMaxsysPackage)' == 'true'">
+		<None Remove="_PackageAssets\*" />
+		<None Include="_PackageAssets\logo.png" Pack="true" PackagePath="" />
+		<None Include="_PackageAssets\README.md" Pack="true" PackagePath="" />
+		<None Include="_PackageAssets\LICENSE" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+</Project>

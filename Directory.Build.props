@@ -1,0 +1,12 @@
+<Project>
+
+	<!-- Universal: vale para todos os projetos da solution -->
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<NoWarn>$(NoWarn);NU1507;NU1903</NoWarn>
+	</PropertyGroup>
+
+</Project>

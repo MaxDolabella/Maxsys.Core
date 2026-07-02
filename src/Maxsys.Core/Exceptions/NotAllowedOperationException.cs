@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Exceptions;
+namespace Maxsys.Core.Exceptions;
 
 /// <summary>
 /// Representa um erro que ocorre ao se tentar realizar uma operação não permitida.

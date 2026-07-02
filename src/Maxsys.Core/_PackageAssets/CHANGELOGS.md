@@ -2,6 +2,30 @@
 
 :mortar_board: Cada lançamento é um novo aprendizado!!
 
+## 17.0.0
+* :warning: Atualização de framework (`.NET 10`) e uso de `C# 14` (*extension members*);
+* :triangular_flag_on_post: Removida a classe obsoleta `Entry` (use a interface `ICoreEntry`);
+* :warning: Mensageria (MediatR) extraída para o pacote `Maxsys.Messaging` (mediador próprio):
+    * :package: Dependência `MediatR` removida;
+    * :triangular_flag_on_post: Removidos os templates CQRS/Messaging (`CreateCommandBase` e demais *commands/queries/handlers* de CRUD);
+* :warning: EventSourcing extraído para o pacote `Maxsys.EventSourcing`;
+* :warning: `ImageHelper` extraído para o pacote `Maxsys.Drawing`:
+    * :package: Dependência `System.Drawing.Common` removida;
+* :warning: Família `ServiceBase<TRepo1..8>` (multi-repositório) substituída por `ModelServiceBase<TEntity, TRepository>` / `ModelServiceBase<TEntity, TRepository, TKey>` + interfaces `IModelService<TEntity>` / `IModelService<TEntity, TKey>`, com eventos *async* de ciclo de vida (`AddingAsync`/`AddedAsync`, `UpdatingAsync`/`UpdatedAsync`, `DeletingAsync`/`DeletedAsync`, `Get/ToList/GetListCompletedAsync`) e *hooks* `OnBefore*`/`OnAfter*`;
+* :triangular_flag_on_post: Removida a filtragem via `IFilter`/`FilterBase` e tipos associados (`SearchTerm`, `SearchTermModes`, `SearchKey`, `SearchKeyModes`, `KeyList`, `FilterItem`, `ActiveTypes`, `RangeFilter`, `PeriodFilter`, `DateTimeOffsetFilter`) — filtragem agora exclusivamente via `ColumnFilter`;
+* :triangular_flag_on_post: Removida a ordenação por enum/byte (`SortableAttribute`, `SortablePropertyAttribute`, `InfoSortableColumns`) — ordenação apenas por `SortFilter.Field` (string, com suporte a *dot notation*);
+* :triangular_flag_on_post: Removidas as extensões `ToObservableCollection`/`ToReadOnlyObservableCollection`;
+* :sparkles: Adicionada *factory* estática `Result` (`Result.Success`/`Error`/`Warning`/`Info`/`FromException`/`FromNotifications`); construtores de `OperationResult` com mensagem/exception/`ValidationResult` marcados como `[Obsolete]`;
+* :sparkles: Adicionado `ColumnFilter` + `FilterMatchModes` (filtragem dinâmica estilo PrimeNG, aplicada em `QueryableExtensions.ApplyFilters` e nos contratos de `IRepository`/`IModelService`) e `ColumnFilterExtensions.AddFilter` (composição via *expression*);
+* :sparkles: Adicionado `SearchableAttribute` + busca global via `ListCriteria.Search` (`QueryableExtensions.ApplySearch`);
+* :sparkles: Adicionados `CacheManager`/`ICacheManager` (+ `AddCacheManager()`);
+* :sparkles: Adicionado Audit (`AuditHelper`/`AuditLog`/`AuditLogField`);
+* :sparkles: Adicionados *converters* JSON: `DateTimeOffsetJsonConverter` e `UnixTimestampJsonConverter`;
+* :sparkles: Adicionados DTOs `ObjectLink`/`ObjectLinkItem`, `MonitorableDTO` e enum `UpdateStatus`;
+* :sparkles: Adicionados `HttpServiceBase` (consumo de APIs Maxsys com eventos `Sending`/`Sent`/`MaxsysApiResponseValid`/`MaxsysApiResponseInvalid`) e `RandomUtils`;
+* :hammer_and_wrench: Extensions reescritas com *extension members* do C# 14;
+
+---
 ## 16.0.0
 * :package: Atualização de pacotes;
 * :warning: Refatoração de `IService`/`Service` e `IRepository`: Add novos métodos e ajuste de constraints.
@@ -57,7 +81,7 @@
 ---
 ## 12.0.0
 * `IRepository`: Métodos com `object id` em parametros removidos. Somente `object[] keys` mantidos.
-* `IEntityService`/`EntityService`: Parâmetros genéricos em Eventos `AddedAsync` e `UpdatedAsync` alterados de `<TEntity, TDTO>` para `<TEntity, object>`
+* `IModelService`/`ModelService`: Parâmetros genéricos em Eventos `AddedAsync` e `UpdatedAsync` alterados de `<TEntity, TDTO>` para `<TEntity, object>`
 
 ---
 ## 11.0.0

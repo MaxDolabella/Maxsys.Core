@@ -1,5 +1,3 @@
-﻿using FluentValidation.Results;
-
 namespace Maxsys.Core.Interfaces.Data;
 
 public interface IUnitOfWork : IDisposable
@@ -26,5 +24,5 @@ public interface IUnitOfWork : IDisposable
     /// <summary>
     /// Limpa o ChangeTracker quando se utiliza EF
     /// </summary>
-    void ClearTracker();
+    void ClearTracker(); // TODO Remover isso da interface.
 }

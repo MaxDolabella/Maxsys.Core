@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core;
+namespace Maxsys.Core;
 
 [Serializable]
 public class ValueEventArgs : EventArgs

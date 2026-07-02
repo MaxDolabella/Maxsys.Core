@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Biblioteca Maxsys para recursos Web (ASP.NET Core): ApiControllerBase, HealthCheck, model binders. (.NET 10)</Description>
+		<PackageDescription>Biblioteca Maxsys para recursos Web (ASP.NET Core): ApiControllerBase, HealthCheck, model binders. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Web</PackageId>
+		<PackageTags>maxsys;asp-net-core</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="Maxsys.Core" />
+		<Using Include="Maxsys.Core.Web" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+	</ItemGroup>
+
+</Project>

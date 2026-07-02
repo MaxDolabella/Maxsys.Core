@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -20,40 +20,40 @@ public static class StringHelper
         s_InvalidFileNameChars = [.. invalidChars];
     }
 
-    public static string? RemoveInvalidFileNameChars(this string? input)
+    public static string? RemoveInvalidFileNameChars(this string? value)
     {
-        if (input is null)
+        if (value is null)
             return null;
 
-        var newValue = string.Join("_", input.Split(s_InvalidFileNameChars)).Trim();
+        var newValue = string.Join("_", value.Split(s_InvalidFileNameChars)).Trim();
         return newValue.All(c => c == '_') ? string.Empty : newValue;
     }
 
     /// <summary>
     /// Retorna um texto a partir de outro texto, ou nulo se o texto testado for vazio/nulo
     /// </summary>
-    public static string? GetTextOrNullIfEmpty(this string? input)
+    public static string? GetTextOrNullIfEmpty(this string? text)
     {
-        return string.IsNullOrWhiteSpace(input) ? null : input.Trim();
+        return string.IsNullOrWhiteSpace(text) ? null : text.Trim();
     }
 
     /// <summary>
     /// Retorna um número decimal a partir de um texto, ou nulo se o texto testado for vazio/nulo
     /// </summary>
-    public static decimal? GetDecimalOrNullIfEmpty(this string? input)
+    public static decimal? GetDecimalOrNullIfEmpty(this string? text)
     {
-        return !string.IsNullOrWhiteSpace(input)
-            ? decimal.TryParse(input.Trim(), out decimal value) ? value : default(decimal?)
+        return !string.IsNullOrWhiteSpace(text)
+            ? decimal.TryParse(text.Trim(), out decimal value) ? value : default(decimal?)
             : null;
     }
 
     /// <summary>
     /// Retorna uma data a partir de um texto, ou nulo se o texto testado for vazio/nulo
     /// </summary>
-    public static DateTime? GetDateTimeOrNullIfEmpty(this string? input)
+    public static DateTime? GetDateTimeOrNullIfEmpty(this string? text)
     {
-        return !string.IsNullOrWhiteSpace(input)
-            ? DateTime.TryParse(input.Trim(), out DateTime dateTime) ? dateTime : default(DateTime?)
+        return !string.IsNullOrWhiteSpace(text)
+            ? DateTime.TryParse(text.Trim(), out DateTime dateTime) ? dateTime : default(DateTime?)
             : null;
     }
 
@@ -75,11 +75,11 @@ public static class StringHelper
     /// <summary>
     /// Retorna uma string contendo apenas números.
     /// </summary>
-    /// <param name="input"></param>
-    public static string? GetOnlyNumbers(this string? input)
+    /// <param name="text"></param>
+    public static string? GetOnlyNumbers(this string? text)
     {
-        return input is not null
-            ? new string([.. input.Where(char.IsDigit)])
+        return text is not null
+            ? new string(text.Where(char.IsDigit).ToArray())
             : null;
     }
 
@@ -176,7 +176,7 @@ public static class StringHelper
     /// <summary>
     /// Breaks a given text into up to two parts, each with a maximum of 35 characters.
     /// </summary>
-    /// <param name="input">The input text to split. Can be <c>null</c>.</param>
+    /// <param name="text">The input text to split. Can be <c>null</c>.</param>
     /// <param name="maxLength"></param>
     /// <returns>
     /// A list containing up to two strings, each at most 35 characters long, or <c>null</c> if the input is <c>null</c>.
@@ -186,27 +186,27 @@ public static class StringHelper
     /// Words are split at spaces when possible. If a word exceeds 35 characters, it is chunked into pieces of at most 35 characters.
     /// The method stops after collecting two parts.
     /// </remarks>
-    public static List<string>? SplitTextIntoChunks([NotNullIfNotNull(nameof(input))] this string? input, int maxLength)
+    public static List<string>? SplitTextIntoChunks([NotNullIfNotNull(nameof(text))] this string? text, int maxLength)
     {
-        if (input is null)
+        if (text is null)
         {
             return null;
         }
 
-        if (string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(text))
         {
             return [];
         }
 
-        input = input.Trim();
-        if (input.Length <= maxLength)
+        text = text.Trim();
+        if (text.Length <= maxLength)
         {
-            return [input];
+            return [text];
         }
 
         var result = new List<string>(2);
 
-        foreach (var word in input.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        foreach (var word in text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             foreach (var part in word.Chunk(maxLength).Select(x => new string(x)))
             {

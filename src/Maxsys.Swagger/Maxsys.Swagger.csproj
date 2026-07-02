@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Biblioteca Maxsys para configuração do Swagger/OpenAPI (Swashbuckle): filtros de enum, FromJson, ActionIdentifier. (.NET 10)</Description>
+		<PackageDescription>Biblioteca Maxsys para configuração do Swagger/OpenAPI (Swashbuckle): filtros de enum, FromJson, ActionIdentifier. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Swagger</PackageId>
+		<PackageTags>maxsys;swagger;openapi;swashbuckle</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Web\Maxsys.Web.csproj" />
+	</ItemGroup>
+
+</Project>

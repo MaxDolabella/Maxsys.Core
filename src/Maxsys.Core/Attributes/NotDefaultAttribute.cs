@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Maxsys.Core;
 
 /// <summary>
 /// Specifies that a field data cannot be the <see langword="default"/> value of it's type.
 /// </summary>
-
+// TODO: mover para o Maxsys.Core.Attributes
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 public class NotDefaultAttribute : ValidationAttribute
 {

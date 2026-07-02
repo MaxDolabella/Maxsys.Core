@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core;
+namespace Maxsys.Core;
 
 /// <summary>
 /// Interface para um objeto que contenha uma chave (<see cref="Id"/>) do tipo não nulo

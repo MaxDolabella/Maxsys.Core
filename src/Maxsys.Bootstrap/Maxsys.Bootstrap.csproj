@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	
 	<PropertyGroup>
-		<Version>0.0.4</Version>
+		<Version>0.0.5</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Biblioteca com componentes bootstrap para utilização de recursos MVC.</Description>
 		<PackageDescription>Biblioteca com componentes bootstrap para utilização de recursos MVC.</PackageDescription>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Bootstrap</RepositoryUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/src/Maxsys.Bootstrap</RepositoryUrl>
 		<RepositoryType>Public</RepositoryType>
 		<PackageId>Maxsys.Bootstrap</PackageId>
 		<PackageTags>maxsys;asp-net-mvc;mvc;bootstrap</PackageTags>
 		<PackageReleaseNotes>
-			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Bootstrap/PackageAssets/README.md#release-notes.
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/src/Maxsys.Bootstrap/PackageAssets/CHANGELOGS.md.
 		</PackageReleaseNotes>
 		<PackageIcon>PackageAssets/logo.png</PackageIcon>
 		<PackageReadmeFile>PackageAssets/README.md</PackageReadmeFile>
