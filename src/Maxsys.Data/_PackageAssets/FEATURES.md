@@ -108,8 +108,9 @@ Implementação abstrata de `IUnitOfWork` sobre um `DbContext`, com transações
 - `BeginTransactionAsync(name?, ct)` — inicia uma transação (nome opcional, apenas para log). Chamadas aninhadas incrementam o semáforo em vez de abrir nova transação.
 - `CommitTransactionAsync(ct)` — decrementa o semáforo; o commit real só ocorre quando o semáforo zera (transação mais externa).
 - `RollbackTransactionAsync(ct)` — desfaz a transação corrente e zera o semáforo.
-- `SaveChangesAsync(ct)` — retorna `OperationResult`; em caso de exceção, reverte o `ChangeTracker` para o estado original (auto-rollback dos entries) e adiciona a exceção como notificação. Fora de transação, limpa o tracker após salvar.
-- `ClearTracker()` — limpa o `ChangeTracker` do contexto.
+- `SaveChangesAsync(ct)` — retorna `OperationResult`; em caso de exceção, reverte o `ChangeTracker` para o estado original (auto-rollback dos entries) e adiciona a exceção como notificação. Fora de transação, limpa o tracker após salvar (desativável via override de `ClearTrackerOnSaveChanges`).
+- `ClearTracker()` — limpa o `ChangeTracker` do contexto. **Não faz parte de `IUnitOfWork`** (conceito específico de EF) — disponível apenas na classe concreta.
+- Eventos: `ChangesSaved` (pós-save bem-sucedido; valor = quantidade de alterações) e `TrackerCleared` (pós-limpeza do tracker) — para cross-cutting como invalidação de cache ou log.
 
 ```csharp
 public class AppUnitOfWork : UnitOfWorkBase<AppDbContext>

@@ -495,8 +495,7 @@ _repository.Update(new Product { Id = id }, new { Name = "Novo nome" }); // upda
 ### IUnitOfWork
 Contrato de Unit of Work para transação e persistência.
 + `BeginTransactionAsync(name?)` / `CommitTransactionAsync()` / `RollbackTransactionAsync()`.
-+ `SaveChangesAsync()`: retorna `OperationResult` (no EF Core, também limpa o ChangeTracker).
-+ `ClearTracker()`: limpa o ChangeTracker.
++ `SaveChangesAsync()`: retorna `OperationResult`. Limpezas pós-persistência (ex.: ChangeTracker do EF) são detalhe da implementação — o contrato não expõe conceitos de tracking.
 + `Id` / `ContextId`: identificadores do UoW e do contexto.
 
 ```csharp

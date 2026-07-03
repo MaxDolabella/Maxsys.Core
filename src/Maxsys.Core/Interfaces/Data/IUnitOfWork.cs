@@ -15,14 +15,10 @@ public interface IUnitOfWork : IDisposable
     ValueTask RollbackTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Executa o SaveChanges().
+    /// Persiste as alterações pendentes.
     /// <para/>
-    /// ATENÇÃO: Uma vez usando o EF Core, também limpa o ChangeTracker.
+    /// Implementações podem executar limpeza pós-persistência (ex.: em EF Core,
+    /// <c>UnitOfWorkBase</c> limpa o ChangeTracker — comportamento configurável na implementação).
     /// </summary>
     Task<OperationResult> SaveChangesAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Limpa o ChangeTracker quando se utiliza EF
-    /// </summary>
-    void ClearTracker(); // TODO Remover isso da interface.
 }

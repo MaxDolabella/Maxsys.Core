@@ -4,6 +4,7 @@
 * :warning: Pacote renomeado de `Maxsys.Core.Data` para `Maxsys.Data` (PackageId e namespace raiz);
 * :warning: Interface de entry point renomeada de `ICoreDataEntry` para `IDataEntry`; removida a classe obsoleta `Entry`;
 * :warning: Repositórios desacoplados do AutoMapper: `RepositoryBase`/`JoinRepositoryBase` agora recebem `IQueryProjector` (antes `IMapper`); novo *chokepoint* `ApplyJoinProjection` no `JoinRepositoryBase`. Use o pacote `Maxsys.Mapping.AutoMapper` (`AddMaxsysAutoMapper`) para manter o comportamento anterior;
+* :warning: `UnitOfWorkBase`: `ClearTracker()` deixou de fazer parte de `IUnitOfWork` (permanece público na classe); :sparkles: novos eventos `ChangesSaved` (pós-save, com contagem) e `TrackerCleared`, e *flag* sobrescrevível `ClearTrackerOnSaveChanges` (default `true`) controlando a limpeza automática pós-save;
 * :warning: Atualização de framework (`.NET 10`) e `Entity Framework Core 10`;
 * :warning: `RepositoryBase<TEntity>` reescrito:
 	* Agora é classe concreta (registrável como `IRepository<>` genérico via `AddGenericRepositories`);

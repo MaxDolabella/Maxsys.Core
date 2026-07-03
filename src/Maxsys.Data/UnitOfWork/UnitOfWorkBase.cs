@@ -26,6 +26,27 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
         ContextId = context.ContextId.InstanceId;
     }
 
+    #region EVENTS
+
+    /// <summary>
+    /// Disparado após um <see cref="SaveChangesAsync"/> bem-sucedido.
+    /// O valor é a quantidade de alterações persistidas.
+    /// </summary>
+    public event EventHandler<int>? ChangesSaved;
+
+    /// <summary>
+    /// Disparado após o ChangeTracker ser limpo (via <see cref="ClearTracker"/>).
+    /// </summary>
+    public event EventHandler? TrackerCleared;
+
+    #endregion EVENTS
+
+    /// <summary>
+    /// Define se o ChangeTracker é limpo automaticamente após um
+    /// <see cref="SaveChangesAsync"/> bem-sucedido fora de transação. Padrão: <see langword="true"/>.
+    /// </summary>
+    protected virtual bool ClearTrackerOnSaveChanges => true;
+
     public virtual async ValueTask BeginTransactionAsync(string? name = null, CancellationToken cancellationToken = default)
     {
         var normalizedName = string.IsNullOrWhiteSpace(name) ? TRANSACTION_DEFAULT_NAME : name.Trim();
@@ -83,15 +104,15 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
         try
         {
             var count = await _context.SaveChangesAsync(cancellationToken);
-            
+
             _logger.LogDebug("<{count}> Changes Saved.\nSemaphore[{semaphore}]", count, _semaphore);
-            
-            if (_semaphore == 0)
+
+            ChangesSaved?.Invoke(this, count);
+
+            if (_semaphore == 0 && ClearTrackerOnSaveChanges)
             {
                 ClearTracker();
             }
-
-            
         }
         catch (Exception ex)
         {
@@ -152,9 +173,17 @@ public abstract class UnitOfWorkBase<TContext> : IUnitOfWork where TContext : Db
 
     #endregion DIPOSABLE IMPLEMENTATION
 
+    /// <summary>
+    /// Limpa o ChangeTracker do EF Core e dispara <see cref="TrackerCleared"/>.
+    /// <para/>
+    /// Não faz parte de <see cref="IUnitOfWork"/> (conceito específico de EF) —
+    /// disponível apenas na classe concreta.
+    /// </summary>
     public virtual void ClearTracker()
     {
         _logger.LogDebug("Cleaning Tracker...");
         _context.ChangeTracker.Clear();
+
+        TrackerCleared?.Invoke(this, EventArgs.Empty);
     }
 }
