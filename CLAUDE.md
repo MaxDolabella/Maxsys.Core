@@ -48,7 +48,9 @@ Maxsys.Core            ← núcleo, sem EF, ASP.NET nem AutoMapper. Contratos, D
        └─ Maxsys.EventSourcing → DomainEvent, DomainEntity, StoredEvent, IEventStore (depende de Core + Messaging).
 Maxsys.Drawing         ← ImageHelper (System.Drawing.Common, Windows-only). Isolado de propósito — não mover pro Core.
 Maxsys.Archive         ← compressão/arquivamento (independente).
-Maxsys.Bootstrap       ← TagHelpers + utilidades p/ Bootstrap em MVC (independente).
+Maxsys.Bootstrap       ← componentes Bootstrap 5.3 p/ MVC (independente): TagHelpers <bs-*> (conteúdo projetado)
+                         + ViewComponents <vc:bs-*> (data-driven; requer AddMaxsysBootstrap()). Customização global
+                         via classes *Defaults; padrão: 1 arquivo por família (TagHelper + filhos + enums + Defaults).
 ```
 
 Regra de ouro: **`Maxsys.Core` não conhece EF Core nem ASP.NET**. Abstrações (`IRepository`, `IUnitOfWork`) vivem em `Maxsys.Core/Interfaces`; implementações concretas vivem em `Maxsys.Data`.

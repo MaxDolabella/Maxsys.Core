@@ -20,7 +20,7 @@ Essas bibliotecas auxiliam no desenvolvimento de aplicações pessoais em `Windo
 | [Maxsys.EventSourcing](https://www.nuget.org/packages/Maxsys.EventSourcing) | Domain Events / Event Sourcing                       | ![Nuget Maxsys.EventSourcing](https://img.shields.io/nuget/v/Maxsys.EventSourcing)  |
 | [Maxsys.Drawing](https://www.nuget.org/packages/Maxsys.Drawing)             | Manipulação de imagens (Windows)                     | ![Nuget Maxsys.Drawing](https://img.shields.io/nuget/v/Maxsys.Drawing)              |
 | [Maxsys.Archive](https://www.nuget.org/packages/Maxsys.Archive)             | Arquivos baseados em zip                             | ![Nuget Maxsys.Archive](https://img.shields.io/nuget/v/Maxsys.Archive)              |
-| [Maxsys.Bootstrap](https://www.nuget.org/packages/Maxsys.Bootstrap)         | TagHelpers Bootstrap p/ MVC                          | ![Nuget Maxsys.Bootstrap](https://img.shields.io/nuget/v/Maxsys.Bootstrap)          |
+| [Maxsys.Bootstrap](https://www.nuget.org/packages/Maxsys.Bootstrap)         | Componentes Bootstrap 5.3 (TagHelpers + ViewComponents) | ![Nuget Maxsys.Bootstrap](https://img.shields.io/nuget/v/Maxsys.Bootstrap)          |
 
 
 ## :black_nib: Autores
