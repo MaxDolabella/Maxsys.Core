@@ -1,8 +1,7 @@
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Maxsys.Data.Extensions;
 using Maxsys.Core.Extensions;
 using Maxsys.Core.Filtering;
+using Maxsys.Core.Interfaces.Mapping;
 using Maxsys.Core.Interfaces.Repositories;
 using Maxsys.Core.Sorting;
 using Microsoft.EntityFrameworkCore;
@@ -23,14 +22,27 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
 {
     #region CONSTRUCTOR
 
-    public JoinRepositoryBase(DbContext context, IMapper mapper)
-        : base(context, mapper)
+    public JoinRepositoryBase(DbContext context, IQueryProjector projector)
+        : base(context, projector)
     {
     }
 
     #endregion CONSTRUCTOR
 
     #region PROT
+
+    /// <summary>
+    /// Chokepoint único para projeção <typeparamref name="TJoin"/> → <typeparamref name="TDestination"/>
+    /// via <see cref="IQueryProjector"/>. Subclasses podem sobrescrever para injetar políticas de leitura
+    /// (ex.: Field-Level Security) que reescrevam o <c>Select</c> traduzido para SQL.
+    /// </summary>
+    /// <remarks>
+    /// Implementação default: <c>_projector.Project&lt;TDestination&gt;(source)</c>.
+    /// Toda projeção interna do join passa por aqui — não chame o projector diretamente
+    /// em <see cref="JoinRepositoryBase{TEntity, TJoin}"/>.
+    /// </remarks>
+    protected virtual IQueryable<TDestination> ApplyJoinProjection<TDestination>(IQueryable<TJoin> source)
+        => _projector.Project<TDestination>(source);
 
     protected IOrderedQueryable<T> ApplyOrderBy<T>(IQueryable<T> query, Expression<Func<T, dynamic>> sortSelector, SortDirection sortDirection)
     {
@@ -242,8 +254,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         Expression<Func<TEntity, bool>>? predicate,
         CancellationToken cancellationToken = default)
     {
-        var query = (await GetJoinQueryable(predicate, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(predicate, null, null, true, cancellationToken));
 
         return await query.ToListAsync(cancellationToken);
     }
@@ -254,8 +265,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(predicate, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(predicate, null, null, true, cancellationToken))
             .ApplyCriteria(criteria);
 
         return await query.ToListAsync(cancellationToken);
@@ -269,8 +279,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         CancellationToken cancellationToken = default)
 
     {
-        var query = (await GetJoinQueryable(predicate, null, null, false, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(predicate, null, null, false, cancellationToken));
 
         var orderedQuery = ApplyOrderBy(query, sortSelector, sortDirection);
 
@@ -281,7 +290,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma coleção de <see cref="ColumnFilter"/>,
-    /// sem paginação e sem ordenação, utilizando AutoMapper para projeção.
+    /// sem paginação e sem ordenação, utilizando o projetor do repositório (IQueryProjector) para projeção.
     /// </summary>
     /// <typeparam name="TDestination">Tipo de destino da projeção.</typeparam>
     /// <param name="filters">Coleção de filtros dinâmicos a serem aplicados na consulta.</param>
@@ -292,15 +301,14 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(filters, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(filters, null, null, true, cancellationToken));
 
         return await query.ToListAsync(cancellationToken);
     }
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma coleção de <see cref="ColumnFilter"/>,
-    /// aplicando paginação e ordenação via <see cref="ListCriteria"/>, utilizando AutoMapper para projeção.
+    /// aplicando paginação e ordenação via <see cref="ListCriteria"/>, utilizando o projetor do repositório (IQueryProjector) para projeção.
     /// </summary>
     /// <typeparam name="TDestination">Tipo de destino da projeção.</typeparam>
     /// <param name="filters">Coleção de filtros dinâmicos a serem aplicados na consulta.</param>
@@ -313,8 +321,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(filters, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(filters, null, null, true, cancellationToken))
             .ApplyCriteria(criteria);
 
         return await query.ToListAsync(cancellationToken);
@@ -322,7 +329,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
 
     /// <summary>
     /// Obtém uma lista de <typeparamref name="TDestination"/> a partir de uma coleção de <see cref="ColumnFilter"/>,
-    /// com paginação e ordenação explícitas, utilizando AutoMapper para projeção.
+    /// com paginação e ordenação explícitas, utilizando o projetor do repositório (IQueryProjector) para projeção.
     /// </summary>
     /// <typeparam name="TDestination">Tipo de destino da projeção.</typeparam>
     /// <param name="filters">Coleção de filtros dinâmicos a serem aplicados na consulta.</param>
@@ -339,8 +346,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(filters, null, null, false, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(filters, null, null, false, cancellationToken));
 
         var orderedQuery = ApplyOrderBy(query, sortSelector, sortDirection);
 
@@ -353,7 +359,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
 
     /// <summary>
     /// Obtém a primeira entidade projetada para <typeparamref name="TDestination"/>
-    /// a partir de uma coleção de <see cref="ColumnFilter"/>, utilizando AutoMapper.
+    /// a partir de uma coleção de <see cref="ColumnFilter"/>, utilizando o projetor do repositório (IQueryProjector).
     /// </summary>
     /// <typeparam name="TDestination">Tipo de destino da projeção.</typeparam>
     /// <param name="filters">Coleção de filtros dinâmicos a serem aplicados na consulta.</param>
@@ -362,8 +368,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
     public virtual async Task<TDestination?> GetAsync<TDestination>(ICollection<ColumnFilter> filters, CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(filters, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(filters, null, null, true, cancellationToken));
 
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
@@ -371,8 +376,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
     public override async Task<TDestination?> GetAsync<TDestination>(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(predicate, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(predicate, null, null, true, cancellationToken));
 
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
@@ -410,7 +414,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
 
     /// <summary>
     /// Obtém a primeira entidade projetada para <typeparamref name="TDestination"/>
-    /// a partir de uma coleção de <see cref="ColumnFilter"/>, com ordenação explícita, utilizando AutoMapper.
+    /// a partir de uma coleção de <see cref="ColumnFilter"/>, com ordenação explícita, utilizando o projetor do repositório (IQueryProjector).
     /// </summary>
     /// <param name="filters">Coleção de filtros dinâmicos a serem aplicados na consulta.</param>
     /// <param name="sortSelector">Expressão para selecionar a coluna de ordenação.</param>
@@ -421,8 +425,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
     {
         var orderedQuery = await GetJoinQueryable(filters, sortSelector, sortDirection, true, cancellationToken);
 
-        return await orderedQuery
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
+        return await ApplyJoinProjection<TDestination>(orderedQuery)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -431,8 +434,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
     {
         var orderedQuery = await GetJoinQueryable(predicate, sortSelector, sortDirection, true, cancellationToken);
 
-        return await orderedQuery
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider)
+        return await ApplyJoinProjection<TDestination>(orderedQuery)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -487,8 +489,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
     public virtual async Task<TDestination?> GetSingleOrDefaultAsync<TDestination>(ICollection<ColumnFilter> filters, CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(filters, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(filters, null, null, true, cancellationToken));
 
         try
         {
@@ -511,8 +512,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
     public virtual async Task<TDestination?> GetSingleOrThrowsAsync<TDestination>(ICollection<ColumnFilter> filters, CancellationToken cancellationToken = default)
         where TDestination : class
     {
-        var query = (await GetJoinQueryable(filters, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(filters, null, null, true, cancellationToken));
 
         return await query.SingleOrDefaultAsync(cancellationToken);
     }
@@ -521,8 +521,7 @@ public abstract class JoinRepositoryBase<TEntity, TJoin> : RepositoryBase<TEntit
         where TDestination : class
     {
         var predicate = DbSet.EntityType.GetIdExpression<TEntity>(ids);
-        var query = (await GetJoinQueryable(predicate, null, null, true, cancellationToken))
-            .ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        var query = ApplyJoinProjection<TDestination>(await GetJoinQueryable(predicate, null, null, true, cancellationToken));
 
         return await query.FirstOrDefaultAsync(cancellationToken);
     }

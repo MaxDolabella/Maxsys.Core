@@ -4,6 +4,7 @@
 
 ## 17.0.0
 * :warning: Atualização de framework (`.NET 10`) e uso de `C# 14` (*extension members*);
+* :warning: Dependência `AutoMapper` **removida** — mapeamento abstraído em `IObjectMapper`/`IQueryProjector` (`Maxsys.Core.Interfaces.Mapping`); `ModelServiceBase<TEntity, TRepository, TKey>` agora recebe `IObjectMapper`. Implementação AutoMapper no novo pacote `Maxsys.Mapping.AutoMapper` (`AddMaxsysAutoMapper`);
 * :triangular_flag_on_post: Removida a classe obsoleta `Entry` (use a interface `ICoreEntry`);
 * :warning: Mensageria (MediatR) extraída para o pacote `Maxsys.Messaging` (mediador próprio):
     * :package: Dependência `MediatR` removida;

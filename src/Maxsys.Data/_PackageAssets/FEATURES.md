@@ -1,6 +1,6 @@
 # Maxsys.Data
 
-Biblioteca Maxsys de acesso a dados com Entity Framework Core: implementações de Repository Pattern e Unit of Work para os contratos definidos em `Maxsys.Core` (`IRepository`, `IUnitOfWork`), com consultas dinâmicas via `ColumnFilter`/`ListCriteria` e projeções integradas ao AutoMapper.
+Biblioteca Maxsys de acesso a dados com Entity Framework Core: implementações de Repository Pattern e Unit of Work para os contratos definidos em `Maxsys.Core` (`IRepository`, `IUnitOfWork`), com consultas dinâmicas via `ColumnFilter`/`ListCriteria` e projeções via `IQueryProjector` (adaptador AutoMapper no pacote `Maxsys.Mapping.AutoMapper`).
 
 ## Repositórios
 
@@ -14,10 +14,10 @@ Classe base (não genérica) de todos os repositórios. Implementa `IRepository`
 
 ### RepositoryBase&lt;TEntity&gt;
 
-Implementação concreta de `IRepository<TEntity>`. Cobre CRUD, consultas por `Expression`, consultas dinâmicas por `ColumnFilter`/`ListCriteria`, projeções (AutoMapper ou expressão manual), paginação e ordenação.
+Implementação concreta de `IRepository<TEntity>`. Cobre CRUD, consultas por `Expression`, consultas dinâmicas por `ColumnFilter`/`ListCriteria`, projeções (via `IQueryProjector` ou expressão manual), paginação e ordenação.
 
 - `GetQueryable(predicate, @readonly, ct)` — ponto central (virtual) de obtenção da query. A flag `@readonly` alterna `AsNoTracking()`/`AsTracking()`. Sobrescreva para aplicar filtro global, `Include` etc.
-- `ApplyProjection<TDestination>(source)` — *chokepoint* único de projeção via AutoMapper (`ProjectTo`). Sobrescrevível para injetar políticas de leitura (ex.: Field-Level Security).
+- `ApplyProjection<TDestination>(source)` — *chokepoint* único de projeção via `IQueryProjector`. Sobrescrevível para injetar políticas de leitura (ex.: Field-Level Security).
 - `ApplyProjection<TDestination>(source, projection)` — *chokepoint* equivalente para projeções manuais (`Expression<Func<TEntity, TDestination>>`).
 - Escrita: `AddAsync`, `UpdateAsync`, `DeleteAsync` (por entidade ou por `object[] keys`), `ExecuteDeleteAsync(predicate)`.
 - Cenário desconectado: `Update(entity, updatingData)` e `Delete(entity/entities)` via `Attach`.
@@ -28,8 +28,8 @@ Implementação concreta de `IRepository<TEntity>`. Cobre CRUD, consultas por `E
 ```csharp
 public class ProductRepository : RepositoryBase<Product>, IProductRepository
 {
-    public ProductRepository(AppDbContext context, IMapper mapper)
-        : base(context, mapper)
+    public ProductRepository(AppDbContext context, IQueryProjector projector)
+        : base(context, projector)
     { }
 
     // Filtro global + include aplicados a TODAS as consultas do repositório
@@ -45,7 +45,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         return query;
     }
 
-    // Opcional: interceptar toda projeção AutoMapper (ex.: mascarar campos sensíveis)
+    // Opcional: interceptar toda projeção do mapeador (ex.: mascarar campos sensíveis)
     protected override IQueryable<TDestination> ApplyProjection<TDestination>(IQueryable<Product> source)
         => base.ApplyProjection<TDestination>(source);
 }
@@ -65,7 +65,7 @@ Repositório abstrato para consultas em que a entidade `TEntity` é convertida e
 
 - `EntityToJoinQueryableConvert(query, filters)` — método abstrato onde a subclasse define o join (ex.: `LeftOuterJoin` de `Maxsys.Core`).
 - `GetQueryable(filters, @readonly, ct)` / `GetJoinQueryable(...)` — obtenção das queries base e de join, com ordenação opcional sobre a entidade.
-- Sobrecargas de `CountAsync`, `AnyAsync`, `ToListAsync`, `GetAsync`, `GetSingleOrDefaultAsync`, `GetSingleOrThrowsAsync` e `GetByIdAsync` operando sobre `TJoin` — projeções AutoMapper partem de `TJoin` (mapeie `TJoin -> TDestination`).
+- Sobrecargas de `CountAsync`, `AnyAsync`, `ToListAsync`, `GetAsync`, `GetSingleOrDefaultAsync`, `GetSingleOrThrowsAsync` e `GetByIdAsync` operando sobre `TJoin` — projeções partem de `TJoin` (mapeie `TJoin -> TDestination`).
 
 ```csharp
 public sealed class LocationJoin
@@ -76,8 +76,8 @@ public sealed class LocationJoin
 
 public class LocationRepository : JoinRepositoryBase<Location, LocationJoin>
 {
-    public LocationRepository(AppDbContext context, IMapper mapper)
-        : base(context, mapper)
+    public LocationRepository(AppDbContext context, IQueryProjector projector)
+        : base(context, projector)
     { }
 
     protected override IQueryable<LocationJoin> EntityToJoinQueryableConvert(

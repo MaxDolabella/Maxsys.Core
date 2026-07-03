@@ -11,6 +11,7 @@
     <Project Path="src/Maxsys.Drawing/Maxsys.Drawing.csproj" />
     <Project Path="src/Maxsys.EventSourcing/Maxsys.EventSourcing.csproj" />
     <Project Path="src/Maxsys.Excel/Maxsys.Excel.csproj" />
+    <Project Path="src/Maxsys.Mapping.AutoMapper/Maxsys.Mapping.AutoMapper.csproj" />
     <Project Path="src/Maxsys.Messaging/Maxsys.Messaging.csproj" />
     <Project Path="src/Maxsys.Swagger/Maxsys.Swagger.csproj" />
     <Project Path="src/Maxsys.Web/Maxsys.Web.csproj" />

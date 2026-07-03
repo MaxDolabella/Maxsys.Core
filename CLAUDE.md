@@ -28,7 +28,7 @@ Não há suíte de testes unitários. `tests/Tests.Api` é um projeto ASP.NET Co
 - `Directory.Build.props` — TFM único `net10.0`, `Nullable`, `ImplicitUsings`, `LangVersion latest` para **todos** os projetos. Não declare TFM nos `.csproj`.
 - `Directory.Build.targets` — metadados NuGet compartilhados sob a flag opt-in `<IsMaxsysPackage>true</IsMaxsysPackage>` (autor, ícone `logo.png`, README, LICENSE). Achata `_PackageAssets/*` na raiz do `.nupkg` via Remove+Include (não mexer sem entender o comentário no próprio arquivo).
 - `Directory.Packages.props` — Central Package Management: **toda** versão de dependência é declarada aqui, nunca no `.csproj`.
-- **AutoMapper está travado em 14.0.0** — última versão gratuita; versões posteriores são pagas. NÃO atualizar.
+- **AutoMapper está travado em 14.0.0** — última versão gratuita; versões posteriores são pagas. NÃO atualizar. Desde a v17, **só `Maxsys.Mapping.AutoMapper` referencia AutoMapper** — Core/Data usam as abstrações `IObjectMapper`/`IQueryProjector`.
 
 ## Versionamento e publicação
 
@@ -38,8 +38,9 @@ Não há suíte de testes unitários. `tests/Tests.Api` é um projeto ASP.NET Co
 ## Arquitetura dos pacotes (camadas e dependências)
 
 ```
-Maxsys.Core            ← núcleo, sem EF nem ASP.NET. Contratos, DTOs, ModelServiceBase, OperationResult/Result, ColumnFilter.
+Maxsys.Core            ← núcleo, sem EF, ASP.NET nem AutoMapper. Contratos, DTOs, ModelServiceBase, OperationResult/Result, ColumnFilter, IObjectMapper/IQueryProjector.
   ├─ Maxsys.Data             → EF Core. RepositoryBase, JoinRepositoryBase, UnitOfWorkBase, ValueConversion.
+  ├─ Maxsys.Mapping.AutoMapper → adaptador AutoMapper p/ IObjectMapper/IQueryProjector (AddMaxsysAutoMapper). Único pacote com AutoMapper.
   ├─ Maxsys.Web              → ASP.NET Core. ApiControllerBase, ApiActionResult, HealthCheck, FromJson binder.
   │    └─ Maxsys.Swagger     → filtros/extensions p/ Swashbuckle (enums, FromJson, ActionIdentifier).
   ├─ Maxsys.Excel            → ClosedXML. WorkbookFacade + mapeamento declarativo (TableTypeBuilder).
@@ -58,7 +59,9 @@ Regra de ouro: **`Maxsys.Core` não conhece EF Core nem ASP.NET**. Abstrações 
 
 - **`OperationResult` / `OperationResult<T>`** (`src/Maxsys.Core/Common/`) é o retorno padrão de operações. Carrega `Notification`s com `ResultTypes`; `IsValid` é falso com severidade ≤ Warning. **Criação nova deve usar a factory estática `Result`** (`Result.Success()`, `Result.Error(msg)`, `Result.FromException(ex)`...). Os construtores com mensagem/exception estão `[Obsolete]` em `OperationResult.Ctors.cs` — ainda usados internamente (warnings **CS0618** no build são esperados e benignos).
 
-- **Família `ModelServiceBase`** (`Services/`): serviços entity-centric em 2 níveis — `ModelServiceBase<TEntity, TRepository>` (leitura + eventos async de consulta) e `ModelServiceBase<TEntity, TRepository, TKey>` (CRUD com UoW/AutoMapper, requer `IdSelector`). Interfaces `IModelService*` em `Interfaces/Services/`. Eventos de ciclo de vida (`AddingAsync`, `AddedAsync`, ...) para cross-cutting. Validação (FluentValidation) é aplicada nos handlers/pipeline, não numa variante do service.
+- **Família `ModelServiceBase`** (`Services/`): serviços entity-centric em 2 níveis — `ModelServiceBase<TEntity, TRepository>` (leitura + eventos async de consulta) e `ModelServiceBase<TEntity, TRepository, TKey>` (CRUD com UoW + `IObjectMapper`, requer `IdSelector`). Interfaces `IModelService*` em `Interfaces/Services/`. Eventos de ciclo de vida (`AddingAsync`, `AddedAsync`, ...) para cross-cutting. Validação (FluentValidation) é aplicada nos handlers/pipeline, não numa variante do service.
+
+- **Mapeamento é abstraído** (`Interfaces/Mapping/`): `IObjectMapper` (instâncias; usado pelo `ModelServiceBase`) e `IQueryProjector` (projeção de `IQueryable`; usado por `RepositoryBase`/`JoinRepositoryBase` via chokepoints `ApplyProjection`/`ApplyJoinProjection`). A implementação AutoMapper vive em `Maxsys.Mapping.AutoMapper` (`AddMaxsysAutoMapper<TEntry>()`, com scan de Profiles). NÃO referenciar AutoMapper em Core/Data.
 
 - **Filtragem é SÓ via `ColumnFilter`** (`Filtering/ColumnFilter.cs`, modos PrimeNG-style). O specification pattern antigo (`IFilter`/`FilterBase`) foi **removido** na v17 — não reintroduzir. `[Searchable]` em props de DTO habilita busca textual global via `ApplySearch`.
 

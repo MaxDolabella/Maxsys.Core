@@ -1,9 +1,8 @@
 using System.Linq.Expressions;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Maxsys.Data.Extensions;
 using Maxsys.Core.Extensions;
 using Maxsys.Core.Filtering;
+using Maxsys.Core.Interfaces.Mapping;
 using Maxsys.Core.Interfaces.Repositories;
 using Maxsys.Core.Sorting;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +14,15 @@ public class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEntity>
     where TEntity : class
 {
     protected readonly DbSet<TEntity> DbSet;
-    protected readonly IMapper _mapper;
+    protected readonly IQueryProjector _projector;
 
     #region CONSTRUCTOR
 
-    public RepositoryBase(DbContext context, IMapper mapper)
+    public RepositoryBase(DbContext context, IQueryProjector projector)
         : base(context)
     {
         DbSet = Context.Set<TEntity>();
-        _mapper = mapper;
+        _projector = projector;
     }
 
     #endregion CONSTRUCTOR
@@ -66,16 +65,16 @@ public class RepositoryBase<TEntity> : RepositoryBase, IRepository<TEntity>
 
     /// <summary>
     /// Chokepoint único para projeção <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/>
-    /// via AutoMapper. Subclasses podem sobrescrever para injetar políticas de leitura
+    /// via <see cref="IQueryProjector"/>. Subclasses podem sobrescrever para injetar políticas de leitura
     /// (ex.: Field-Level Security) que reescrevam o <c>Select</c> traduzido para SQL.
     /// </summary>
     /// <remarks>
-    /// Implementação default: <c>source.ProjectTo&lt;TDestination&gt;(_mapper.ConfigurationProvider)</c>.
-    /// Toda projeção interna baseada em AutoMapper passa por aqui — não chame
-    /// <c>ProjectTo</c> diretamente em <see cref="RepositoryBase{TEntity}"/>.
+    /// Implementação default: <c>_projector.Project&lt;TDestination&gt;(source)</c>.
+    /// Toda projeção interna baseada em mapeador passa por aqui — não chame
+    /// <see cref="IQueryProjector.Project{TDestination}"/> diretamente em <see cref="RepositoryBase{TEntity}"/>.
     /// </remarks>
     protected virtual IQueryable<TDestination> ApplyProjection<TDestination>(IQueryable<TEntity> source)
-        => source.ProjectTo<TDestination>(_mapper.ConfigurationProvider);
+        => _projector.Project<TDestination>(source);
 
     /// <summary>
     /// Chokepoint único para projeção <typeparamref name="TEntity"/> → <typeparamref name="TDestination"/>

@@ -41,6 +41,7 @@
 | *(novo)* | **Maxsys.Messaging** | `Maxsys.Messaging` | Core |
 | *(novo)* | **Maxsys.EventSourcing** | `Maxsys.EventSourcing` | Core + Messaging |
 | *(novo)* | **Maxsys.Drawing** | `Maxsys.Drawing` | Core (System.Drawing.Common, Windows-only) |
+| *(novo)* | **Maxsys.Mapping.AutoMapper** | `Maxsys.Mapping` (PackageId `Maxsys.Mapping.AutoMapper`) | Core + AutoMapper (único pacote com AutoMapper) |
 | Maxsys.Archive | *(intacto, retarget net10)* | — | — |
 | Maxsys.Bootstrap | *(intacto, retarget net10)* | — | — |
 
@@ -109,6 +110,13 @@
   reescritos a partir do código v17 (formato H2-área/H3-tipo com exemplos, legível para humano e RAG);
   históricos de changelog preservados; entries 17.0.0/2.0.0/0.0.5 adicionadas.
 - **`CLAUDE.md`** reescrito para a estrutura v17; URLs de pacote (Archive/Bootstrap) corrigidas para o layout `src/`.
+- **AutoMapper desacoplado (2026-07-02, breaking):** Core/Data não referenciam mais AutoMapper.
+  Abstrações em `Maxsys.Core.Interfaces.Mapping` — `IObjectMapper` (instâncias; `ModelServiceBase<,,TKey>`
+  agora o recebe no ctor) e `IQueryProjector` (projeção de `IQueryable`; `RepositoryBase`/`JoinRepositoryBase`
+  o recebem no ctor). `JoinRepositoryBase` ganhou o chokepoint `ApplyJoinProjection` (antes tinha 13 chamadas
+  `ProjectTo` diretas que ignoravam o `ApplyProjection` — bug latente corrigido). Novo pacote
+  **`Maxsys.Mapping.AutoMapper`** (namespace `Maxsys.Mapping`) com `AutoMapperAdapter` + `AddMaxsysAutoMapper<TEntry>()`
+  (auto-scan de Profiles). Consumidores sem AutoMapper implementam as duas interfaces e registram no DI.
 
 > Migração concluída: build da solution com 0 erros e `dotnet pack` gerando os 10 pacotes.
 > Warnings remanescentes são os benignos catalogados acima (CS0618/CS0114).

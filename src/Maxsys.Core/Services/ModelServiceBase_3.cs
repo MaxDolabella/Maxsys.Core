@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
-using AutoMapper;
 using Maxsys.Core.Events;
 using Maxsys.Core.Filtering;
 using Maxsys.Core.Interfaces.Data;
+using Maxsys.Core.Interfaces.Mapping;
 using Maxsys.Core.Interfaces.Repositories;
 using Maxsys.Core.Interfaces.Services;
 using Maxsys.Core.Sorting;
@@ -17,11 +17,11 @@ public abstract class ModelServiceBase<TEntity, TRepository, TKey>
     where TKey : notnull
 {
     protected readonly IUnitOfWork _uow;
-    protected readonly IMapper _mapper;
+    protected readonly IObjectMapper _mapper;
 
     protected abstract Expression<Func<TEntity, bool>> IdSelector(TKey id);
 
-    protected ModelServiceBase(TRepository repository, IUnitOfWork uow, IMapper mapper)
+    protected ModelServiceBase(TRepository repository, IUnitOfWork uow, IObjectMapper mapper)
         : base(repository)
     {
         _uow = uow;

@@ -5,7 +5,7 @@
 
 ![License](https://img.shields.io/github/license/maxdolabella/maxsys.core)
 
-**Maxsys.Data** complementa o pacote **Maxsys.Core** com o acesso a dados via *Entity Framework Core*, implementando os padrões *Repository* (`RepositoryBase`) e *Unit of Work* (`UnitOfWorkBase`), com filtragem dinâmica por `ColumnFilter` e projeções via AutoMapper.
+**Maxsys.Data** complementa o pacote **Maxsys.Core** com o acesso a dados via *Entity Framework Core*, implementando os padrões *Repository* (`RepositoryBase`) e *Unit of Work* (`UnitOfWorkBase`), com filtragem dinâmica por `ColumnFilter` e projeções via `IQueryProjector` (adaptador AutoMapper no pacote `Maxsys.Mapping.AutoMapper`).
 
 ## :dart: Target
 `.NET 10`

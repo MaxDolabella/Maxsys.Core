@@ -23,7 +23,6 @@ Esse pacote contém as abstrações e classes base do ecossistema: `Entity`, `IR
 
 ## :link: Dependências
 
-![AutoMapper](https://img.shields.io/badge/AutoMapper-14.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FAutoMapper)  
 ![FluentValidation.DependencyInjectionExtensions](https://img.shields.io/badge/FluentValidation.DependencyInjectionExtensions-12.1.1-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FFluentValidation.DependencyInjectionExtensions)  
 ![Microsoft.Extensions.Caching.Memory](https://img.shields.io/badge/Microsoft.Extensions.Caching.Memory-10.0.7-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.Extensions.Caching.Memory)  
 ![Microsoft.Extensions.Configuration.Binder](https://img.shields.io/badge/Microsoft.Extensions.Configuration.Binder-10.0.7-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMicrosoft.Extensions.Configuration.Binder)  

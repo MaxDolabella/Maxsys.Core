@@ -353,7 +353,7 @@ public sealed class ReportService : ServiceBase, IReportService
 ```
 
 ### IModelService&lt;TEntity&gt; / ModelServiceBase&lt;TEntity, TRepository&gt;
-Serviço de leitura sobre uma entidade, delegando ao repositório e projetando para DTOs (AutoMapper ou *projection* explícita).
+Serviço de leitura sobre uma entidade, delegando ao repositório e projetando para DTOs (via mapeador registrado ou *projection* explícita).
 + Consulta pontual: `GetAsync<TDestination>` (por predicate, projection ou `ColumnFilter`), `GetByIdAsync<TDestination>`, `GetSingleOrDefaultAsync`, `GetSingleOrThrowsAsync`.
 + Listagens: `ToListAsync<TDestination>` (lista simples) e `GetListAsync<TDestination>` (retorna `ListDTO<T>` com `Count`), com *overloads* por predicate/`ColumnFilter`/`ListCriteria`/paginação + `sortSelector`.
 + Utilitários: `CountAsync`, `AnyAsync`, `IdExistsAsync`.
@@ -361,7 +361,7 @@ Serviço de leitura sobre uma entidade, delegando ao repositório e projetando p
 + Constraints: `TEntity : class`, `TRepository : IRepository<TEntity>`.
 
 ### IModelService&lt;TEntity, TKey&gt; / ModelServiceBase&lt;TEntity, TRepository, TKey&gt;
-Extensão CRUD completa do serviço de modelo. Recebe `TRepository`, `IUnitOfWork` e `IMapper` no construtor; exige implementar `IdSelector(TKey id)`.
+Extensão CRUD completa do serviço de modelo. Recebe `TRepository`, `IUnitOfWork` e `IObjectMapper` no construtor; exige implementar `IdSelector(TKey id)`.
 + Escrita: `AddAsync<TCreateDTO>` (item ou coleção), `UpdateAsync<TUpdateDTO>` (`TUpdateDTO : class, IKey<TKey>`; item ou coleção), `DeleteAsync(TKey)` (item ou coleção) — versões de coleção retornam `OperationResultCollection` e aceitam `stopOnFirstFail`.
 + Leitura por chave: `GetAsync<TDestination>(TKey id[, projection])`.
 + Listagens de referência: `ToInfoListAsync` / `GetInfoListAsync` retornando `InfoDTO<TKey>`.
@@ -375,7 +375,7 @@ public interface IProductService : IModelService<Product, Guid> { }
 
 public sealed class ProductService : ModelServiceBase<Product, IProductRepository, Guid>, IProductService
 {
-    public ProductService(IProductRepository repository, IUnitOfWork uow, IMapper mapper)
+    public ProductService(IProductRepository repository, IUnitOfWork uow, IObjectMapper mapper)
         : base(repository, uow, mapper)
     { }
 
@@ -435,6 +435,39 @@ public sealed class MovieService : HttpClientBase, IMovieService
 ```
 
 ---
+## Mapeamento (abstrações)
+
+A partir da v17, o Core **não depende de AutoMapper**. O mapeamento é abstraído em duas interfaces
+(`Maxsys.Core.Interfaces.Mapping`), implementadas por um pacote adaptador — o oficial é
+`Maxsys.Mapping.AutoMapper` (registro via `AddMaxsysAutoMapper`).
+
+### IObjectMapper
+Mapeamento objeto → objeto (instâncias em memória). Usado por `ModelServiceBase<TEntity, TRepository, TKey>` no CRUD.
++ `Map<TDestination>(object source)` — nova instância de destino.
++ `Map<TDestination>(object source, Action<TDestination> afterMap)` — mapeia e executa pós-processamento no momento do map (roda **após** o pipeline do mapeador; tem implementação default na interface — adapters customizados não precisam implementar).
++ `Map<TSource, TDestination>(source, destination)` — mapeamento *in-place* (update).
+
+```csharp
+var dto = _mapper.Map<ProductDTO>(entity, dto => dto.DisplayName = $"{dto.Code} - {dto.Name}");
+```
+
+### IQueryProjector
+Projeção de `IQueryable` → `IQueryable<TDestination>` por composição de *expression tree*
+(traduzível pelo provedor LINQ; não materializa a query). Usado pelos repositórios de `Maxsys.Data`.
++ `Project<TDestination>(IQueryable source)`.
+
+```csharp
+// Consumidor com AutoMapper (pacote Maxsys.Mapping.AutoMapper):
+services.AddMaxsysAutoMapper<IApplicationEntry>(); // scan de Profiles + IObjectMapper/IQueryProjector
+
+// Consumidor SEM AutoMapper: implemente as interfaces e registre no DI.
+public sealed class MyProjector : IQueryProjector
+{
+    public IQueryable<TDestination> Project<TDestination>(IQueryable source) => /* Mapster, manual... */;
+}
+```
+
+---
 ## Repositórios (contratos)
 
 As implementações concretas (EF Core) vivem em `Maxsys.Data`. Aqui ficam apenas os contratos.
@@ -443,11 +476,11 @@ As implementações concretas (EF Core) vivem em `Maxsys.Data`. Aqui ficam apena
 Interface básica para tipificar um objeto como Repositório: `Guid Id` (identificador do repositório), `Guid ContextId` (identificador do contexto em uso) e `IDisposable`.
 
 ### IRepository&lt;TEntity&gt;
-Repositório CRUD completo da entidade, com filtragem por *expression* ou `ColumnFilter` e projeção via AutoMapper ou *projection* explícita.
+Repositório CRUD completo da entidade, com filtragem por *expression* ou `ColumnFilter` e projeção via mapeador (`IQueryProjector`) ou *projection* explícita.
 + Escrita: `AddAsync` (item/coleção), `UpdateAsync` (item/coleção), `DeleteAsync` (por chaves ou entidade), `ExecuteDeleteAsync(predicate)`.
 + Desconectado: `Update(entity, updatingData)` (update parcial com objeto anônimo), `Delete(entity)` / `Delete(entities)` — somente `Id` necessário.
 + Utilitários: `CountAsync` / `AnyAsync` (por predicate, `ColumnFilter` em entidade e/ou DTO, ou `ListCriteria`), `IdExistsAsync(object[])`, `HasChanges(entity, ...)`.
-+ Listagem: dezenas de *overloads* de `ToListAsync` combinando origem do filtro (predicate ou `ColumnFilter`), projeção (`TDestination` via AutoMapper ou expression) e paginação/ordenação (`ListCriteria` ou `Pagination` + `sortSelector`).
++ Listagem: dezenas de *overloads* de `ToListAsync` combinando origem do filtro (predicate ou `ColumnFilter`), projeção (`TDestination` via mapeador ou expression) e paginação/ordenação (`ListCriteria` ou `Pagination` + `sortSelector`).
 + Consulta pontual: `GetAsync` (por predicate ou `ColumnFilter`, com projeção e/ou ordenação), `GetByIdAsync` (por chaves, com/sem projeção), `GetWithIncludeAsync` (com `includeNavigation`), `GetSingleOrDefaultAsync` / `GetSingleOrThrowsAsync`.
 
 ```csharp

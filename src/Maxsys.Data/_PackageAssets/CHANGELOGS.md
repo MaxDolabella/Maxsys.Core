@@ -3,11 +3,12 @@
 ## 17.0.0
 * :warning: Pacote renomeado de `Maxsys.Core.Data` para `Maxsys.Data` (PackageId e namespace raiz);
 * :warning: Interface de entry point renomeada de `ICoreDataEntry` para `IDataEntry`; removida a classe obsoleta `Entry`;
+* :warning: Repositórios desacoplados do AutoMapper: `RepositoryBase`/`JoinRepositoryBase` agora recebem `IQueryProjector` (antes `IMapper`); novo *chokepoint* `ApplyJoinProjection` no `JoinRepositoryBase`. Use o pacote `Maxsys.Mapping.AutoMapper` (`AddMaxsysAutoMapper`) para manter o comportamento anterior;
 * :warning: Atualização de framework (`.NET 10`) e `Entity Framework Core 10`;
 * :warning: `RepositoryBase<TEntity>` reescrito:
 	* Agora é classe concreta (registrável como `IRepository<>` genérico via `AddGenericRepositories`);
 	* Consultas dinâmicas via `ColumnFilter`/`ListCriteria` (substituindo as variantes baseadas em `IFilter`/`FilterBase`);
-	* Projeções AutoMapper centralizadas no *chokepoint* sobrescrevível `ApplyProjection` (para políticas de leitura, ex.: Field-Level Security);
+	* Projeções centralizadas no *chokepoint* sobrescrevível `ApplyProjection` (para políticas de leitura, ex.: Field-Level Security);
 	* Flag `@readonly` (`AsNoTracking`/`AsTracking`) mantida em todas as consultas;
 * :sparkles: Adicionado `JoinRepositoryBase<TEntity, TJoin>` para consultas com joins não naturais e filtragem via `ColumnFilter`;
 * :triangular_flag_on_post: Removida a variante `RepositoryBase<TEntity, TFilter>` (baseada em `IFilter<TEntity>`/`FilterBase`);
