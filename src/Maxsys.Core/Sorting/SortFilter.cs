@@ -1,34 +1,23 @@
-﻿namespace Maxsys.Core.Sorting;
+namespace Maxsys.Core.Sorting;
 
 /// <summary>
 /// Filtro para definir ordenação de uma coluna
 /// </summary>
-public sealed class SortFilter
+public sealed partial class SortFilter
 {
     public SortFilter()
     { }
 
-    public SortFilter(byte column, SortDirection direction)
+    public SortFilter(string field, SortDirection direction)
     {
         Direction = direction;
-        Column = column;
-    }
-
-    public SortFilter(string columnName, SortDirection direction)
-    {
-        Direction = direction;
-        ColumnName = columnName;
+        Field = field;
     }
 
     /// <summary>
-    /// é o valor em byte (item de enum) que representa a coluna que se deseja ordenar
+    /// é nome do campo que se deseja ordenar
     /// </summary>
-    public byte Column { get; set; } = 0;
-
-    /// <summary>
-    /// é nome da coluna que se deseja ordenar
-    /// </summary>
-    public string? ColumnName { get; set; } = null;
+    public string? Field { get; set; } = null;
 
     /// <summary>
     /// é a direção da ordenação.

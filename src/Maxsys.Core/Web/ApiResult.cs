@@ -1,15 +1,16 @@
-﻿using System.Text.Json.Serialization;
+using System.Net;
+using System.Text.Json.Serialization;
 
 namespace Maxsys.Core.Web;
 
 public class ApiResult : ApiResultBase
 {
-    [JsonPropertyOrder(-2147483644)]
+    [JsonPropertyOrder(-2147483643)]
     public IEnumerable<Notification>? Notifications { get; set; }
 
     #region CTOR
 
-    public ApiResult() : base(string.Empty, 200, ResultTypes.Success)
+    public ApiResult() : base(string.Empty, (int)HttpStatusCode.OK, ResultTypes.Success)
     { }
 
     public ApiResult(string title, int statusCode, ResultTypes resultType, IEnumerable<Notification>? notifications)
@@ -27,7 +28,7 @@ public class ApiResult : ApiResultBase
 
 public class ApiResult<T> : ApiResult
 {
-    [JsonPropertyOrder(-2147483645)]
+    [JsonPropertyOrder(-2147483644)]
     public T? Data { get; set; } = default;
 
     #region CTOR

@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Interfaces.Repositories;
+namespace Maxsys.Core.Interfaces.Repositories;
 
 /// <summary>
 /// Fornece uma interface básica para tipificar um objeto como Repositório.<br/>

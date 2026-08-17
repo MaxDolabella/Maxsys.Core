@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Interfaces.Services;
+namespace Maxsys.Core.Interfaces.Services;
 
 /// <summary>
 /// Fornece uma interface básica para tipificar um objeto como Service.<br/>

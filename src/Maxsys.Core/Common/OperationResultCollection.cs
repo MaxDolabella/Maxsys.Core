@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace Maxsys.Core;
@@ -35,8 +35,7 @@ public abstract class OperationResultCollectionBase<TOperationResult> : Collecti
     #endregion IOperationResult
 }
 
-public class OperationResultCollection : OperationResultCollectionBase<OperationResult>
-{ }
+public class OperationResultCollection : OperationResultCollectionBase<OperationResult>;
 
 public class OperationResultCollection<T> : OperationResultCollectionBase<OperationResult<T>>
 {

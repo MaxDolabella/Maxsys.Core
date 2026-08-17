@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Http;
+namespace Maxsys.Core.Http;
 
 public delegate Task SendingEventHandler(object? sender, SendingEventArgs e, CancellationToken cancellationToken);
 

@@ -1,54 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	
+<Project Sdk="Microsoft.NET.Sdk">
+
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	
-	<PropertyGroup>
-		<Version>0.0.4</Version>
-		<Authors>Max Dolabella</Authors>
-		<Company>Maxsys Tech</Company>
-		<Description>Biblioteca com componentes bootstrap para utilização de recursos MVC.</Description>
-		<PackageDescription>Biblioteca com componentes bootstrap para utilização de recursos MVC.</PackageDescription>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Bootstrap</RepositoryUrl>
-		<RepositoryType>Public</RepositoryType>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>0.1.0</Version>
+		<Description>Componentes Bootstrap 5.3 para ASP.NET Core MVC: TagHelpers (conteúdo projetado) e ViewComponents (data-driven). (.NET 10)</Description>
+		<PackageDescription>Componentes Bootstrap 5.3 para ASP.NET Core MVC: TagHelpers (conteúdo projetado) e ViewComponents (data-driven). (.NET 10)</PackageDescription>
 		<PackageId>Maxsys.Bootstrap</PackageId>
-		<PackageTags>maxsys;asp-net-mvc;mvc;bootstrap</PackageTags>
-		<PackageReleaseNotes>
-			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Bootstrap/PackageAssets/README.md#release-notes.
-		</PackageReleaseNotes>
-		<PackageIcon>PackageAssets/logo.png</PackageIcon>
-		<PackageReadmeFile>PackageAssets/README.md</PackageReadmeFile>
-		<PackageLicenseFile>PackageAssets/LICENSE</PackageLicenseFile>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageTags>maxsys;asp-net-mvc;mvc;bootstrap;taghelpers;viewcomponents</PackageTags>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Update="PackageAssets\LICENSE">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-		<None Update="PackageAssets\logo.png">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-		<None Update="PackageAssets\README.md">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-
-		<None Update="PackageAssets\FEATURES.md">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-	</ItemGroup>
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
-	
+
 </Project>

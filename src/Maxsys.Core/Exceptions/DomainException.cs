@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Exceptions;
+namespace Maxsys.Core.Exceptions;
 
 /// <summary>
 /// Representa um erro de domínio.

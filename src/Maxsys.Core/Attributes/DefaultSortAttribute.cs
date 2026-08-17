@@ -1,4 +1,4 @@
-﻿using Maxsys.Core.Extensions;
+using Maxsys.Core.Extensions;
 using Maxsys.Core.Sorting;
 
 namespace Maxsys.Core;

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Extensão Maxsys.Data para filtros tipados (specification): RepositoryBase&lt;TEntity, TFilter&gt; (EF Core) implementando o IRepository com filtro de Maxsys.Core.Filtering. (.NET 10)</Description>
+		<PackageDescription>Extensão Maxsys.Data para filtros tipados (specification): RepositoryBase&lt;TEntity, TFilter&gt; (EF Core) implementando o IRepository com filtro de Maxsys.Core.Filtering. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Data.Filtering</PackageId>
+		<PackageTags>maxsys;filters;filtering;specification;entity-framework;repository-pattern</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="Maxsys.Core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core.Filtering\Maxsys.Core.Filtering.csproj" />
+		<ProjectReference Include="..\Maxsys.Data\Maxsys.Data.csproj" />
+	</ItemGroup>
+
+</Project>

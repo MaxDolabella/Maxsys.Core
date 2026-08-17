@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core;
+namespace Maxsys.Core;
 
 [Serializable]
 public sealed class AddedEntityEventArgs<TEntity, TCreateDTO> : ModifiedEntityEventArgs<TEntity, TCreateDTO>

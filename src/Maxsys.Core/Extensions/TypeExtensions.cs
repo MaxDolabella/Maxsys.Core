@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Maxsys.Core.Extensions;
@@ -8,25 +8,35 @@ namespace Maxsys.Core.Extensions;
 /// </summary>
 public static class TypeExtensions
 {
-    /// <summary>
-    /// Determines whether the <paramref name="genericType"/> is assignable from
-    /// <paramref name="givenType"/> taking into account generic definitions
-    /// </summary>
-    /// <remarks>Adapted from this <see href="https://glacius.tmont.com/articles/determining-if-an-open-generic-type-isassignablefrom-a-type">article</see>.</remarks>
-    public static bool IsAssignableToGenericType(this Type? givenType, Type? genericType)
+    extension(Type? givenType)
     {
-        if (givenType is null || genericType is null)
+        /// <summary>
+        /// Determines whether the <paramref name="genericType"/> is assignable from
+        /// <paramref name="givenType"/> taking into account generic definitions
+        /// </summary>
+        /// <remarks>Adapted from this <see href="https://glacius.tmont.com/articles/determining-if-an-open-generic-type-isassignablefrom-a-type">article</see>.</remarks>
+        public bool IsAssignableToGenericType(Type? genericType)
         {
-            return false;
+            if (givenType is null || genericType is null)
+            {
+                return false;
+            }
+
+            return givenType == genericType
+              || MapsToGenericTypeDefinition(givenType, genericType)
+              || HasInterfaceThatMapsToGenericTypeDefinition(givenType, genericType)
+              || givenType.BaseType.IsAssignableToGenericType(genericType);
         }
 
-        return givenType == genericType
-          || givenType.MapsToGenericTypeDefinition(genericType)
-          || givenType.HasInterfaceThatMapsToGenericTypeDefinition(genericType)
-          || givenType.BaseType.IsAssignableToGenericType(genericType);
+        public bool TryGetAttribute<T>([NotNullWhen(true)] out T? value) where T : Attribute
+        {
+            value = givenType?.GetCustomAttribute<T>();
+
+            return value is not null;
+        }
     }
 
-    private static bool HasInterfaceThatMapsToGenericTypeDefinition(this Type givenType, Type genericType)
+    private static bool HasInterfaceThatMapsToGenericTypeDefinition(Type givenType, Type genericType)
     {
         return givenType
           .GetInterfaces()
@@ -34,17 +44,10 @@ public static class TypeExtensions
           .Any(it => it.GetGenericTypeDefinition() == genericType);
     }
 
-    private static bool MapsToGenericTypeDefinition(this Type givenType, Type genericType)
+    private static bool MapsToGenericTypeDefinition(Type givenType, Type genericType)
     {
         return genericType.IsGenericTypeDefinition
           && givenType.IsGenericType
           && givenType.GetGenericTypeDefinition() == genericType;
-    }
-
-    public static bool TryGetAttribute<T>(this Type? type, [NotNullWhen(true)] out T? value) where T : Attribute
-    {
-        value = type?.GetCustomAttribute<T>();
-
-        return value is not null;
     }
 }

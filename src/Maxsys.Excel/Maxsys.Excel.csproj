@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Biblioteca Maxsys para leitura/escrita de arquivos Excel via ClosedXML. (.NET 10)</Description>
+		<PackageDescription>Biblioteca Maxsys para leitura/escrita de arquivos Excel via ClosedXML. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Excel</PackageId>
+		<PackageTags>maxsys;excel;closedxml</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="Maxsys.Core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+	</ItemGroup>
+
+</Project>

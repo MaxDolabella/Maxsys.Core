@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Adaptador AutoMapper para as abstrações de mapeamento Maxsys (IObjectMapper/IQueryProjector). (.NET 10)</Description>
+		<PackageDescription>Adaptador AutoMapper para as abstrações de mapeamento Maxsys (IObjectMapper/IQueryProjector). (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Mapping.AutoMapper</PackageId>
+		<PackageTags>maxsys;automapper;mapping;projection</PackageTags>
+		<!-- RootNamespace sem o segmento "AutoMapper" para evitar colisão de namespace com o pacote AutoMapper. -->
+		<RootNamespace>Maxsys.Mapping</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+	</ItemGroup>
+
+</Project>

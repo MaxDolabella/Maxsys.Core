@@ -12,7 +12,7 @@
 ![Nuget](https://img.shields.io/nuget/v/Maxsys.Archive)
 
 ```xml
-    <PackageReference Include="Maxsys.Archive" Version="1.0.0" />
+    <PackageReference Include="Maxsys.Archive" Version="2.0.0" />
 ```
 
 <!-- 

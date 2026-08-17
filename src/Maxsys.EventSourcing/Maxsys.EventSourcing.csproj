@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Biblioteca Maxsys para Event Sourcing: IDomainEvent, DomainEvent, IEventStore e DomainEntity. (.NET 10)</Description>
+		<PackageDescription>Biblioteca Maxsys para Event Sourcing: IDomainEvent, DomainEvent, IEventStore e DomainEntity. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.EventSourcing</PackageId>
+		<PackageTags>maxsys;eventsourcing;ddd;domain-events</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+		<ProjectReference Include="..\Maxsys.Messaging\Maxsys.Messaging.csproj" />
+	</ItemGroup>
+
+</Project>

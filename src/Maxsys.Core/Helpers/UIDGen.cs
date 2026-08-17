@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maxsys.Core.Helpers;
+
+// TODO<maxsys>
 public static class UIDGen
 {
     /// <summary>
@@ -202,23 +199,6 @@ public static class UIDGen
     }
 
     #endregion Guid
-
-    /// <summary>
-    /// Creates a hexadecimal string representation of a 64 bits UID based on a <see cref="DateTime"/> value.<br/>
-    /// If <paramref name="dateTime"/> arg is not passed (<see langword="default"/>),
-    /// <paramref name="dateTime"/> will be assigned as <see cref="DateTime.Now"/>.<br/>
-    /// The result string is in lowecase.
-    /// </summary>
-    /// <param name="dateTime">Is the <see cref="DateTime"/> to be converted into a 64 bits UID.</param>
-    /// <returns>A string of hexadecimal 64 bits UID representation; for example, "7c30b180d0f07b43".</returns>
-    public static string GenerateUID(DateTime dateTime = default)
-    {
-        if (dateTime == default) dateTime = DateTime.Now;
-
-        byte randomByte = RandomNumberGenerator.GetBytes(1)[0];
-
-        return $"{dateTime.Year:x3}{dateTime.Month:x2}{dateTime.Day:x2}{dateTime.Hour:x2}{dateTime.Second:x2}{dateTime.Millisecond:x3}{randomByte:x2}";
-    }
 }
 
 [Flags]

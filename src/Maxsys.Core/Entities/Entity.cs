@@ -1,23 +1,17 @@
-﻿using Maxsys.Core.EventSourcing;
-
 namespace Maxsys.Core.Entities;
 
-public abstract class Entity
-{
-    private readonly List<DomainEvent> _domainEvents = [];
+public abstract class Entity;
 
-    /// <summary>
-    /// Must be ignored in entity configuration
-    /// </summary>
-    public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-
-    public void AddDomainEvent(DomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-
-    public void RemoveDomainEvent(DomainEvent domainEvent) => _domainEvents.Remove(domainEvent);
-
-    public void ClearDomainEvent() => _domainEvents.Clear();
-}
-
+/// <summary>
+/// Entidade com chave única tipada.
+/// </summary>
+/// <typeparam name="TKey">
+/// Tipo da chave primária. Deve ser um tipo escalar simples (<see cref="int"/>, <see cref="Guid"/>, <see cref="string"/>, etc.).<br/>
+/// <b>Não use tipos compostos</b> (tuplas, records) como <typeparamref name="TKey"/> — o EF Core não consegue mapear
+/// um único <see cref="Id"/> composto como chave primária. Para entidades com chave composta, herde de <see cref="Entity"/>
+/// (sem TKey), declare as propriedades escalares separadamente e configure via
+/// <c>builder.HasKey(x =&gt; new &#123; x.PropA, x.PropB &#125;)</c>.
+/// </typeparam>
 public abstract class Entity<TKey> : Entity, IKey<TKey>
 {
     // TODO estudar comportamento quando required for aplicado.

@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Version>1.0.0</Version>
+		<Version>2.0.0</Version>
 		<Authors>Max Dolabella</Authors>
 		<Company>Maxsys Tech</Company>
 		<Description>Biblioteca para geração padronizada de arquivos baseados em zip.</Description>
 		<PackageDescription>Biblioteca para geração padronizada de arquivos baseados em zip.</PackageDescription>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/Maxsys.Archive</RepositoryUrl>
+		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core/tree/master/src/Maxsys.Archive</RepositoryUrl>
 		<RepositoryType>Public</RepositoryType>
 		<PackageId>Maxsys.Archive</PackageId>
 		<PackageTags>maxsys;archive;zip</PackageTags>
 		<PackageReleaseNotes>
-			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Archive/_PackageAssets/README.md#release-notes.
+			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/src/Maxsys.Archive/_PackageAssets/CHANGELOGS.md.
 		</PackageReleaseNotes>
 		<PackageIcon>_PackageAssets/logo.png</PackageIcon>
 		<PackageReadmeFile>_PackageAssets/README.md</PackageReadmeFile>

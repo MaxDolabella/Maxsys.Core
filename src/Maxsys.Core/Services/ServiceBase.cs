@@ -1,4 +1,5 @@
-﻿using Maxsys.Core.Interfaces.Services;
+using Maxsys.Core.Helpers;
+using Maxsys.Core.Interfaces.Services;
 
 namespace Maxsys.Core.Services;
 
@@ -6,7 +7,7 @@ namespace Maxsys.Core.Services;
 public abstract class ServiceBase : IService
 {
     /// <inheritdoc />
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; } = UIDGen.NewGuid();
 
     #region Dispose Pattern
 
@@ -37,11 +38,11 @@ public abstract class ServiceBase : IService
     ///
     /// if (disposing)
     /// {
-    ///     // dispose managed state (managed objects).
+    ///     // TODO: dispose managed state (managed objects).
     /// }
     ///
-    /// // free unmanaged resources (unmanaged objects) and override a finalizer below.
-    /// // set large fields to null.
+    /// // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+    /// // TODO: set large fields to null.
     ///
     /// _disposed = true;
     /// </code>
@@ -56,11 +57,11 @@ public abstract class ServiceBase : IService
 
         if (disposing)
         {
-            // NOTE: dispose managed state (managed objects).
+            // TODO: dispose managed state (managed objects).
         }
 
-        // NOTE: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        // NOTE: set large fields to null.
+        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+        // TODO: set large fields to null.
 
         _disposed = true;
     }

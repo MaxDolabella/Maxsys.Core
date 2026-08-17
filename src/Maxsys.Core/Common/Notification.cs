@@ -1,12 +1,14 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Maxsys.Core;
 
 /// <summary>
 /// Representa uma notificação em uma operação (<see cref="OperationResult"/>).
 /// </summary>
-public sealed class Notification
+public sealed class Notification : IEquatable<Notification>
 {
+    #region CTORs
+
     /// <summary>
     /// CTOR vazio necessário para conversão de Json
     /// </summary>
@@ -53,6 +55,10 @@ public sealed class Notification
 #endif
     }
 
+    #endregion CTORs
+
+    #region Props
+
     /// <summary>
     /// Severidade do erro
     /// </summary>
@@ -74,6 +80,10 @@ public sealed class Notification
     /// </summary>
     public object? Tag { get; set; }
 
+    #endregion Props
+
+    #region Methods
+
     /// <summary>
     /// Custom ToString()
     /// </summary>
@@ -83,4 +93,33 @@ public sealed class Notification
             ? $"{Message} [{Details}]"
             : Message;
     }
+
+    #region Equals, == operator
+
+    public bool Equals(Notification? other)
+    {
+        if (other is null)
+            return false;
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return ResultType == other.ResultType
+            && Message == other.Message
+            && Details == other.Details
+            && Equals(Tag, other.Tag);
+    }
+
+    public override bool Equals(object? obj) => Equals(obj as Notification);
+
+    public override int GetHashCode() => HashCode.Combine(ResultType, Message, Details, Tag);
+
+    public static bool operator ==(Notification? left, Notification? right)
+        => left is null ? right is null : left.Equals(right);
+
+    public static bool operator !=(Notification? left, Notification? right)
+        => !(left == right);
+
+    #endregion Equals, == operator
+
+    #endregion Methods
 }

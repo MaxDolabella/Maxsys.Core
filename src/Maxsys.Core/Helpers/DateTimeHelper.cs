@@ -1,4 +1,4 @@
-﻿namespace Maxsys.Core.Helpers;
+namespace Maxsys.Core.Helpers;
 
 /// <summary>
 /// Fornece métodos de ajuda para <see cref="DateTime"/>.

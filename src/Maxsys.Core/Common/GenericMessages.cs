@@ -1,77 +1,51 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Maxsys.Core;
 
 /// <summary>
 /// Contém mensagens mais comuns utilizadas na aplicação.
 /// </summary>
-public static class GenericMessages
+public static partial class GenericMessages
 {
-    ///<summary>Item não encontrado.</summary>
-    [Description("Item não encontrado.")]
-    public const string ITEM_NOT_FOUND = nameof(ITEM_NOT_FOUND);
+    // ── Severidades base ───────────────────────────────────────────────────
 
-    ///<summary>Ocorreu um erro ao adicionar item.</summary>
-    [Description("Ocorreu um erro ao adicionar item.")]
-    public const string ERROR_ADDING_ITEM = nameof(ERROR_ADDING_ITEM);
+    public const string SUCCESS = "warnings.common.success";
+    public const string ERROR = "warnings.common.error";
+    public const string WARNING = "warnings.common.warning";
+    public const string INFORMATION = "warnings.common.information";
 
-    ///<summary>Ocorreu um erro ao atualizar item.</summary>
-    [Description("Ocorreu um erro ao atualizar item.")]
-    public const string ERROR_UPDATING_ITEM = nameof(ERROR_UPDATING_ITEM);
+    // ── Acesso / segurança ─────────────────────────────────────────────────
 
-    ///<summary>Ocorreu um erro ao deletar item.</summary>
-    [Description("Ocorreu um erro ao deletar item.")]
-    public const string ERROR_DELETING_ITEM = nameof(ERROR_DELETING_ITEM);
+    public const string UNAUTHORIZED = "warnings.common.unauthorized";
 
-    ///<summary>Ocorreu um erro ao salvar.</summary>
-    [Description("Ocorreu um erro ao salvar.")]
-    public const string ERROR_SAVE = nameof(ERROR_SAVE);
+    // ── CRUD / persistência ────────────────────────────────────────────────
 
-    ///<summary>Campo obrigatório.</summary>
-    [Description("Campo obrigatório.")]
-    public const string WARNING_FIELD_REQUIRED = nameof(WARNING_FIELD_REQUIRED);
+    public const string ITEM_NOT_FOUND = "warnings.common.item_not_found";
+    public const string ERROR_ADDING = "warnings.common.error_adding";
+    public const string ERROR_UPDATING = "warnings.common.error_updating";
+    public const string ERROR_DELETING = "warnings.common.error_deleting";
+    public const string ERROR_SAVE = "warnings.common.error_save";
 
-    ///<summary>Campo inválido.</summary>
-    [Description("Campo inválido.")]
-    public const string WARNING_FIELD_INVALID = nameof(WARNING_FIELD_INVALID);
+    // ── Operações ──────────────────────────────────────────────────────────
 
-    ///<summary>Campo deve ser único.</summary>
-    [Description("Campo deve ser único.")]
-    public const string WARNING_FIELD_UNIQUE = nameof(WARNING_FIELD_UNIQUE);
+    public const string INVALID_OPERATION = "warnings.common.invalid_operation";
+    public const string INVALID_OBJECT = "warnings.common.invalid_object";
+    public const string INVALID_XML = "warnings.common.invalid_xml";
+    public const string INVALID_SCHEMA = "warnings.common.invalid_schema";
+    public const string SCHEMA_READING_ERROR = "warnings.common.schema_reading_error";
 
-    ///<summary>Tamanho do campo é inválido.</summary>
-    [Description("Tamanho do campo é inválido.")]
-    public const string WARNING_FIELD_LENGTH = nameof(WARNING_FIELD_LENGTH);
+    // ── Validação de campo ─────────────────────────────────────────────────
 
-    ///<summary>Não autorizado</summary>
-    [Description("Não autorizado.")]
-    public const string UNAUTHORIZED = nameof(UNAUTHORIZED);
+    public const string FIELD_REQUIRED = "warnings.common.field_required";
+    public const string FIELD_INVALID = "warnings.common.field_invalid";
+    public const string FIELD_UNIQUE = "warnings.common.field_unique";
+    public const string FIELD_LENGTH = "warnings.common.field_length";
+    public const string FIELD_FORMAT = "warnings.common.field_format";
+    public const string FIELD_RANGE = "warnings.common.field_range";
+    public const string FIELDS_CONFLICT = "warnings.common.fields_conflict";
 
-    ///<summary>Erro</summary>
-    [Description("Erro.")]
-    public const string ERROR = nameof(ERROR);
+    // ── Validação de item/objeto ───────────────────────────────────────────
 
-    ///<summary>Aviso</summary>
-    [Description("Aviso.")]
-    public const string WARNING = nameof(WARNING);
-
-    ///<summary>Informação</summary>
-    [Description("Informação.")]
-    public const string INFORMATION = nameof(INFORMATION);
-
-    ///<summary>Operação Inválida</summary>
-    [Description("Operação Inválida.")]
-    public const string INVALID_OPERATION = nameof(INVALID_OPERATION);
-
-    ///<summary>XML inválido</summary>
-    [Description("XML inválido.")]
-    public const string INVALID_XML = nameof(INVALID_XML);
-
-    ///<summary>Schema inválido</summary>
-    [Description("Schema inválido.")]
-    public const string INVALID_SCHEMA = nameof(INVALID_SCHEMA);
-
-    ///<summary>Erro em leitura de Schema</summary>
-    [Description("Erro em leitura de Schema.")]
-    public const string SCHEMA_READING_ERROR = nameof(SCHEMA_READING_ERROR);
+    public const string ITEM_REQUIRED = "warnings.common.item_required";
+    public const string ITEM_DUPLICATE = "warnings.common.item_duplicate";
 }

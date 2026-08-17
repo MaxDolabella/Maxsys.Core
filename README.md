@@ -6,17 +6,21 @@
 Contém bibliotecas para aplicações Maxsys.
 Essas bibliotecas auxiliam no desenvolvimento de aplicações pessoais em `Windows Forms`, `WPF` e `ASP.NET Core (WebAPI / MVC)`. Sinta-se livre pra estudar, alterar e utilizar todo ou parte do código como bem entender.
 
-## :gear: Projects (.NET9)
+## :gear: Projects (.NET 10)
 
-| Projeto                                                                           | Versão                                                                                    |
-|-----------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------:|
-| [Maxsys.Core](https://www.nuget.org/packages/Maxsys.Core)                         | ![Maxsys.Core](https://img.shields.io/nuget/v/Maxsys.Core)                                |
-| [Maxsys.Core.Data](https://www.nuget.org/packages/Maxsys.Core.Data)               | ![Nuget Maxsys.Core.Data](https://img.shields.io/nuget/v/Maxsys.Core.Data)                |
-| [Maxsys.Core.Excel](https://www.nuget.org/packages/Maxsys.Core.Excel)             | ![Nuget Maxsys.Core.Excel](https://img.shields.io/nuget/v/Maxsys.Core.Excel)              |
-| [Maxsys.Core.Web](https://www.nuget.org/packages/Maxsys.Core.Web)                 | ![Nuget Maxsys.Core.Web](https://img.shields.io/nuget/v/Maxsys.Core.Web)                  |
-| [Maxsys.Core.Web.Swagger](https://www.nuget.org/packages/Maxsys.Core.Web.Swagger) | ![Nuget Maxsys.Core.Web.Swagger](https://img.shields.io/nuget/v/Maxsys.Core.Web.Swagger)  |
-| [Maxsys.Archive](https://www.nuget.org/packages/Maxsys.Archive)                   | ![Nuget Maxsys.Archive](https://img.shields.io/nuget/v/Maxsys.Archive)                |
-| [Maxsys.Bootstrap](https://www.nuget.org/packages/Maxsys.Bootstrap)               | ![Nuget Maxsys.Bootstrap](https://img.shields.io/nuget/v/Maxsys.Bootstrap)                |
+| Projeto                                                                     | Descrição                                            | Versão                                                                              |
+|-----------------------------------------------------------------------------|------------------------------------------------------|:------------------------------------------------------------------------------------:|
+| [Maxsys.Core](https://www.nuget.org/packages/Maxsys.Core)                   | Núcleo: contratos, `OperationResult`, filtros, DTOs  | ![Maxsys.Core](https://img.shields.io/nuget/v/Maxsys.Core)                          |
+| [Maxsys.Data](https://www.nuget.org/packages/Maxsys.Data)                   | EF Core: Repository + Unit of Work                   | ![Nuget Maxsys.Data](https://img.shields.io/nuget/v/Maxsys.Data)                    |
+| [Maxsys.Mapping.AutoMapper](https://www.nuget.org/packages/Maxsys.Mapping.AutoMapper) | Adaptador AutoMapper (`IObjectMapper`/`IQueryProjector`) | ![Nuget Maxsys.Mapping.AutoMapper](https://img.shields.io/nuget/v/Maxsys.Mapping.AutoMapper) |
+| [Maxsys.Excel](https://www.nuget.org/packages/Maxsys.Excel)                 | Leitura tipada de Excel (ClosedXML)                  | ![Nuget Maxsys.Excel](https://img.shields.io/nuget/v/Maxsys.Excel)                  |
+| [Maxsys.Web](https://www.nuget.org/packages/Maxsys.Web)                     | ASP.NET Core: `ApiControllerBase`, HealthCheck       | ![Nuget Maxsys.Web](https://img.shields.io/nuget/v/Maxsys.Web)                      |
+| [Maxsys.Swagger](https://www.nuget.org/packages/Maxsys.Swagger)             | Swagger/OpenAPI (Swashbuckle)                        | ![Nuget Maxsys.Swagger](https://img.shields.io/nuget/v/Maxsys.Swagger)              |
+| [Maxsys.Messaging](https://www.nuget.org/packages/Maxsys.Messaging)         | CQRS com mediador próprio                            | ![Nuget Maxsys.Messaging](https://img.shields.io/nuget/v/Maxsys.Messaging)          |
+| [Maxsys.EventSourcing](https://www.nuget.org/packages/Maxsys.EventSourcing) | Domain Events / Event Sourcing                       | ![Nuget Maxsys.EventSourcing](https://img.shields.io/nuget/v/Maxsys.EventSourcing)  |
+| [Maxsys.Drawing](https://www.nuget.org/packages/Maxsys.Drawing)             | Manipulação de imagens (Windows)                     | ![Nuget Maxsys.Drawing](https://img.shields.io/nuget/v/Maxsys.Drawing)              |
+| [Maxsys.Archive](https://www.nuget.org/packages/Maxsys.Archive)             | Arquivos baseados em zip                             | ![Nuget Maxsys.Archive](https://img.shields.io/nuget/v/Maxsys.Archive)              |
+| [Maxsys.Bootstrap](https://www.nuget.org/packages/Maxsys.Bootstrap)         | Componentes Bootstrap 5.3 (TagHelpers + ViewComponents) | ![Nuget Maxsys.Bootstrap](https://img.shields.io/nuget/v/Maxsys.Bootstrap)          |
 
 
 ## :black_nib: Autores

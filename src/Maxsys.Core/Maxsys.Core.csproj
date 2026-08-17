@@ -1,68 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<NoWarn>$(NoWarn);NU1507</NoWarn>
-	</PropertyGroup>
-
-	<!-- Package -->
-	<PropertyGroup>
-		<Version>16.0.0</Version>
-		<Authors>Max Dolabella</Authors>
-		<Company>Maxsys Tech</Company>
-		<Description>Core para aplicações Maxsys</Description>
-		<PackageDescription>Core para aplicações Maxsys</PackageDescription>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageProjectUrl>https://github.com/MaxDolabella/Maxsys.Core</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/MaxDolabella/Maxsys.Core</RepositoryUrl>
-		<RepositoryType>Public</RepositoryType>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Core para aplicações Maxsys (.NET 10)</Description>
+		<PackageDescription>Core para aplicações Maxsys (.NET 10)</PackageDescription>
 		<PackageId>Maxsys.Core</PackageId>
-		<PackageTags>maxsys;maxsys-core;c-sharp;csharp;classlib;nuget;clean-architecture;fluentvalidation;ddd;repository;repository-pattern;unit-of-work;unitofwork;unitofworkpattern;uow;uow-pattern;mvp;model-view-presenter;mvvm;model-view-viewmodel</PackageTags>
-		<PackageReleaseNotes>
-			Notas da versão podem ser vistas em https://github.com/MaxDolabella/Maxsys.Core/blob/master/Maxsys.Core/_PackageAssets/README.md#release-notes.
-		</PackageReleaseNotes>
-		<ApplicationIcon>_PackageAssets/logo.ico</ApplicationIcon>
-		<PackageIcon>_PackageAssets/logo.png</PackageIcon>
-		<PackageReadmeFile>_PackageAssets/README.md</PackageReadmeFile>
-		<PackageLicenseFile>_PackageAssets/LICENSE</PackageLicenseFile>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageTags>maxsys;maxsys-core;csharp;classlib;nuget;clean-architecture;ddd;fluentvalidation;repository-pattern;unit-of-work</PackageTags>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Update="_PackageAssets\LICENSE">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-		<None Update="_PackageAssets\logo.png">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-		<None Update="_PackageAssets\README.md">
-			<PackagePath>\</PackagePath>
-			<Pack>True</Pack>
-		</None>
-	</ItemGroup>
 
 	<ItemGroup>
 		<Using Include="Maxsys.Core" />
-		<Using Remove="System.IO" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-		<PackageReference Include="MediatR" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Http" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-		<PackageReference Include="System.Drawing.Common" />
 	</ItemGroup>
-  
 
 </Project>
