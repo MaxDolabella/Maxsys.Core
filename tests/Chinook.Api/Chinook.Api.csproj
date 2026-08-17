@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="SourceGear.sqlite3" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Maxsys.Core\Maxsys.Core.csproj" />
+    <ProjectReference Include="..\..\src\Maxsys.Data\Maxsys.Data.csproj" />
+    <ProjectReference Include="..\..\src\Maxsys.Mapping.AutoMapper\Maxsys.Mapping.AutoMapper.csproj" />
+    <ProjectReference Include="..\..\src\Maxsys.Messaging\Maxsys.Messaging.csproj" />
+    <ProjectReference Include="..\..\src\Maxsys.Web\Maxsys.Web.csproj" />
+  </ItemGroup>
+
+</Project>

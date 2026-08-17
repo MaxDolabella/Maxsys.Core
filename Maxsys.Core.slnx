@@ -19,6 +19,7 @@
     <Project Path="src/Maxsys.Web/Maxsys.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Chinook.Api/Chinook.Api.csproj" Id="8a589f85-d9e9-408e-9739-a18c08002110" />
     <Project Path="tests/Tests.Api/Tests.Api.csproj" />
   </Folder>
   <Folder Name="/_root/">

@@ -1,0 +1,17 @@
+using Chinook.Api;
+
+var builder = WebApplication.CreateBuilder(args);
+
+DependencyInjectionExtensions.RegisterServices(builder.Services, builder.Configuration);
+
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
