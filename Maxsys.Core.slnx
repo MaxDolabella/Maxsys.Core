@@ -8,6 +8,7 @@
     <Project Path="src/Maxsys.Bootstrap/Maxsys.Bootstrap.csproj" />
     <Project Path="src/Maxsys.Core.Filtering/Maxsys.Core.Filtering.csproj" Id="f0ccc6eb-278b-433e-8c48-428b287a4b68" />
     <Project Path="src/Maxsys.Core/Maxsys.Core.csproj" />
+    <Project Path="src/Maxsys.Data.Filtering/Maxsys.Data.Filtering.csproj" Id="4525461b-9923-403e-b127-11603a69afae" />
     <Project Path="src/Maxsys.Data/Maxsys.Data.csproj" />
     <Project Path="src/Maxsys.Drawing/Maxsys.Drawing.csproj" />
     <Project Path="src/Maxsys.EventSourcing/Maxsys.EventSourcing.csproj" />

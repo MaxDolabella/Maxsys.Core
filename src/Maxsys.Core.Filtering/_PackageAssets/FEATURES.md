@@ -98,7 +98,7 @@ Namespace `Maxsys.Core.Interfaces.Repositories` (mesmo namespace do `IRepository
 + **LIST** — `ToListAsync` de `TEntity` ou `TDestination` (mapeado ou por `projection`), combinável com `ListCriteria` ou `Pagination` + `sortSelector`.
 + **QTD** — `CountAsync(filter)`, `CountAsync<TDestination>(filter, criteria)` (ColumnFilters + Search pós-projeção) e `AnyAsync(filter)`.
 
-> :warning: Este pacote define **apenas o contrato**. A implementação fica no consumidor — tipicamente uma classe que estende `RepositoryBase<TEntity>` de `Maxsys.Data` e aplica `filters.ApplyFilter(ref query)` nos chokepoints de consulta.
+> :warning: Este pacote define **apenas o contrato**. A implementação EF Core (`RepositoryBase<TEntity, TFilter>`, que aplica `filters.ApplyFilter(ref query)` na query base) vive em **`Maxsys.Data.Filtering`**; para outro provedor de dados, implemente `IRepository<TEntity, TFilter>` diretamente.
 
 ## Service
 

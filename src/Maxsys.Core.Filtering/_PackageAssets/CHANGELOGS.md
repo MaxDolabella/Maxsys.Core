@@ -9,4 +9,4 @@
 * :sparkles: Blocos de construção: `SearchTerm`/`SearchTermModes` (busca textual traduzida para `Expression` via `ExpressionHelper`), `KeyList<TKey>`/`SearchKey<TKey>`/`SearchKeyModes` (Include/Exclude de chaves), `RangeFilter<T>`, `PeriodFilter`/`PeriodFilter<TDateTypeFilter>`/`DateTimeOffsetFilter`, `FilterItem<T>` e `ActiveTypes`;
 * :sparkles: `IRepository<TEntity, TFilter>` — variante de repositório com consultas por filtro tipado (`GetAsync`, `ToListAsync`, `CountAsync`, `AnyAsync`, `GetSingleOrDefaultAsync`, `GetSingleOrThrowsAsync`...);
 * :sparkles: `IModelService<TEntity, TKey, TFilter>` + `ModelServiceBase<TEntity, TRepository, TKey, TFilter>` — variante de service com GET/LIST/QTY por filtro tipado (incluindo `ListDTO`/`InfoDTO`);
-* :package: Depende apenas de `Maxsys.Core`. A implementação concreta do repositório fica no consumidor (ex.: estendendo `RepositoryBase` de `Maxsys.Data`).
+* :package: Depende apenas de `Maxsys.Core`. A implementação EF Core do repositório vive no pacote `Maxsys.Data.Filtering`.

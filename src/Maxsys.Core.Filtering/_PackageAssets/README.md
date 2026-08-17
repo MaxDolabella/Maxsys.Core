@@ -43,7 +43,7 @@ public class ProductService : ModelServiceBase<Product, IProductRepository, Guid
 
 Inclui ainda blocos de construção para filtros: `SearchTerm` (busca textual com `SearchTermModes`), `KeyList<TKey>` (Include/Exclude de chaves), `RangeFilter<T>`/`PeriodFilter` (faixas e períodos) e `ActiveTypes`.
 
-> :bulb: Este pacote define os **contratos e bases**. A implementação concreta do repositório (aplicando `ApplyFilter` na query) fica no consumidor — tipicamente estendendo `RepositoryBase` de `Maxsys.Data`.
+> :bulb: Este pacote define os **contratos e bases**. A implementação EF Core do repositório (`RepositoryBase<TEntity, TFilter>`) vive em **`Maxsys.Data.Filtering`** — ou implemente `IRepository<TEntity, TFilter>` você mesmo para outro provedor de dados.
 
 ## :dart: Target
 `.NET 10`

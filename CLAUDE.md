@@ -41,7 +41,8 @@ Não há suíte de testes unitários. `tests/Tests.Api` é um projeto ASP.NET Co
 Maxsys.Core            ← núcleo, sem EF, ASP.NET nem AutoMapper. Contratos, DTOs, ModelServiceBase, OperationResult/Result, ColumnFilter, IObjectMapper/IQueryProjector.
   ├─ Maxsys.Data             → EF Core. RepositoryBase, JoinRepositoryBase, UnitOfWorkBase, ValueConversion.
   ├─ Maxsys.Core.Filtering   → filtros tipados/specification (opt-in): IFilter/FilterBase, PeriodFilter/RangeFilter,
-  │                            IRepository<TEntity,TFilter> e ModelServiceBase de aridade 4. Só depende do Core.
+  │    │                       IRepository<TEntity,TFilter> e ModelServiceBase de aridade 4. Só depende do Core.
+  │    └─ Maxsys.Data.Filtering → implementação EF Core: RepositoryBase<TEntity,TFilter> (depende de Core.Filtering + Data).
   ├─ Maxsys.Mapping.AutoMapper → adaptador AutoMapper p/ IObjectMapper/IQueryProjector (AddMaxsysAutoMapper). Único pacote com AutoMapper.
   ├─ Maxsys.Web              → ASP.NET Core. ApiControllerBase, ApiActionResult, HealthCheck, FromJson binder.
   │    └─ Maxsys.Swagger     → filtros/extensions p/ Swashbuckle (enums, FromJson, ActionIdentifier).
