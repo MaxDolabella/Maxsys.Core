@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsMaxsysPackage>true</IsMaxsysPackage>
+		<Version>17.0.0</Version>
+		<Description>Extensão Maxsys.Core para filtros tipados (specification): IFilter/FilterBase, PeriodFilter, RangeFilter e variantes de Repository/ModelService com filtro. (.NET 10)</Description>
+		<PackageDescription>Extensão Maxsys.Core para filtros tipados (specification): IFilter/FilterBase, PeriodFilter, RangeFilter e variantes de Repository/ModelService com filtro. (.NET 10)</PackageDescription>
+		<PackageId>Maxsys.Core.Filtering</PackageId>
+		<PackageTags>maxsys;filters;filtering;specification</PackageTags>
+	</PropertyGroup>
+
+	
+	<ItemGroup>
+    <ProjectReference Include="..\Maxsys.Core\Maxsys.Core.csproj" />
+  </ItemGroup>
+
+</Project>

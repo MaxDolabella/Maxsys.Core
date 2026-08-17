@@ -32,7 +32,7 @@ Não há suíte de testes unitários. `tests/Tests.Api` é um projeto ASP.NET Co
 
 ## Versionamento e publicação
 
-- **Versão é manual e por projeto**, na tag `<Version>` de cada `.csproj`. Libs principais em `17.0.0`; `Maxsys.Archive` em `2.0.0`; `Maxsys.Bootstrap` em `0.0.5`.
+- **Versão é manual e por projeto**, na tag `<Version>` de cada `.csproj`. Libs principais em `17.0.0`; `Maxsys.Archive` em `2.0.0`; `Maxsys.Bootstrap` em `0.1.0`.
 - **Publicação no NuGet dispara por git tag** `publish-*` (`.github/workflows/dotnet-nuget.yml`): restore/build da slnx + `dotnet pack` de cada `src/**/*.csproj` + `nuget push`. Push no master sozinho **não** publica nada.
 
 ## Arquitetura dos pacotes (camadas e dependências)
@@ -40,6 +40,8 @@ Não há suíte de testes unitários. `tests/Tests.Api` é um projeto ASP.NET Co
 ```
 Maxsys.Core            ← núcleo, sem EF, ASP.NET nem AutoMapper. Contratos, DTOs, ModelServiceBase, OperationResult/Result, ColumnFilter, IObjectMapper/IQueryProjector.
   ├─ Maxsys.Data             → EF Core. RepositoryBase, JoinRepositoryBase, UnitOfWorkBase, ValueConversion.
+  ├─ Maxsys.Core.Filtering   → filtros tipados/specification (opt-in): IFilter/FilterBase, PeriodFilter/RangeFilter,
+  │                            IRepository<TEntity,TFilter> e ModelServiceBase de aridade 4. Só depende do Core.
   ├─ Maxsys.Mapping.AutoMapper → adaptador AutoMapper p/ IObjectMapper/IQueryProjector (AddMaxsysAutoMapper). Único pacote com AutoMapper.
   ├─ Maxsys.Web              → ASP.NET Core. ApiControllerBase, ApiActionResult, HealthCheck, FromJson binder.
   │    └─ Maxsys.Swagger     → filtros/extensions p/ Swashbuckle (enums, FromJson, ActionIdentifier).
@@ -65,7 +67,7 @@ Regra de ouro: **`Maxsys.Core` não conhece EF Core nem ASP.NET**. Abstrações 
 
 - **Mapeamento é abstraído** (`Interfaces/Mapping/`): `IObjectMapper` (instâncias; usado pelo `ModelServiceBase`) e `IQueryProjector` (projeção de `IQueryable`; usado por `RepositoryBase`/`JoinRepositoryBase` via chokepoints `ApplyProjection`/`ApplyJoinProjection`). A implementação AutoMapper vive em `Maxsys.Mapping.AutoMapper` (`AddMaxsysAutoMapper<TEntry>()`, com scan de Profiles). NÃO referenciar AutoMapper em Core/Data.
 
-- **Filtragem é SÓ via `ColumnFilter`** (`Filtering/ColumnFilter.cs`, modos PrimeNG-style). O specification pattern antigo (`IFilter`/`FilterBase`) foi **removido** na v17 — não reintroduzir. `[Searchable]` em props de DTO habilita busca textual global via `ApplySearch`.
+- **Filtragem no Core é SÓ via `ColumnFilter`** (`Filtering/ColumnFilter.cs`, modos PrimeNG-style). O specification pattern (`IFilter`/`FilterBase`) foi removido do **Core** na v17 e reintroduzido depois como pacote **opt-in `Maxsys.Core.Filtering`** — é lá que ele vive; não trazer de volta pro Core. `[Searchable]` em props de DTO habilita busca textual global via `ApplySearch`.
 
 - **Ordenação é SÓ por `Field` string** (`SortFilter`). Sort por enum/byte foi removido; `ApplySort` lança exceção se receber `SortFilter` sem `Field`. Default sort via `[DefaultSort]` na classe.
 
