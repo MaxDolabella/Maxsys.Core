@@ -19,7 +19,7 @@
 
 ## :link: Dependências
 ![Maxsys.Core](https://img.shields.io/badge/Maxsys.Core-17.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Core)  
-![ClosedXML](https://img.shields.io/badge/ClosedXML-0.105.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
+![ClosedXML](https://img.shields.io/badge/ClosedXML-0.105.1-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FClosedXML)
 
 ## :star2: Features
 As principais *features* do projeto, podem ser vistas [aqui](FEATURES.md).

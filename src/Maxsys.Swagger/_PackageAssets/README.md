@@ -19,7 +19,7 @@
 
 ## :link: Dependências
 ![Maxsys.Web](https://img.shields.io/badge/Maxsys.Web-17.0.0-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FMaxsys.Web)  
-![Swashbuckle.AspNetCore](https://img.shields.io/badge/Swashbuckle.AspNetCore-10.1.7-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSwashbuckle.AspNetCore)
+![Swashbuckle.AspNetCore](https://img.shields.io/badge/Swashbuckle.AspNetCore-10.2.3-blue?style=for-the-badge&link=https%3A%2F%2Fwww.nuget.org%2Fpackages%2FSwashbuckle.AspNetCore)
 
 ## :star2: Features
 As principais *features* do projeto podem ser vistas [aqui](FEATURES.md).
